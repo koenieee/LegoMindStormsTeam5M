@@ -2,9 +2,11 @@
 Lego Mindstorm project Team 5M
 
 #NXTConfiguration
+
 S1: ColorSensor
 S2: LightSensor
 S3: UltraSonicSensor
+
 
 A: Right
 B: Middle
