@@ -21,6 +21,6 @@ If there are changes from other users, please press the sync button
 
 #Rules
 
-1) Open main project with Eclipse
-2) Don't push binaries to github
-3) Carefully look at your code to  
+1. Open main project with Eclipse
+2. Don't push binaries to github
+3. Carefully look at your code before you commit your changes.
