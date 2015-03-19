@@ -6,6 +6,10 @@ S1: ColorSensor
 S2: LightSensor
 S3: UltraSonicSensor
 
+A: Right
+B: Middle
+C: Left
+
 #Team 
 
 Users of Lego MindStorm Project 5M
