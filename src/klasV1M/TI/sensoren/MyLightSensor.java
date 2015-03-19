@@ -5,6 +5,7 @@ import lejos.nxt.SensorPort;
 
 /**
  * Overrides class LightSensor to implement SensorListener Pattern
+ * 
  * @author koen
  *
  */
@@ -16,8 +17,10 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	public MyLightSensor(SensorPort port) {
 		super(port);
 	}
-	
-	/** Updates calls the method that implements the SensorListener with the new and old values
+
+	/**
+	 * Updates calls the method that implements the SensorListener with the new
+	 * and old values
 	 * 
 	 */
 	public void updateState() {
@@ -27,11 +30,14 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 			sis.stateChanged(this, oldVal, newVal);
 		}
 	}
-	
+
 	/**
-	 * This method adds the SensorListener to this object, and this object is added to the SensorHandler.
-	 * It also starts the Thread of SensorHandler to keep track of new sensor values.
-	 * @param senin SensorListener
+	 * This method adds the SensorListener to this object, and this object is
+	 * added to the SensorHandler. It also starts the Thread of SensorHandler to
+	 * keep track of new sensor values.
+	 * 
+	 * @param senin
+	 *            SensorListener
 	 */
 	public void addListener(SensorListener senin) {
 		sis = senin;
