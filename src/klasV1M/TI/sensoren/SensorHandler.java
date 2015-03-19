@@ -27,6 +27,7 @@ public class SensorHandler extends Thread {
 	/**
 	 * Main function of SensorHandler to ask every <PERIOD> seconds if the
 	 * sensor has been changes
+	 * @exception If the thread has been interrupted there will be an exception thrown.
 	 */
 	public void run() {
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
@@ -38,7 +39,8 @@ public class SensorHandler extends Thread {
 						ses.updateState();
 				}
 				Thread.sleep(PERIOD);
-			} catch (InterruptedException _) {
+			} catch (InterruptedException e) {
+				
 			}
 		}
 	}

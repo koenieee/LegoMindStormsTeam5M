@@ -73,7 +73,6 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 		if (oldVal != newVal) {
 			sis.stateChanged(this, oldVal, newVal);
 		}
-
 	}
 
 	/**

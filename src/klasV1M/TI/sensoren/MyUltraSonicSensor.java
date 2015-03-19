@@ -26,7 +26,9 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 	public void updateState() {
 		oldVal = newVal;
 		newVal = super.getRange();
-		upd.stateChanged(this, oldVal, newVal);
+		if (oldVal != newVal) {
+			upd.stateChanged(this, oldVal, newVal);
+		}
 	}
 
 	/**
