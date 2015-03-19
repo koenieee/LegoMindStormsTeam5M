@@ -1,9 +1,6 @@
 package klasV1M.TI.controllers;
 
-import klasV1M.TI.sensoren.MyColorSensor;
-import klasV1M.TI.sensoren.MyLightSensor;
-import lejos.nxt.SensorPort;
-
+import klasV1M.TI.Globals;
 
 /**
  * Configuration class can be used to configure some settings on the Lego Mindstorm Robot
@@ -11,8 +8,6 @@ import lejos.nxt.SensorPort;
  *
  */
 public class Configuration {
-	public MyColorSensor MCS = new MyColorSensor(SensorPort.S1);
-	public MyLightSensor MBS = new MyLightSensor(SensorPort.S2);
 	public boolean calibrated = false;
 	
 	private double radius;
@@ -43,10 +38,10 @@ public class Configuration {
 		} catch (InterruptedException e) {}
 
 		System.out.println("Calibrating...");
-		MCS.setHigh(MCS.getRawLightValue());
-		MBS.calibrateHigh();
+		Globals.MCS.setHigh(Globals.MCS.getRawLightValue());
+		Globals.MLS.calibrateHigh();
 		
-		System.out.println(MCS.getLightValue() + "\n" + MCS.getHigh());
+		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getHigh());
 
 		System.out.println("Put on black spot within next five seconds");
 
@@ -56,10 +51,10 @@ public class Configuration {
 
 		System.out.println("Calibrating...");
 		
-		MCS.setLow(MCS.getRawLightValue());
-		MBS.calibrateLow();
+		Globals.MCS.setLow(Globals.MCS.getRawLightValue());
+		Globals.MLS.calibrateLow();
 		
-		System.out.println(MCS.getLightValue() + "\n" + MCS.getLow());
+		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getLow());
 		
 		try {
 			Thread.sleep(10000);

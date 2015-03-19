@@ -1,23 +1,19 @@
 package klasV1M.TI.controllers;
 
-import klasV1M.TI.sensoren.MyColorSensor;
-import klasV1M.TI.sensoren.MyUltraSonicSensor;
+import klasV1M.TI.Globals;
 import klasV1M.TI.sensoren.SensorHandler;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.LCD;
-import lejos.nxt.SensorPort;
 
 /**
- * Example TestController to test the working and implementation of Sensors and Sensor
- * Listener Pattern
+ * Example TestController to test the working and implementation of Sensors and
+ * Sensor Listener Pattern
  * 
  * @author koen
  *
  */
 public class TestController implements SensorListener {
-	MyUltraSonicSensor myus;
-	MyColorSensor mycc;
 	SensorHandler scc;
 
 	/**
@@ -30,10 +26,8 @@ public class TestController implements SensorListener {
 	 */
 	public TestController(int period) {
 		SensorHandler.PERIOD = period;
-		myus = new MyUltraSonicSensor(SensorPort.S3);
-		mycc = new MyColorSensor(SensorPort.S2);
-		myus.addListener(this);
-		mycc.addListener(this);
+		Globals.MLS.addListener(this);
+		Globals.MCS.addListener(this);
 	}
 
 	/**
@@ -50,10 +44,14 @@ public class TestController implements SensorListener {
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 
-		if (s.equals(myus)) {
-			LCD.clear();
-			LCD.drawString(("oldval: " + oldVal + "\nnewVal: " + newVal), 0, 0);
-
+		if (s.equals(Globals.MLS)) {
+			// LCD.clear();
+			LCD.drawString(("Light oldval: " + oldVal + "\nnewVal: " + newVal),
+					0, 0);
+		}
+		if (s.equals(Globals.MCS)) {
+			LCD.drawString(("Color oldval: " + oldVal + "\nnewVal: " + newVal),
+					0, 20);
 		}
 
 	}
