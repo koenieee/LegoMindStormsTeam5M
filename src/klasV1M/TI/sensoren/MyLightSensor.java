@@ -26,7 +26,14 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	public void updateState() {
 		oldVal = newVal;
 		newVal = super.getLightValue();
+
 		if (oldVal != newVal) {
+			if(newVal < 0){
+				newVal = 0;
+			}
+			if(newVal > 100){
+				newVal = 100;
+			}
 			sis.stateChanged(this, oldVal, newVal);
 		}
 	}
