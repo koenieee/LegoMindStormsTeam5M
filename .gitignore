@@ -2,3 +2,6 @@
 /.metadata/
 Main.nxd
 Main.nxj
+*.nxd
+*.nxj
+*.class
