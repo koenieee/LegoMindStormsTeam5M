@@ -1,10 +1,15 @@
-package klasV1M.TI.sensoren;
+package klasV1M.TI.controllers;
 
+import klasV1M.TI.sensoren.MyColorSensor;
+import klasV1M.TI.sensoren.MyUltraSonicSensor;
+import klasV1M.TI.sensoren.SensorHandler;
+import klasV1M.TI.sensoren.SensorListener;
+import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 
 /**
- * TestController to test the working and implementation of Sensors and Sensor
+ * Example TestController to test the working and implementation of Sensors and Sensor
  * Listener Pattern
  * 
  * @author koen
