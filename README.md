@@ -1,6 +1,11 @@
 # LegoMindStormsTeam5M
 Lego Mindstorm project Team 5M
 
+#NXTConfiguration
+S1: ColorSensor
+S2: LightSensor
+S3: UltraSonicSensor
+
 #Team 
 
 Users of Lego MindStorm Project 5M
