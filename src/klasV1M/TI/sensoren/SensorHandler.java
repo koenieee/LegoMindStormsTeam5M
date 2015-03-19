@@ -5,8 +5,7 @@ import java.util.List;
 
 public class SensorHandler extends Thread {
 	private List<UpdatingSensor> theSensors;
-	public static int PERIOD = 5000; // /< Period time that the SensorHandler
-										// polls the Sensors.
+	public static int PERIOD = 5000; ///< Period time that the SensorHandler polls the Sensors.
 	private static SensorHandler theHandler = null;
 
 	private SensorHandler() {
@@ -32,7 +31,7 @@ public class SensorHandler extends Thread {
 	public void run() {
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
-		for (;;) {
+		while(!Thread.interrupted()) {
 			try {
 				synchronized (this) {
 					for (UpdatingSensor ses : theSensors)

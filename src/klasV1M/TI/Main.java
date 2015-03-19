@@ -1,6 +1,3 @@
-/**
- * 
- */
 package klasV1M.TI;
 
 /**
