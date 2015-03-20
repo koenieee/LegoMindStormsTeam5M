@@ -65,12 +65,12 @@ public class ObstacleController implements Runnable, SensorListener {
 		// LightSensor
 		if (s.equals(Globals.MLS)) {
 			// Test
-			Globals.mLeft.setSpeed(3.6f * newVal);
+			Globals.mLeft.setSpeed(3.6f * (100 - newVal) + 180);
 		}
 		// ColorSensor
 		if (s.equals(Globals.MCS)) {
 			// Test
-			Globals.mRight.setSpeed(3.6f * newVal);
+			Globals.mRight.setSpeed(3.6f * (100 - newVal) + 180);
 		}
 	}
 }
