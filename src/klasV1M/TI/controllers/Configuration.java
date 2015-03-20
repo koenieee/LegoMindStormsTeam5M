@@ -1,6 +1,11 @@
 package klasV1M.TI.controllers;
 
 import klasV1M.TI.Globals;
+import lejos.nxt.Button;
+import lejos.nxt.Motor;
+import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.TachoMotorPort;
+import lejos.robotics.navigation.DifferentialPilot;
 
 /**
  * Configuration class can be used to configure some settings on the Lego Mindstorm Robot
@@ -15,14 +20,22 @@ public class Configuration {
 	private double circumference;
 	private boolean configured;
 	
+	/**
+	 * Resets and configures all components of the NXT.
+	 */
 	public synchronized void resetAndConfigureAll() {
 		measureWheelRadius();
 		configureLightSensors();
 		resetSoundSensor();
 	}
 	
+	/**
+	 * Measures the wheel radius.
+	 */
 	public synchronized void measureWheelRadius() {
-		
+		System.out.println("Please place a solid object about 50 cm away from this robot\nIncomplete method!");
+		Button.waitForAnyPress();
+		/* INCOMPLETE!! */
 	}
 	
 	
@@ -57,7 +70,7 @@ public class Configuration {
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getLow());
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {}
 		
 		calibrated = true;
@@ -68,18 +81,34 @@ public class Configuration {
 		
 	}
 	
+	/**
+	 * Returns the radius of the wheels.
+	 * @return the radius of the wheels
+	 */
 	public synchronized double getRadius() {
 		return radius;
 	}
 
+	/**
+	 * Returns the diameter of the wheels.
+	 * @return the diameter of the wheels
+	 */
 	public synchronized double getDiameter() {
 		return diameter;
 	}
 
+	/**
+	 * Returns the circumference of the wheels.
+	 * @return the circumference of the wheels
+	 */
 	public synchronized double getCircumference() {
 		return circumference;
 	}
 
+	/**
+	 * Tests if the NXT has been configured.
+	 * @return <b>true</b> if configured, <b>false</b> otherwise
+	 */
 	public synchronized boolean isConfigured() {
 		return configured;
 	}
