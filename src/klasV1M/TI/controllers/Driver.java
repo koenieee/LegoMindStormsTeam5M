@@ -16,12 +16,18 @@ public class Driver implements Runnable {
 		
 	}
 
+	/**
+	 * Starts a new {@link Thread} of this class if one is not already running.
+	 */
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);
 		}
 	}
 	
+	/**
+	 * Stops the {@link Thread} of this class if it is already running.
+	 */
 	public void stop() {
 		if (t != null) {
 			t.interrupt();
