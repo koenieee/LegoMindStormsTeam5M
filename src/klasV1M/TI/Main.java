@@ -19,7 +19,7 @@ public class Main {
 		c.configureLightSensors();
 		LCD.clear();
 		//RConsole.open();
-		System.out.println("Put one sensor on black and the other one on white");
+		System.out.println("Put one sensor on black and the other on white");
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
