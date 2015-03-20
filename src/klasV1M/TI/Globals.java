@@ -9,11 +9,11 @@ import lejos.nxt.SensorPort;
 
 public class Globals {
 	/**
-	 * The {@link MyColorSensor} mounted on the front-left?
+	 * The {@link MyColorSensor} mounted on the front-right
 	 */
 	public static MyColorSensor MCS = new MyColorSensor(SensorPort.S1);
 	/**
-	 * The {@link MyLightSensor} mounted on the front-right?
+	 * The {@link MyLightSensor} mounted on the front-left
 	 */
 	public static MyLightSensor MLS = new MyLightSensor(SensorPort.S2);
 	/**

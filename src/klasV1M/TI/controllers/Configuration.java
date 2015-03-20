@@ -6,6 +6,7 @@ import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.TachoMotorPort;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.Delay;
 
 /**
  * Configuration class can be used to configure some settings on the Lego Mindstorm Robot
@@ -34,8 +35,57 @@ public class Configuration {
 	 */
 	public synchronized void measureWheelRadius() {
 		System.out.println("Please place a solid object about 50 cm away from this robot\nIncomplete method!");
-		Button.waitForAnyPress();
-		/* INCOMPLETE!! */
+		while (Globals.MUS.getRange() == 255) {
+			Button.waitForAnyPress();
+		}
+		
+		// Slow acceleration to avoid slipping
+		Globals.mLeft.setAcceleration(60);
+		Globals.mRight.setAcceleration(60);
+		Globals.mLeft.setSpeed(360);
+		Globals.mRight.setSpeed(360);
+		
+		int iL = Globals.mLeft.getTachoCount();
+		int iR = Globals.mRight.getTachoCount();
+		
+		float dStart = Globals.MUS.getRange();
+		
+		Globals.mLeft.forward();
+		Globals.mRight.forward();
+		System.out.println("Start " + dStart);
+		System.out.println("Moving for " + 2 + " seconds...");//(long) ((dStart - 10)/Math.PI * 100));//((dStart - 10) * Math.PI * 1000) + " seconds...");
+		Delay.msDelay(2000);
+		// DELAY NOT WORKING!!!???
+		//try {
+		//	Thread.sleep(2000);//((dStart - 10)/Math.PI * 100));//(25000 / dStart));
+		//} catch (InterruptedException e) {
+		//}
+		
+		Globals.mLeft.flt(true);
+		Globals.mRight.flt();
+		
+		Delay.msDelay(1000);
+		
+		System.out.println("Starting measurement...");
+		
+		float dEnd = Globals.MUS.getRange();
+		
+		int iLDiff = Globals.mLeft.getTachoCount() - iL;
+		int iRDiff = Globals.mRight.getTachoCount() - iR;
+		
+		//System.out.println("iL " + iL + " | iLD " + iLDiff);
+		//System.out.println("iR " + iR + " | iRD " + iRDiff);
+		//System.out.println("d " + (dStart - dEnd));
+		
+		// average rotation
+		int iDiff = (iLDiff + iRDiff) / 2;
+		
+		circumference = (dStart - dEnd) / (iDiff);
+		diameter = circumference / Math.PI;
+		radius = diameter / 2;
+		
+		System.out.println("C " + Math.round(circumference) + "\nD " + Math.round(diameter) + "\nR " + Math.round(radius));
+		Delay.msDelay(5000);
 	}
 	
 	

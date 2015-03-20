@@ -15,7 +15,7 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Configuration c = new Configuration();
-		c.configureLightSensors();
+		c.resetAndConfigureAll();//configureLightSensors();
 		RConsole.open();
 		TestController tc = new TestController(2000);
 		while (true) {
