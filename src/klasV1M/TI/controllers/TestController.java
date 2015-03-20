@@ -41,28 +41,31 @@ public class TestController implements SensorListener {
 	 * @param newVal
 	 *            The new value that the Sensor has detected
 	 */
+	
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-
+		boolean whiteC = true;
+		boolean whiteL = true;
 		if (s.equals(Globals.MLS)) {
 			// LCD.clear();
 			String text = "";
 			if(newVal < 50){
+				
 				text = "Black";
 				Globals.mLeft.stop();
 				Globals.mRight.forward();
-				
+				whiteL=false;
 			}
 			else
 			{
 				text = "White";
+				whiteL=true;
 			}
 			
 			LCD.drawString(("LightSensor: " + text),
 					0, 0);
-			
-			
 		}
+		
 		if (s.equals(Globals.MCS)) { //
 			
 			String text = "";
@@ -71,15 +74,23 @@ public class TestController implements SensorListener {
 
 				Globals.mLeft.forward();
 				Globals.mRight.stop();
+				
+				whiteC=false;
 			}
 			else
 			{
 				text = "White";
+				whiteC=true;
 			}
 			
 			LCD.drawString(("ColorSensor: " + text),
 					0, 3);
 		}
+		
+		/*if(whiteL && whiteC){
+			Globals.mLeft.stop();
+			Globals.mRight.stop();
+		}*/
 
 	}
 
