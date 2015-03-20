@@ -124,7 +124,6 @@ public class Configuration {
 		} catch (InterruptedException e) {}
 		
 		calibrated = true;
-		System.out.println("Calibrated == true");
 	}
 	
 	public synchronized void resetSoundSensor() {
