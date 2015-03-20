@@ -18,7 +18,6 @@ public class Main {
 		System.out.println("Starting application...");
 		c.resetAndConfigureAll();//configureLightSensors();
 		RConsole.open();
-		TestController tc = new TestController(2000);
 		TestController tc = new TestController(200);
 		while (true) {
 			Thread.yield();
