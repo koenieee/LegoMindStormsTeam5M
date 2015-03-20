@@ -2,6 +2,7 @@ package klasV1M.TI;
 
 import klasV1M.TI.controllers.Configuration;
 import klasV1M.TI.controllers.TestController;
+import lejos.nxt.LCD;
 import lejos.nxt.comm.RConsole;
 
 /**
@@ -16,8 +17,18 @@ public class Main {
 	public static void main(String[] args) {
 		Configuration c = new Configuration();
 		c.configureLightSensors();
-		RConsole.open();
-		TestController tc = new TestController(2000);
+		LCD.clear();
+		//RConsole.open();
+		System.out.println("Put one sensor on black and the other one on white");
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		TestController tc = new TestController(200);
+		
+		
 		while (true) {
 			Thread.yield();
 		}

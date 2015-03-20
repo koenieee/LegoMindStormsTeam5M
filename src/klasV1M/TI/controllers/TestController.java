@@ -46,12 +46,39 @@ public class TestController implements SensorListener {
 
 		if (s.equals(Globals.MLS)) {
 			// LCD.clear();
-			LCD.drawString(("L oldval: " + oldVal + "\nnewVal: " + newVal),
+			String text = "";
+			if(newVal < 50){
+				text = "Black";
+				Globals.mLeft.stop();
+				Globals.mRight.forward();
+				
+			}
+			else
+			{
+				text = "White";
+			}
+			
+			LCD.drawString(("LightSensor: " + text),
 					0, 0);
+			
+			
 		}
-		if (s.equals(Globals.MCS)) {
-			LCD.drawString(("C oldval: " + oldVal + "\nnewVal: " + newVal),
-					0, 2);
+		if (s.equals(Globals.MCS)) { //
+			
+			String text = "";
+			if(newVal < 50){
+				text = "Black";
+
+				Globals.mLeft.forward();
+				Globals.mRight.stop();
+			}
+			else
+			{
+				text = "White";
+			}
+			
+			LCD.drawString(("ColorSensor: " + text),
+					0, 3);
 		}
 
 	}
