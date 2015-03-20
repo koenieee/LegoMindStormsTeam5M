@@ -34,6 +34,11 @@ public class Configuration {
 	 * Measures the wheel radius.
 	 */
 	public synchronized void measureWheelRadius() {
+		// Force motors off
+		Globals.mLeft.stop(true);
+		Globals.mMiddle.stop(true);
+		Globals.mRight.stop();
+		
 		System.out.println("Please place a solid object about 50 cm away from this robot\nIncomplete method!");
 		while (Globals.MUS.getRange() == 255) {
 			Button.waitForAnyPress();
@@ -89,7 +94,7 @@ public class Configuration {
 	}
 	
 	
-	/** Function to calibrate both the LightSensor and the ColorSensor to work in a range of 0 to 100 
+	/** Function to calibrate both the {@link MyLightSensor} and the {@link MyColorSensor} to work in a range of 0 to 100 
 	 * With 0 as most Black
 	 * With 100 as most White
 	 */

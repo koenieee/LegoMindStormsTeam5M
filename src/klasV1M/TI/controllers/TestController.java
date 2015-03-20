@@ -14,8 +14,6 @@ import lejos.nxt.LCD;
  *
  */
 public class TestController implements SensorListener {
-	SensorHandler scc;
-
 	/**
 	 * TestController can be called with an integer to know how many times the
 	 * SensorHandler must be called
