@@ -1,5 +1,7 @@
 package klasV1M.TI;
 
+import java.util.HashMap;
+
 import klasV1M.TI.sensoren.MyColorSensor;
 import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
@@ -41,6 +43,9 @@ public class Globals {
 	 * The right {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
+	
+	
+	public static HashMap<Float, Integer> angleAndCM = new HashMap<Float, Integer>();
 	
 	public static void playSong() {
 

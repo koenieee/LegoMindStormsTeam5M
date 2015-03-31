@@ -108,16 +108,20 @@ public class Configuration {
 		System.out.println("Calibrating...");
 		Globals.MCS.setHigh(Globals.MCS.getRawLightValue());
 		Globals.MLS.calibrateHigh();
-		Globals.playSong();
+		
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getHigh());
+		/*
+		Globals.mLeft.setAcceleration(60);
+		Globals.mRight.setAcceleration(60);
 		Globals.mLeft.forward();
 		Globals.mRight.forward();
+		
 		try{
-			Thread.sleep(1000);
+			Thread.sleep(700);
 		}
 		catch (InterruptedException e){}
 		Globals.mLeft.stop();
-		Globals.mRight.stop();
+		Globals.mRight.stop();*/
 		
 		
 		System.out.println("Put on black spot within next five seconds");
@@ -132,7 +136,7 @@ public class Configuration {
 		Globals.MLS.calibrateLow();
 		
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getLow());
-		Globals.playSong();
+		//Globals.playSong();
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {}
@@ -141,7 +145,7 @@ public class Configuration {
 	}
 	
 	public synchronized void resetSoundSensor() {
-		
+		Globals.mMiddle.resetTachoCount();
 	}
 	
 	/**
