@@ -14,7 +14,7 @@ import lejos.nxt.Sound;
 /**
  * Provides global access to the sensors and motors.
  * TODO:
- * - Test if synchronized access is needed/change class into a Singleton? 
+ * - Test if synchronized access is needed/change class into a Singleton?
  * @author Remco
  *
  */
@@ -23,9 +23,12 @@ public class Globals {
 	 * Standard delay for updating.
 	 */
 	public static int StandardDelay = 100;
-	
+	/**
+	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
+	 * need to be equal or lower to, to be considered of the color black
+	 */
 	public static int BlackThreshold = 20;
-	
+
 	/**
 	 * The {@link MyColorSensor} mounted on the front-right
 	 */
@@ -38,7 +41,7 @@ public class Globals {
 	 * The {@link MyUltraSonicSensor} mounted on the front
 	 */
 	public static MyUltraSonicSensor MUS = new MyUltraSonicSensor(SensorPort.S3);
-	
+
 	/**
 	 * The right {@link NXTRegulatedMotor}
 	 */
@@ -51,10 +54,9 @@ public class Globals {
 	 * The right {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
-	
-	
+
 	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
-	
+
 	public static void playSong() {
 
 		// NOTE: This tune was generated from a midi using Guy

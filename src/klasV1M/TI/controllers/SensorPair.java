@@ -2,21 +2,32 @@ package klasV1M.TI.controllers;
 
 import java.util.HashMap;
 
+import javax.microedition.sensor.HeadingChannelInfo;
+
 import klasV1M.TI.Globals;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.LCD;
+import lejos.nxt.comm.RConsole;
 
 public class SensorPair implements Runnable, SensorListener {
 
 	private Thread t;
 	
+	private boolean lost;
+	private boolean found;
+
 	private int lineRelative = 0;
-	private float heading;
 	private boolean left;
 	private boolean right;
 	
-	private HashMap<Long, Integer> log = new HashMap<Long, Integer>();
+	public static final int LINE_UNKNOWN = -1;
+	public static final int LINE_MIDDLE = 0;
+	public static final int LINE_LEFT = 1;
+	public static final int LINE_RIGHT = 2;
+
+	
+	//private HashMap<Long, Integer> log = new HashMap<Long, Integer>();
 
 	public SensorPair() {
 		Globals.MLS.addListener(this);
@@ -28,6 +39,7 @@ public class SensorPair implements Runnable, SensorListener {
 		if (Globals.MCS.getLightValue() <= Globals.BlackThreshold) {
 			right = true;
 		}
+		determineLine();
 	}
 
 	@Override
@@ -39,22 +51,18 @@ public class SensorPair implements Runnable, SensorListener {
 			} catch (InterruptedException e) {
 			}
 			
-			lineRelative = left && right ? 0 : left ? -1 : right ? 1 : 8;
+			// active polling
+			determineLine();
 			
-			log.put(System.currentTimeMillis(), lineRelative);
+			//lineRelative = left && right ? 0 : left ? -1 : right ? 1 : 8;
 			
-			
-			System.out.println(lineRelative);
-			if (lineRelative == 0) {
-				continue;
-			}
-			
-			
+			//log.put(System.currentTimeMillis(), lineRelative);
+			//RConsole.println(lineRelative + " " + (left && right ? "Middle" : left ? "Left" : right ? "Right" : "Unknown"));
 			
 			//LCD.clearDisplay();
 			
 			
-			for (int i = 0; i < log.size() && i < LCD.SCREEN_HEIGHT; i++) {
+			/*for (int i = 0; i < log.size() && i < LCD.SCREEN_HEIGHT; i++) {
 				int centerX = LCD.SCREEN_WIDTH / 2;
 				
 				for (int j = 0; j < 3; j++) {
@@ -62,7 +70,7 @@ public class SensorPair implements Runnable, SensorListener {
 				}
 				
 				LCD.setPixel(centerX + lineRelative, LCD.SCREEN_HEIGHT - 1 - i, 1);
-			}
+			}*/
 			
 			
 			
@@ -76,6 +84,37 @@ public class SensorPair implements Runnable, SensorListener {
 			
 			System.out.println("Heading " + (heading == -1 ? "Left" : heading == 1 ? "Right" : "None"));*/
 		}
+	}
+	
+	private void determineLine() {
+		if (left && right) {
+			RConsole.println("On line");
+			if (!found) {
+				RConsole.println("Found!");
+			}
+			lineRelative = LINE_MIDDLE;
+			found = true;
+		} else if (left) {
+			lineRelative = LINE_LEFT;
+			RConsole.println("Left");
+		} else if (right) {
+			lineRelative = LINE_RIGHT;
+			RConsole.println("Right");
+		} else {
+			if (!lost) {
+				RConsole.println("Now lost!");
+			}
+			lineRelative = LINE_UNKNOWN;
+			lost = true;
+		}
+	}
+	
+	public boolean isLost() {
+		return lost;
+	}
+	
+	public int getLineRelative() {
+		return lineRelative;
 	}
 
 	public void start() {
@@ -96,7 +135,7 @@ public class SensorPair implements Runnable, SensorListener {
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		//System.out.println("old: " + oldVal + " | new: " + newVal);
-
+		System.out.println(System.currentTimeMillis() % 1000 + ": " + (s.equals(Globals.MLS) ? "MLS" : "MCS"));
 		if (s.equals(Globals.MLS)) {
 			left = newVal <= Globals.BlackThreshold;
 		}
@@ -104,6 +143,8 @@ public class SensorPair implements Runnable, SensorListener {
 		if (s.equals(Globals.MCS)) {
 			right = newVal <= Globals.BlackThreshold;
 		}
-		t.interrupt();
+		//t.interrupt();
+		// passive polling
+		//determineLine();
 	}
 }

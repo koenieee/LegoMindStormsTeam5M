@@ -3,9 +3,15 @@ package klasV1M.TI.sensoren;
 import java.util.ArrayList;
 import java.util.List;
 
+import klasV1M.TI.Globals;
+
 public class SensorHandler extends Thread {
 	private List<UpdatingSensor> theSensors;
-	public static int PERIOD = 5000; ///< Period time that the SensorHandler polls the Sensors.
+	/**
+	 * The period time that the {@link SensorHandler} polls the Sensors.
+	 * Defaults to {@link Globals}'s StandardDelay.
+	 */
+	public static int PERIOD = Globals.StandardDelay; ///< Period time that the SensorHandler polls the Sensors.
 	private static SensorHandler theHandler = null;
 
 	private SensorHandler() {

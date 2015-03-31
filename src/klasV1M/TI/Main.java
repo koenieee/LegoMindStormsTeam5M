@@ -1,6 +1,7 @@
 package klasV1M.TI;
 
 import klasV1M.TI.controllers.Configuration;
+import klasV1M.TI.controllers.LightTestController;
 import klasV1M.TI.controllers.ObstacleController;
 import klasV1M.TI.controllers.SensorPair;
 import klasV1M.TI.controllers.TestController;
@@ -26,6 +27,7 @@ public class Main {
 		oc.start();
 		SensorPair sp = new SensorPair();
 		sp.start();
+		//LightTestController ltc = new LightTestController();
 		//TestController tc = new TestController(200);
 		while (true) {
 			Thread.yield();
