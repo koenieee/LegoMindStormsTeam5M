@@ -1,6 +1,7 @@
 package klasV1M.TI;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import klasV1M.TI.sensoren.MyColorSensor;
 import klasV1M.TI.sensoren.MyLightSensor;
@@ -45,7 +46,7 @@ public class Globals {
 	public static NXTRegulatedMotor mLeft = Motor.C;
 	
 	
-	public static HashMap<Float, Integer> angleAndCM = new HashMap<Float, Integer>();
+	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
 	
 	public static void playSong() {
 
