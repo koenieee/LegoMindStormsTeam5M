@@ -17,6 +17,13 @@ public class ObstacleController implements Runnable, SensorListener {
 		Globals.MLS.addListener(this);
 		Globals.MCS.addListener(this);
 		Globals.MUS.addListener(this);
+		
+		Globals.mLeft.setAcceleration(180);
+		Globals.mRight.setAcceleration(180);
+		Globals.mLeft.setSpeed(180);
+		Globals.mRight.setSpeed(180);
+		Globals.mLeft.forward();
+		Globals.mRight.forward();
 	}
 	
 	public void calculateRoute() {
@@ -29,15 +36,22 @@ public class ObstacleController implements Runnable, SensorListener {
 	
 	@Override
 	public void run() {
-		Globals.mLeft.setSpeed(360);
-		Globals.mRight.setSpeed(360);
 		Globals.mLeft.forward();
 		Globals.mRight.forward();
+		
+		while(!Thread.interrupted()) {
+			//Thread.yield();
+			try {
+				Thread.sleep(Globals.StandardDelay);
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);
+			t.start();
 		}
 	}
 	
@@ -62,15 +76,23 @@ public class ObstacleController implements Runnable, SensorListener {
 				objectDetected = false;
 			}
 		}
+		
+		/*int diff = 0;
+		if (newVal < 20) {
+			diff = (int) ((20 - newVal) * (36 + 18));
+		}*/
+		
+		//System.out.println("Diff: " + diff);
+		
 		// LightSensor
 		if (s.equals(Globals.MLS)) {
 			// Test
-			Globals.mLeft.setSpeed(3.6f * (100 - newVal) + 180);
+			Globals.mLeft.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
 		}
 		// ColorSensor
 		if (s.equals(Globals.MCS)) {
 			// Test
-			Globals.mRight.setSpeed(3.6f * (100 - newVal) + 180);
+			Globals.mRight.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
 		}
 	}
 }

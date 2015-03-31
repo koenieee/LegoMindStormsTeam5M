@@ -16,6 +16,13 @@ import lejos.nxt.SensorPort;
  */
 public class Globals {
 	/**
+	 * Standard delay for updating.
+	 */
+	public static int StandardDelay = 100;
+	
+	public static int BlackThreshold = 20;
+	
+	/**
 	 * The {@link MyColorSensor} mounted on the front-right
 	 */
 	public static MyColorSensor MCS = new MyColorSensor(SensorPort.S1);
