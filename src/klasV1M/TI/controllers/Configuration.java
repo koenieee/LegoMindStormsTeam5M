@@ -99,7 +99,7 @@ public class Configuration {
 	 * With 100 as most White
 	 */
 	public synchronized void configureLightSensors() {
-		System.out.println("Put on white spot within next five seconds");
+		System.out.println("Place sensors before black line on white spot.");
 
 		try {
 			Thread.sleep(5000);
@@ -108,9 +108,18 @@ public class Configuration {
 		System.out.println("Calibrating...");
 		Globals.MCS.setHigh(Globals.MCS.getRawLightValue());
 		Globals.MLS.calibrateHigh();
-		
+		Globals.playSong();
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getHigh());
-
+		Globals.mLeft.forward();
+		Globals.mRight.forward();
+		try{
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e){}
+		Globals.mLeft.stop();
+		Globals.mRight.stop();
+		
+		
 		System.out.println("Put on black spot within next five seconds");
 
 		try {
@@ -123,7 +132,7 @@ public class Configuration {
 		Globals.MLS.calibrateLow();
 		
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getLow());
-		
+		Globals.playSong();
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {}
