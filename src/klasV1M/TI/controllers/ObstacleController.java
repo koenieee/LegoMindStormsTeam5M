@@ -1,5 +1,7 @@
 package klasV1M.TI.controllers;
 
+import java.util.Iterator;
+
 import klasV1M.TI.Globals;
 import klasV1M.TI.sensoren.SensorHandler;
 import klasV1M.TI.sensoren.SensorListener;
@@ -11,13 +13,15 @@ public class ObstacleController implements Runnable, SensorListener {
 	private boolean objectDetected;
 	private boolean lineLost;
 	private float heading;
-	
+
 	public ObstacleController(int period) {
+		t = null;
 		SensorHandler.PERIOD = period;
-		Globals.MLS.addListener(this);
-		Globals.MCS.addListener(this);
+		// Light sensor are being handled by sensorpair
+		// Globals.MLS.addListener(this);
+		// Globals.MCS.addListener(this);
 		Globals.MUS.addListener(this);
-		
+
 		Globals.mLeft.setAcceleration(180);
 		Globals.mRight.setAcceleration(180);
 		Globals.mLeft.setSpeed(180);
@@ -25,25 +29,37 @@ public class ObstacleController implements Runnable, SensorListener {
 		Globals.mLeft.forward();
 		Globals.mRight.forward();
 	}
-	
+
 	public void calculateRoute() {
-		
+		if (Globals.angleAndCM.get(Globals.angleAndCM.size() - 1)[0] <= 40) {
+			Iterator<Float[]> theIterator = Globals.angleAndCM.iterator();
+
+			while (theIterator.hasNext()) {
+				Float[] input = theIterator.next();
+				Float distance = input[0];
+				Float angle = input[1];
+				System.out.println("distance: " + distance + " angle: " + angle);
+			}
+		}
 	}
-	
+
 	public void pollStatus() {
-		
+
 	}
-	
+
 	@Override
 	public void run() {
-		Globals.mLeft.forward();
-		Globals.mRight.forward();
-		
-		while(!Thread.interrupted()) {
-			//Thread.yield();
+		/*
+		 * Globals.mLeft.setSpeed(360); Globals.mRight.setSpeed(360);
+		 * Globals.mLeft.forward(); Globals.mRight.forward();
+		 */
+		Globals.mMiddle.setSpeed(50);
+		while (true) {
+			scanEnvironment();
 			try {
-				Thread.sleep(Globals.StandardDelay);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
+
 			}
 		}
 	}
@@ -54,7 +70,7 @@ public class ObstacleController implements Runnable, SensorListener {
 			t.start();
 		}
 	}
-	
+
 	public void stop() {
 		if (t != null) {
 			t.interrupt();
@@ -63,15 +79,31 @@ public class ObstacleController implements Runnable, SensorListener {
 		}
 	}
 
+	public void scanEnvironment() {
+		// Globals.mMiddle.setAcceleration(20);
+		// Globals.mMiddle
+
+		Globals.mMiddle.rotateTo(-45);
+		Globals.mMiddle.rotateTo(+45);
+
+	}
+
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(Globals.MUS)) {
 			if (newVal < 255) {
+				Globals.angleAndCM.add(new Float[] { newVal,
+						(float) Globals.mMiddle.getTachoCount() });
+
 				// Object detected
+				System.out.println("Obstacle cm: " + newVal);
+				System.out.println("Angle: " + Globals.mMiddle.getTachoCount());
+
+				// angleAndCM
 				objectDetected = true;
 				// TODO: Scan area now or do so while driving?
-				
+
 			} else {
 				objectDetected = false;
 			}

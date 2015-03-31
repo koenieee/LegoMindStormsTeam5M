@@ -1,11 +1,15 @@
 package klasV1M.TI;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import klasV1M.TI.sensoren.MyColorSensor;
 import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.Sound;
 
 /**
  * Provides global access to the sensors and motors.
@@ -47,4 +51,30 @@ public class Globals {
 	 * The right {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
+	
+	
+	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
+	
+	public static void playSong() {
+
+		// NOTE: This tune was generated from a midi using Guy
+		// Truffelli's Brick Music Studio www.aga.it/~guy/lego
+		short[] note = { 2349, 115, 0, 5, 1760, 165, 0, 35, 1760, 28, 0, 13,
+				1976, 23, 0, 18, 1760, 18, 0, 23, 1568, 15, 0, 25, 1480, 103,
+				0, 18, 1175, 180, 0, 20, 1760, 18, 0, 23, 1976, 20, 0, 20,
+				1760, 15, 0, 25, 1568, 15, 0, 25, 2217, 98, 0, 23, 1760, 88, 0,
+				33, 1760, 75, 0, 5, 1760, 20, 0, 20, 1760, 20, 0, 20, 1976, 18,
+				0, 23, 1760, 18, 0, 23, 2217, 225, 0, 15, 2217, 218 };
+		for (int i = 0; i < note.length; i += 2) {
+			final short w = note[i + 1];
+			final int n = note[i];
+			if (n != 0)
+				Sound.playTone(n, w * 10);
+			try {
+				Thread.sleep(w * 2);
+			} catch (InterruptedException e) {
+			}
+		}
+
+	}
 }

@@ -3,6 +3,7 @@ package klasV1M.TI;
 import klasV1M.TI.controllers.Configuration;
 import klasV1M.TI.controllers.ObstacleController;
 import klasV1M.TI.controllers.SensorPair;
+import klasV1M.TI.controllers.TestController;
 import lejos.nxt.comm.RConsole;
 
 /**
@@ -15,17 +16,14 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//Globals.mMiddle.setSpeed(360);
-		//Globals.mMiddle.rotateTo(45);
-		
-		
 		RConsole.open();
 		Configuration c = new Configuration();
 		System.out.println("Starting application...");
-		c.configureLightSensors();//c.resetAndConfigureAll();//configureLightSensors();
-		//RConsole.open();
-		//ObstacleController oc = new ObstacleController(200);
-		//oc.start();
+		//c.resetAndConfigureAll();
+		c.configureLightSensors();
+		c.resetSoundSensor();
+		ObstacleController oc = new ObstacleController(200);
+		oc.start();
 		SensorPair sp = new SensorPair();
 		sp.start();
 		//TestController tc = new TestController(200);
@@ -33,5 +31,4 @@ public class Main {
 			Thread.yield();
 		}
 	}
-
 }
