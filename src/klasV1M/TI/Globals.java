@@ -1,6 +1,5 @@
 package klasV1M.TI;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import klasV1M.TI.sensoren.MyColorSensor;
@@ -27,7 +26,12 @@ public class Globals {
 	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
 	 * need to be equal or lower to, to be considered of the color black
 	 */
-	public static int BlackThreshold = 20;
+	public static int BlackThreshold = 25;
+	
+	/**
+	 * The cone of vision in degrees of the {@link MyUltraSonicSensor}
+	 */
+	public static int ConeOfVision = 20;
 
 	/**
 	 * The {@link MyColorSensor} mounted on the front-right
@@ -40,7 +44,7 @@ public class Globals {
 	/**
 	 * The {@link MyUltraSonicSensor} mounted on the front
 	 */
-	public static MyUltraSonicSensor MUS = new MyUltraSonicSensor(SensorPort.S3);
+	public static MyUltraSonicSensor MUS = new MyUltraSonicSensor(SensorPort.S4);
 
 	/**
 	 * The right {@link NXTRegulatedMotor}
@@ -58,7 +62,7 @@ public class Globals {
 	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
 
 	public static void playSong() {
-
+		Sound.setVolume(Sound.VOL_MAX);
 		// NOTE: This tune was generated from a midi using Guy
 		// Truffelli's Brick Music Studio www.aga.it/~guy/lego
 		short[] note = { 2349, 115, 0, 5, 1760, 165, 0, 35, 1760, 28, 0, 13,
@@ -77,6 +81,6 @@ public class Globals {
 			} catch (InterruptedException e) {
 			}
 		}
-
+		Sound.setVolume(0);
 	}
 }

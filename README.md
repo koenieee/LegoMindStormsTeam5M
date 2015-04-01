@@ -5,7 +5,7 @@ Lego Mindstorm project Team 5M
 
 + S1: ColorSensor (right)
 + S2: LightSensor (left)
-+ S3: UltraSonicSensor (middle)
++ S4: UltraSonicSensor (middle)
 
 + A: Right
 + B: Middle
