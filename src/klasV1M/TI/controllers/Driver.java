@@ -22,6 +22,7 @@ public class Driver implements Runnable {
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);
+			t.start();
 		}
 	}
 	

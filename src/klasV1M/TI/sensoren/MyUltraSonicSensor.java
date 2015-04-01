@@ -1,5 +1,8 @@
 package klasV1M.TI.sensoren;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lejos.nxt.I2CPort;
 import lejos.nxt.UltrasonicSensor;
 
@@ -11,10 +14,11 @@ import lejos.nxt.UltrasonicSensor;
  */
 public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSensor {
 	private float oldVal, newVal;
-	private SensorListener upd;
+	private List<SensorListener> upd;
 
 	public MyUltraSonicSensor(I2CPort port) {
 		super(port);
+		upd = new ArrayList<SensorListener>();
 	}
 
 	/**
@@ -27,7 +31,12 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 		oldVal = newVal;
 		newVal = super.getRange();
 		if (oldVal != newVal) {
-			upd.stateChanged(this, oldVal, newVal);
+			for (SensorListener s : upd) {
+				s.stateChanged(this, oldVal, newVal);
+			}
+		}
+		for (SensorListener s : upd) {
+			s.stateNotification(this, newVal);
 		}
 	}
 
@@ -40,7 +49,16 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 	 *            SensorListener
 	 */
 	public void addListener(SensorListener senin) {
-		upd = senin;
-		SensorHandler.getInstance().addSensor(this);
+		if (upd.size() == 0) {
+			SensorHandler.getInstance().addSensor(this);
+		}
+		upd.add(senin);
+	}
+	
+	public void removeListener(SensorListener sensor) {
+		upd.remove(sensor);
+		if (upd.size() == 0) {
+			SensorHandler.getInstance().removeSensor(this);
+		}
 	}
 }

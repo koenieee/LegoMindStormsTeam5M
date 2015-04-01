@@ -127,4 +127,10 @@ public class ObstacleController implements Runnable, SensorListener {
 			Globals.mRight.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
 		}
 	}
+
+	@Override
+	public void stateNotification(UpdatingSensor s, float value) {
+		// TODO Auto-generated method stub
+		// Ignore
+	}
 }

@@ -61,4 +61,8 @@ public class SensorHandler extends Thread {
 		theSensors.add(inS);
 	}
 
+	public synchronized void removeSensor(UpdatingSensor sensor) {
+		theSensors.remove(sensor);
+	}
+
 }

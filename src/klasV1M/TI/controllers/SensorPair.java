@@ -147,4 +147,10 @@ public class SensorPair implements Runnable, SensorListener {
 		// passive polling
 		//determineLine();
 	}
+
+	@Override
+	public void stateNotification(UpdatingSensor s, float value) {
+		// TODO Auto-generated method stub
+		// Ignore
+	}
 }

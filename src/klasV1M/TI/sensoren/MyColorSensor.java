@@ -1,5 +1,8 @@
 package klasV1M.TI.sensoren;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lejos.nxt.ColorSensor;
 import lejos.nxt.SensorPort;
 
@@ -10,12 +13,13 @@ import lejos.nxt.SensorPort;
  * 
  */
 public class MyColorSensor extends ColorSensor implements UpdatingSensor {
-	private SensorListener sis;
+	private List<SensorListener> sis;
 	private float oldVal;
 	private float newVal;
 
 	public MyColorSensor(SensorPort port) {
 		super(port);
+		sis = new ArrayList<SensorListener>();
 	}
 
 	private int _zero = 1023;
@@ -71,20 +75,34 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 		oldVal = newVal;
 		newVal = getLightValue();
 		if (oldVal != newVal) {
-			sis.stateChanged(this, oldVal, newVal);
+			for (SensorListener s : sis) {
+				s.stateChanged(this, oldVal, newVal);
+			}
+		}
+		for (SensorListener s : sis) {
+			s.stateNotification(this, newVal);
 		}
 	}
 
 	/**
-	 * This method adds the SensorListener to this object, and this object is
-	 * added to the SensorHandler. It also starts the Thread of SensorHandler to
+	 * This method adds the {@link SensorListener} to this object, and this object is
+	 * added to the {@link SensorHandler}. It also starts the {@link Thread} of {@link SensorHandler} to
 	 * keep track of new sensor values.
 	 * 
 	 * @param senin
-	 *            SensorListener
+	 *            {@link SensorListener}
 	 */
 	public void addListener(SensorListener senin) {
-		sis = senin;
-		SensorHandler.getInstance().addSensor(this);
+		if (sis.size() == 0) {
+			SensorHandler.getInstance().addSensor(this);
+		}
+		sis.add(senin);
+	}
+	
+	public void removeListener(SensorListener senin) {
+		sis.remove(senin);
+		if (sis.size() == 0) {
+			SensorHandler.getInstance().removeSensor(this);
+		}
 	}
 }

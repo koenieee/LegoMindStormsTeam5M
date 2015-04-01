@@ -92,4 +92,10 @@ public class TestController implements SensorListener {
 
 	}
 
+	@Override
+	public void stateNotification(UpdatingSensor s, float value) {
+		// TODO Auto-generated method stub
+		// Ignore
+	}
+
 }
