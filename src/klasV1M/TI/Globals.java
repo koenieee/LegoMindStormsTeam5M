@@ -55,7 +55,7 @@ public class Globals {
 	 */
 	public static NXTRegulatedMotor mMiddle = Motor.B;
 	/**
-	 * The right {@link NXTRegulatedMotor}
+	 * The left {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
 
