@@ -13,9 +13,10 @@ import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.comm.RConsole;
 
-public class AvoidObstacle implements SensorListener{
+public class AvoidObstacle  implements SensorListener, Runnable{
+	
 	public static void main(String[] args) {
-		//RConsole.open();
+		RConsole.open();
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
@@ -27,7 +28,8 @@ public class AvoidObstacle implements SensorListener{
 		Button.waitForAnyPress();
 	}
 
-	private boolean objectDetected;
+	private Thread t;
+	private boolean beginScan;
 	public static MyUltraSonicSensor MUS = new MyUltraSonicSensor(SensorPort.S4);
 	public static NXTRegulatedMotor mRight = Motor.A;
 	/**
@@ -40,9 +42,11 @@ public class AvoidObstacle implements SensorListener{
 	public static NXTRegulatedMotor mLeft = Motor.C;
 	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
 	private boolean left, right, middle = false;
-	private boolean startScanning = false;
+	private boolean doneScanning = false;
+	private boolean startOmzeilen;
 	
 	public AvoidObstacle() {
+		t = null;
 		SensorHandler.PERIOD = 200;
 		mMiddle.resetTachoCount();
 		MUS.addListener(this);
@@ -54,39 +58,52 @@ public class AvoidObstacle implements SensorListener{
 		mRight.forward();*/
 	}
 	
+	public void start(){
+		if(t == null){
+			t = new Thread(this);
+			t.start();
+		}
+	}
+	
+	public void stop(){
+		if(t != null){
+			t.interrupt();
+			t = null;
+		}
+	}
+	
 	//@Override
-	//public void run() {
+	public void run() {
 		/*
 		 * Globals.mLeft.setSpeed(360); Globals.mRight.setSpeed(360);
 		 * Globals.mLeft.forward(); Globals.mRight.forward();
 		 */
 	//	mMiddle.setSpeed(90);
-	//	while (true) {
-			//scanEnvironment();
-		//	try {
-		//		Thread.sleep(500);
-		//	} catch (InterruptedException e) {
-
-		//	}
-	//	}
-	//}
+		mMiddle.setSpeed(30);
+		while (!t.interrupted()) {
+			mMiddle.rotateTo(-70); //links
+			mMiddle.rotateTo(+70);// rechts
+			mMiddle.rotateTo(0);
+		}
+	}
 	
-	public void calculateRoute(float angle, float distance) {
-		
-			if(-5 < angle && angle < 5 && distance < 30){
+	public void calculateRoute(float newVal, int angle) {
+		System.out.println("Centi: " + newVal);
+		System.out.println("Angle: " + mMiddle.getTachoCount());
+			if(-5 < angle && angle < 5 && newVal < 30){
 				//object in front 
 				System.out.println("front is blocked");
 				//RConsole.println("front");
 				//middle = true;
 			}
-			else if(angle > 5 && distance < 30){
+			else if(angle > 5 && newVal < 30){
 				System.out.println("right is blocked");
 			//	RConsole.println("right");
 				//right = true;
 				//object at the right side
 				
 			}
-			else if(angle < -5 && distance < 30){
+			else if(angle < -5 && newVal < 30){
 				System.out.println("left is blocked");
 				//left = true;
 			//	RConsole.println("left");
@@ -94,7 +111,7 @@ public class AvoidObstacle implements SensorListener{
 				
 			}
 		}
-
+		//doneScanning = false;
 		
 /*
 		if(-5 < hoek && hoek < 5 && distance < 30){
@@ -152,33 +169,43 @@ public class AvoidObstacle implements SensorListener{
 		}*/
 	//}
 	
-	public void scanEnvironment() {
-		// Globals.mMiddle.setAcceleration(20);
-		// Globals.mMiddle
-		mMiddle.setSpeed(30);
-		//while(startScanning){
-			mMiddle.rotateTo(-60); //links
-			mMiddle.rotateTo(+60);// rechts
-		//	try {
-		//		Thread.sleep(500);
-		//	} catch (InterruptedException e) {	}
-		//}
-		
-	}
-
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+		
 		if (s.equals(MUS)) {
-			if (newVal < 50) { //object detected in front of us.
+			
+			if (startOmzeilen){
+				if(right && left){ //zowel links als rechts is niet vrij, wat nu??
+					
+				}
+				if(right){ //rechts is geblokkeerd, dus links er om heen
+					stop();
+					mMiddle.setSpeed(50);
+					mMiddle.rotateTo(+60);
+					System.out.println("Rechts omzeilen");
+				}
+				else if(left){ //links is geblokkeerd, dus rechts er om heen.
+					stop();
+					mMiddle.setSpeed(50);
+					mMiddle.rotateTo(-60);
+					System.out.println("Links omzeilen");
+					
+				}
+			}
+			else if (!startOmzeilen && newVal < 30 && mMiddle.getTachoCount() == 0) { //object detected in front of us, scan right and left to find new path.
 			//	mLeft.setSpeed(20);
 			//	mRight.setSpeed(20);
 			//	angleAndCM.add(new Float[] { newVal,
 			//			(float) mMiddle.getTachoCount() });
 				
-				startScanning = true;
-				scanEnvironment();
+				
+				
+				
+				
+				start();
+				//System.out.println("");
 				// Object detected
-			//	System.out.println("Obstacle cm: " + newVal);
+			//	System.out.println("Centi: " + newVal);
 			//	System.out.println("Angle: " + mMiddle.getTachoCount());
 				//mMiddle.setSpeed(50);
 				//mMiddle.rotateTo(-60);
@@ -186,16 +213,54 @@ public class AvoidObstacle implements SensorListener{
 				//mLeft.setSpeed(90);
 				//mRight.setSpeed(220);
 				// angleAndCM
-				calculateRoute(newVal, mMiddle.getTachoCount() );
-				objectDetected = true;
+				//calculateRoute(newVal, mMiddle.getTachoCount() );
+				beginScan = true;
 				
 				//mLeft.setSpeed(220);
 				//mRight.setSpeed(140);
 				// TODO: Scan area now or do so while driving?
 
-			} else {
-				startScanning = false;
-				mMiddle.rotateTo(0); 
+			} else if(beginScan && !startOmzeilen){ //linksom of rechtsom?
+				int angle = mMiddle.getTachoCount();
+				
+				if(angle > 35 && newVal < 30){
+					System.out.println("right is blocked");
+				//	RConsole.println("right");
+					right = true;
+					//object at the right side
+					
+				}
+				else if(angle < -35 && newVal < 30){
+					System.out.println("left is blocked");
+					left = true;
+				//	RConsole.println("left");
+					//object at the right side
+					
+				}
+				if(left || right){
+					startOmzeilen = true;
+					beginScan = false;
+					stop();
+					mMiddle.rotateTo(0); 
+					
+				}
+				
+				
+				//System.out.println("calcu route");
+				//start();
+				//calculateRoute(newVal, mMiddle.getTachoCount() );
+				
+				//objectDetected = false;
+			}
+			
+			//else if(!objectDetected && mMiddle.getTachoCount() == 0) {
+			//	this.interrupt();
+			//	mMiddle.rotateTo(0); 
+			//}
+			else {
+			    stop();
+			    
+			}
 			/*	if(objectDetected){
 					mRight.setSpeed(90);
 					mLeft.setSpeed(220);
@@ -203,14 +268,12 @@ public class AvoidObstacle implements SensorListener{
 				else{
 					mLeft.setSpeed(180);
 					mRight.setSpeed(180);*/
-					objectDetected = false;					
+				//	objectDetected = false;					
 				//}
 
 			}
 		}
-		
-		
-	}
+	
 
 	@Override
 	public void stateNotification(UpdatingSensor s, float value) {
