@@ -69,6 +69,8 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 		if(t != null){
 			t.interrupt();
 			t = null;
+			t.interrupt();
+			
 		}
 	}
 	
@@ -80,14 +82,17 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 		 */
 	//	mMiddle.setSpeed(90);
 		mMiddle.setSpeed(30);
-		while (!t.interrupted()) {
+		while (!Thread.interrupted() && !(left || right)) {
 			mMiddle.rotateTo(-70); //links
 			mMiddle.rotateTo(+70);// rechts
 			mMiddle.rotateTo(0);
-		}
+			
+		} 
+		driveAroundObstacle();
+		
 	}
 	
-	public void calculateRoute(float newVal, int angle) {
+	/*public void calculateRoute(float newVal, int angle) {
 		System.out.println("Centi: " + newVal);
 		System.out.println("Angle: " + mMiddle.getTachoCount());
 			if(-5 < angle && angle < 5 && newVal < 30){
@@ -110,7 +115,7 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 				//object at the right side
 				
 			}
-		}
+		}*/
 		//doneScanning = false;
 		
 /*
@@ -169,30 +174,34 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 		}*/
 	//}
 	
+	public void driveAroundObstacle(){
+		if(right && left){ //zowel links als rechts is niet vrij, wat nu??
+			System.out.println("Rechts en Links is bezet");
+		}
+		if(right && !left){ //rechts is geblokkeerd, dus links er om heen
+			stop();
+			//mMiddle.setSpeed(50);
+			//mMiddle.rotateTo(+60);
+			System.out.println("Rechts omzeilen");
+		}
+		else if(left && !right){ //links is geblokkeerd, dus rechts er om heen.
+			stop();
+		//	mMiddle.setSpeed(50);
+			mMiddle.rotateTo(-70);
+			System.out.println("Links omzeilen");
+			
+		}
+	}
+	
+	
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-		
+		RConsole.println("Left: " + left + "\n" + "Right: " + right);
+		RConsole.println("Centi: " + newVal);
+		RConsole.println("Angle: " + mMiddle.getTachoCount());
 		if (s.equals(MUS)) {
-			
-			if (startOmzeilen){
-				if(right && left){ //zowel links als rechts is niet vrij, wat nu??
-					
-				}
-				if(right){ //rechts is geblokkeerd, dus links er om heen
-					stop();
-					mMiddle.setSpeed(50);
-					mMiddle.rotateTo(+60);
-					System.out.println("Rechts omzeilen");
-				}
-				else if(left){ //links is geblokkeerd, dus rechts er om heen.
-					stop();
-					mMiddle.setSpeed(50);
-					mMiddle.rotateTo(-60);
-					System.out.println("Links omzeilen");
-					
-				}
-			}
-			else if (!startOmzeilen && newVal < 30 && mMiddle.getTachoCount() == 0) { //object detected in front of us, scan right and left to find new path.
+
+			if (!startOmzeilen && newVal < 30 && mMiddle.getTachoCount() == 0) { //object detected in front of us, scan right and left to find new path.
 			//	mLeft.setSpeed(20);
 			//	mRight.setSpeed(20);
 			//	angleAndCM.add(new Float[] { newVal,
@@ -220,7 +229,14 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 				//mRight.setSpeed(140);
 				// TODO: Scan area now or do so while driving?
 
-			} else if(beginScan && !startOmzeilen){ //linksom of rechtsom?
+			} else if(left || right){
+				driveAroundObstacle();
+				beginScan = false;
+				this.stop();
+				//mMiddle.rotateTo(0); 
+				
+			} 
+			else if(beginScan && !startOmzeilen){ //linksom of rechtsom?
 				int angle = mMiddle.getTachoCount();
 				
 				if(angle > 35 && newVal < 30){
@@ -237,13 +253,7 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 					//object at the right side
 					
 				}
-				if(left || right){
-					startOmzeilen = true;
-					beginScan = false;
-					stop();
-					mMiddle.rotateTo(0); 
-					
-				}
+				
 				
 				
 				//System.out.println("calcu route");
@@ -258,7 +268,7 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 			//	mMiddle.rotateTo(0); 
 			//}
 			else {
-			    stop();
+			    this.stop();
 			    
 			}
 			/*	if(objectDetected){
