@@ -2,6 +2,7 @@ package klasV1M.TI.sensoren;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.UltrasonicSensor;
@@ -49,6 +50,12 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 	 *            SensorListener
 	 */
 	public void addListener(SensorListener senin) {
+		// Does not allow multiple of the same SensorListener
+		// HashMap and HashSet are deprecated and as of yet unoptimized, so that can't be used at the moment
+		if (hasListener(senin)) {
+			return;
+		}
+		
 		if (upd.size() == 0) {
 			SensorHandler.getInstance().addSensor(this);
 		}
@@ -60,5 +67,9 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 		if (upd.size() == 0) {
 			SensorHandler.getInstance().removeSensor(this);
 		}
+	}
+
+	public boolean hasListener(SensorListener sensor) {
+		return upd.contains(sensor);
 	}
 }

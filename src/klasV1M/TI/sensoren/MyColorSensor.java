@@ -93,6 +93,12 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 	 *            {@link SensorListener}
 	 */
 	public void addListener(SensorListener senin) {
+		// Does not allow multiple of the same SensorListener
+		// HashMap and HashSet are deprecated and as of yet unoptimized, so that can't be used at the moment
+			if (hasListener(senin)) {
+				return;
+		}
+
 		if (sis.size() == 0) {
 			SensorHandler.getInstance().addSensor(this);
 		}
@@ -104,5 +110,9 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 		if (sis.size() == 0) {
 			SensorHandler.getInstance().removeSensor(this);
 		}
+	}
+	
+	public boolean hasListener(SensorListener sensor) {
+		return sis.contains(sensor);
 	}
 }
