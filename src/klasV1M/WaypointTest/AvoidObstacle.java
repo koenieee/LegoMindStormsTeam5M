@@ -40,17 +40,18 @@ public class AvoidObstacle implements SensorListener{
 	public static NXTRegulatedMotor mLeft = Motor.C;
 	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
 	private boolean left, right, middle = false;
+	private boolean startScanning = false;
 	
 	public AvoidObstacle() {
 		SensorHandler.PERIOD = 200;
 		mMiddle.resetTachoCount();
 		MUS.addListener(this);
-		mLeft.setAcceleration(180);
+	/*	mLeft.setAcceleration(180);
 		mRight.setAcceleration(180);
 	    mLeft.setSpeed(180);
 		mRight.setSpeed(180);
 		mLeft.forward();
-		mRight.forward();
+		mRight.forward();*/
 	}
 	
 	//@Override
@@ -70,31 +71,53 @@ public class AvoidObstacle implements SensorListener{
 	//	}
 	//}
 	
-	public void calculateRoute() {
-		float hoek = angleAndCM.get(angleAndCM.size() - 1)[1];
-		float distance = angleAndCM.get(angleAndCM.size() - 1)[0];
+	public void calculateRoute(float angle, float distance) {
 		
-		if(-5 < hoek && hoek < 5 && distance < 60){
+			if(-5 < angle && angle < 5 && distance < 30){
+				//object in front 
+				System.out.println("front is blocked");
+				//RConsole.println("front");
+				//middle = true;
+			}
+			else if(angle > 5 && distance < 30){
+				System.out.println("right is blocked");
+			//	RConsole.println("right");
+				//right = true;
+				//object at the right side
+				
+			}
+			else if(angle < -5 && distance < 30){
+				System.out.println("left is blocked");
+				//left = true;
+			//	RConsole.println("left");
+				//object at the right side
+				
+			}
+		}
+
+		
+/*
+		if(-5 < hoek && hoek < 5 && distance < 30){
 			//object in front 
 			System.out.println("Obstacle in front of us");
 			//RConsole.println("front");
-			middle = true;
+			//middle = true;
 		}
-		else if(hoek > 5 && distance < 60){
+		else if(hoek > 5 && distance < 30){
 			System.out.println("Obstacle at the right side");
 		//	RConsole.println("right");
-			right = true;
+			//right = true;
 			//object at the right side
 			
 		}
-		else if(hoek < -5 && distance < 60){
+		else if(hoek < -5 && distance < 30){
 			System.out.println("Obstacle at the left side");
-			left = true;
+			//left = true;
 		//	RConsole.println("left");
 			//object at the right side
 			
 		}
-		if(right && middle){ // determine if you want to drive left or right the obstacle.
+	/*	if(right && middle){ // determine if you want to drive left or right the obstacle.
 			//left = false;
 		    right = false;
 		    middle = false;
@@ -114,7 +137,7 @@ public class AvoidObstacle implements SensorListener{
 			mLeft.setSpeed(90);
 			mRight.setSpeed(220);
 		}
-		
+		*/
 		
 		/*
 		if (angleAndCM.get(angleAndCM.size() - 1)[1] <= 40) {
@@ -127,36 +150,43 @@ public class AvoidObstacle implements SensorListener{
 				System.out.println("distance: " + distance + " angle: " + angle);
 			}
 		}*/
-	}
+	//}
 	
 	public void scanEnvironment() {
 		// Globals.mMiddle.setAcceleration(20);
 		// Globals.mMiddle
-
-		mMiddle.rotateTo(-60); //links
-		mMiddle.rotateTo(+60);// rechts
-
+		mMiddle.setSpeed(30);
+		//while(startScanning){
+			mMiddle.rotateTo(-60); //links
+			mMiddle.rotateTo(+60);// rechts
+		//	try {
+		//		Thread.sleep(500);
+		//	} catch (InterruptedException e) {	}
+		//}
+		
 	}
 
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		if (s.equals(MUS)) {
-			if (newVal < 50) {
-				mLeft.setSpeed(20);
-				mRight.setSpeed(20);
-				angleAndCM.add(new Float[] { newVal,
-						(float) mMiddle.getTachoCount() });
+			if (newVal < 50) { //object detected in front of us.
+			//	mLeft.setSpeed(20);
+			//	mRight.setSpeed(20);
+			//	angleAndCM.add(new Float[] { newVal,
+			//			(float) mMiddle.getTachoCount() });
 				
+				startScanning = true;
+				scanEnvironment();
 				// Object detected
 			//	System.out.println("Obstacle cm: " + newVal);
 			//	System.out.println("Angle: " + mMiddle.getTachoCount());
 				//mMiddle.setSpeed(50);
 				//mMiddle.rotateTo(-60);
 				//mMiddle.rotateTo(+60);
-				mLeft.setSpeed(90);
-				mRight.setSpeed(220);
+				//mLeft.setSpeed(90);
+				//mRight.setSpeed(220);
 				// angleAndCM
-				//calculateRoute();
+				calculateRoute(newVal, mMiddle.getTachoCount() );
 				objectDetected = true;
 				
 				//mLeft.setSpeed(220);
@@ -164,19 +194,27 @@ public class AvoidObstacle implements SensorListener{
 				// TODO: Scan area now or do so while driving?
 
 			} else {
-				if(objectDetected){
+				startScanning = false;
+				mMiddle.rotateTo(0); 
+			/*	if(objectDetected){
 					mRight.setSpeed(90);
 					mLeft.setSpeed(220);
 				}
 				else{
 					mLeft.setSpeed(180);
-					mRight.setSpeed(180);
+					mRight.setSpeed(180);*/
 					objectDetected = false;					
-				}
+				//}
 
 			}
 		}
 		
+		
+	}
+
+	@Override
+	public void stateNotification(UpdatingSensor s, float value) {
+		// TODO Auto-generated method stub
 		
 	}
 	
