@@ -13,6 +13,9 @@ public class Driver implements Runnable {
 	
 	@Override
 	public void run() {
+		diffPilot.travel(100);
+	}
+	public void addMoveListener(){
 		
 	}
 
