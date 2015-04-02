@@ -97,7 +97,7 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 			}
 		}
 		for (SensorListener s : sis) {
-			s.stateNotification(this, getRawLightValue());//newVal);
+			s.stateNotification(this, newVal, getRawLightValue());//newVal);
 		}
 	}
 	

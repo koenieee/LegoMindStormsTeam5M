@@ -131,7 +131,7 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	}
 
 	@Override
-	public void stateNotification(UpdatingSensor s, float value) {
+	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
 		// TODO Auto-generated method stub
 		// Ignore
 	}

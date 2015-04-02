@@ -37,7 +37,7 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 			}
 		}
 		for (SensorListener s : upd) {
-			s.stateNotification(this, newVal);
+			s.stateNotification(this, newVal, newVal);
 		}
 	}
 

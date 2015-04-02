@@ -52,7 +52,7 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 			}
 		}
 		for (SensorListener s : sis) {
-			s.stateNotification(this, getNormalizedLightValue());//newVal);
+			s.stateNotification(this, newVal, getNormalizedLightValue());//newVal);
 		}
 	}
 

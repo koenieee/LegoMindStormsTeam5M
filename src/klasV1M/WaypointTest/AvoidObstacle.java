@@ -286,7 +286,7 @@ public class AvoidObstacle  implements SensorListener, Runnable{
 	
 
 	@Override
-	public void stateNotification(UpdatingSensor s, float value) {
+	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
 		// TODO Auto-generated method stub
 		
 	}

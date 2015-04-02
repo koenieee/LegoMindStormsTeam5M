@@ -28,9 +28,10 @@ public class Globals {
 	
 	/**
 	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
-	 * need to be equal or lower to, to be considered of the color black
+	 * need to be equal or lower to, to be considered of the color black.
+	 * Value needs to be between 0-100
 	 */
-	public static int BlackThreshold = 25;
+	public static int BlackThreshold = 50;
 	
 	/**
 	 * The cone of vision in degrees of the {@link MyUltraSonicSensor}
