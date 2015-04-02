@@ -10,14 +10,10 @@ public class Main {
 
 	public static void main(String[] args) {
         DifferentialPilot pilot = new DifferentialPilot(3.4, 12, Motor.C, Motor.A, false);
-        Navigator navigator = new Navigator(pilot);
-
-        navigator.addWaypoint(new Waypoint(20, 40));
-        navigator.addWaypoint(new Waypoint(20, 100));
-        navigator.addWaypoint(new Waypoint(0, 100));
-        navigator.addWaypoint(new Waypoint(0,0));
-
-        navigator.followPath();
+        pilot.setRotateSpeed(10);
+        pilot.rotate(-53, false);
+        pilot.setTravelSpeed(3);
+        pilot.travel(4);
         Button.ENTER.waitForPressAndRelease();
 
 	}

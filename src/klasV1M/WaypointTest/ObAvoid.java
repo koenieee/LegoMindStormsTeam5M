@@ -1,7 +1,8 @@
 package klasV1M.WaypointTest;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorHandler;
@@ -16,7 +17,7 @@ import lejos.robotics.navigation.DifferentialPilot;
 import lejos.robotics.navigation.Navigator;
 import lejos.robotics.navigation.Waypoint;
 
-public class AvoidObstacle implements SensorListener, Runnable {
+public class ObAvoid implements SensorListener, Runnable {
 
 	public static void main(String[] args) {
 		RConsole.open();
@@ -26,7 +27,7 @@ public class AvoidObstacle implements SensorListener, Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		AvoidObstacle aob = new AvoidObstacle();
+		ObAvoid aob = new ObAvoid();
 		// aob.start();
 		Button.waitForAnyPress();
 	}
@@ -43,23 +44,25 @@ public class AvoidObstacle implements SensorListener, Runnable {
 	 * The left {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
-	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
+	public static ArrayList<Integer> angles = new ArrayList<Integer>();
+	public static ArrayList<Float> distances = new ArrayList<Float>();
 	private boolean left, right, middle = false;
 	private boolean doneScanning = false;
 	private boolean startOmzeilen;
 	private boolean drivingViaLeft;
+	private int aantalKeer = 0;
 
-	public AvoidObstacle() {
+	public ObAvoid() {
 		t = null;
-		SensorHandler.PERIOD = 300;
+		SensorHandler.PERIOD = 100;
 		mMiddle.resetTachoCount();
 		MUS.addListener(this);
 		mLeft.setAcceleration(180);
-		mRight.setAcceleration(180);
-		mLeft.setSpeed(180);
-		mRight.setSpeed(180);
-		mLeft.forward();
-		mRight.forward();
+	     mRight.setAcceleration(180);
+		 mLeft.setSpeed(180);
+		 mRight.setSpeed(180);
+		 mLeft.forward();
+		 mRight.forward();
 	}
 
 	public void start() {
@@ -77,21 +80,19 @@ public class AvoidObstacle implements SensorListener, Runnable {
 		 */
 		// mMiddle.setSpeed(90);
 		mMiddle.setSpeed(30);
-		while (!Thread.interrupted() && !(left || right)) {
-			mMiddle.rotateTo(-70, false); // links
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-			}
+		while (aantalKeer < 2) {
 			mMiddle.rotateTo(+70, false);// rechts
-			try {
-				Thread.sleep(400);
-			} catch (InterruptedException e) {
-			}
-			mMiddle.rotateTo(0);
+			// try {
+			// Thread.sleep(400);
+			// } catch (InterruptedException e) {
+			// }
+			mMiddle.rotateTo(0, false);
+			aantalKeer++;
 
 		}
-		driveAroundObstacle();
+		calculateObstacleWidth();
+
+		// driveAroundObstacle();
 
 	}
 
@@ -144,6 +145,102 @@ public class AvoidObstacle implements SensorListener, Runnable {
 	 */
 	// }
 
+	public void calculateObstacleWidth() {
+		System.out.println("Obstacle width is called");
+		ArrayList<Number> anglas = returnHighAngles();
+		double angleWhenObjectIsGone = averageOfList(anglas);
+		System.out.println("Angle:" + angleWhenObjectIsGone);
+		//System.out.println("");
+		double cmWhenAngleIsZero = averageOfList(lowDistances());
+		
+		double widthObject = (Math.sin(angleWhenObjectIsGone)) * 10;
+		
+		System.out.println("The half of the object is: " + widthObject);
+		
+		DifferentialPilot pilot = new DifferentialPilot(3.4, 13, mLeft,
+				mRight, false);
+		//pilot.setTravelSpeed(9);
+		pilot.arc(-10, 53);
+		
+		
+		/*
+		for (int flan : angles) {
+			itera++;
+			RConsole.println("Iterator: " + itera);
+			if (flan == 0) {
+				System.out.println("Lengte bij 0 graden: "	+ distances.get(itera));
+				//System.out.println("Hoek bij hoogste afstand: "	+ angles.get(indexKeydistance));
+			}
+		}*/
+	}
+	
+	
+	
+	public double averageOfList(ArrayList<Number> NUMBERS){
+		   double total = 0;
+		    for (Number element : NUMBERS) {
+		    		total += element.floatValue();
+		    }
+		    
+		    double average = total / NUMBERS.size();
+	  return average;
+	}
+	
+	public ArrayList<Number> returnHighAngles(){
+		ArrayList<Integer> allTheHighs = getMaxes(distances);
+		ArrayList<Number> tempAngles = new ArrayList<Number>();
+		if(allTheHighs.size() != 0){
+			for(int index : allTheHighs){
+				tempAngles.add(angles.get(index-1)+1);
+			}
+		}
+		return tempAngles;
+		
+	}
+	
+	public ArrayList<Number> lowDistances(){
+		ArrayList<Integer> ind = returnLowAngles();
+		ArrayList<Number> tempDista = new ArrayList<Number>();
+		if(ind.size() != 0){
+			for(int index : ind){
+				tempDista.add(distances.get(index));
+			}
+			
+		}
+		return tempDista;
+	}
+	
+	
+	public ArrayList<Integer> returnLowAngles(){
+		ArrayList<Integer> tempAngles = new ArrayList<Integer>();
+		int itera = 0;
+		if(angles.size() != 0){
+			for(int ang : angles){
+				if(-1 < ang  && ang <= 2){
+					tempAngles.add(itera);
+				}
+				itera++;
+			}
+		}
+		return tempAngles;
+		
+	}
+	
+
+	public ArrayList<Integer> getMaxes(ArrayList<Float> list) {
+		ArrayList<Integer> indexes = new ArrayList<Integer>();
+		int i = 0;
+		for (float dista : list) {
+			
+			if (100 < dista  && dista <= 255 ) {
+				RConsole.println("Float: " + dista) ;
+				indexes.add(i);
+			}
+			i++;
+		}
+		return indexes;
+	}
+
 	public void driveAroundObstacle() {
 		beginScan = false;
 		if (right && left) { // zowel links als rechts is niet vrij, wat nu??
@@ -157,15 +254,15 @@ public class AvoidObstacle implements SensorListener, Runnable {
 										// heen.
 			mMiddle.setSpeed(50);
 			mMiddle.rotateTo(-60);
-	        DifferentialPilot pilot = new DifferentialPilot(3.4, 13, mLeft, mRight, false);
-	        Navigator navigator = new Navigator(pilot);
+			DifferentialPilot pilot = new DifferentialPilot(3.4, 13, mLeft,
+					mRight, false);
+			Navigator navigator = new Navigator(pilot);
 
-	        navigator.addWaypoint(new Waypoint(50, 50));
-	        navigator.addWaypoint(new Waypoint(-50, -50));
+			navigator.addWaypoint(new Waypoint(50, 50));
+			navigator.addWaypoint(new Waypoint(-50, -50));
 
-	        navigator.followPath();
+			navigator.followPath();
 
-			
 			System.out.println("Links omzeilen");
 
 		}
@@ -175,45 +272,44 @@ public class AvoidObstacle implements SensorListener, Runnable {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 
 		if (s.equals(MUS)) {
-			if (drivingViaLeft) {
-				
-			} else if (newVal < 30 && !beginScan) { // object detected in front
-													// of us, scan right and
-													// left to find new path.
-				mLeft.setSpeed(5);
-				mRight.setSpeed(5);
-				start();
-				beginScan = true;
-
-			} else if (beginScan) { // linksom of rechtsom?
+			if (beginScan) { // linksom of rechtsom?
 				int angle = mMiddle.getTachoCount();
-				RConsole.println("Left: " + left + "\n" + "Right: " + right);
 				RConsole.println("Centi: " + newVal);
 				RConsole.println("Angle: " + angle);
-				if (angle > 45 && newVal < 30) {
-
-					System.out.println("right is blocked");
-					// RConsole.println("right");
-					right = true;
-					// object at the right side
-
-				} else if (angle < -54 && newVal < 30) {
-					System.out.println("left is blocked");
-					left = true;
-					// RConsole.println("left");
-					// object at the left side
-
+				synchronized (this) {
+					angles.add(angle);
+					distances.add(newVal);
 				}
+
+				// angleAndCM.add(new Float[]{angle, newVal} );
+				//RConsole.println("Centi: " + newVal);
+				//RConsole.println("Angle: " + angle);
 			}
+			else if (newVal < 26  && !beginScan) { // object detected in front
+												// of us, scan right and
+												// left to find new path.
+				 mLeft.setSpeed(0); //stop driving
+				 mRight.setSpeed(0); //stop driving
+				 aantalKeer = 0;
+				// doneScanning = false;
+				start(); // start scanning
+				
+				beginScan = true;
 
+			} 
 			else {
-
+				//doneScanning = true;
+				//synchronized (this) {
+					//aantalKeer = 0;
+				//	angles.clear();
+				//	distances.clear();
+				//}
 			}
 		}
 	}
 
 	@Override
-	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
+	public void stateNotification(UpdatingSensor s, float value) {
 		// TODO Auto-generated method stub
 
 	}
