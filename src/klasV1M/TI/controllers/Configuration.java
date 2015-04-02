@@ -1,10 +1,13 @@
 package klasV1M.TI.controllers;
 
 import klasV1M.TI.Globals;
+import klasV1M.TI.sensoren.SensorListener;
+import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Button;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.TachoMotorPort;
+import lejos.nxt.comm.RConsole;
 import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.Delay;
 
@@ -13,13 +16,25 @@ import lejos.util.Delay;
  * @author koen
  *
  */
-public class Configuration {
+public class Configuration implements Runnable, SensorListener {
 	public boolean calibrated = false;
 	
 	private double radius;
 	private double diameter;
 	private double circumference;
 	private boolean configured;
+	
+	private boolean autoAdjust;
+	private float lowest;
+	private float lowestAverage;
+	private float lowestTotal;
+	private int lowestCount;
+	private float highest;
+	private float highestAverage;
+	private float highestTotal;
+	private int highestCount;
+	
+	private Thread t;
 	
 	/**
 	 * Resets and configures all components of the NXT.
@@ -97,8 +112,9 @@ public class Configuration {
 	/** Function to calibrate both the {@link MyLightSensor} and the {@link MyColorSensor} to work in a range of 0 to 100 
 	 * With 0 as most Black
 	 * With 100 as most White
+	 * @return <b>true</b> when configuration was succesfull, <b>false</b> otherwise.
 	 */
-	public synchronized void configureLightSensors() {
+	public synchronized boolean configureLightSensors() {
 		System.out.println("Place sensors before black line on white spot.");
 
 		try {
@@ -106,7 +122,8 @@ public class Configuration {
 		} catch (InterruptedException e) {}
 
 		System.out.println("Calibrating...");
-		Globals.MCS.setHigh(Globals.MCS.getRawLightValue());
+		highest = Globals.MCS.getRawLightValue();
+		Globals.MCS.setHigh((int) highest);
 		Globals.MLS.calibrateHigh();
 		
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getHigh());
@@ -126,22 +143,32 @@ public class Configuration {
 		
 		System.out.println("Put on black spot within next five seconds");
 
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {}
+		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating...");
-		
-		Globals.MCS.setLow(Globals.MCS.getRawLightValue());
+		lowest = Globals.MCS.getRawLightValue();
+		Globals.MCS.setLow((int) lowest);
 		Globals.MLS.calibrateLow();
 		
 		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getLow());
 		//Globals.playSong();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {}
+		Button.waitForAnyPress(5000);
 		
-		calibrated = true;
+		if (lowest >= highest || lowest == -1 || highest == -1) {
+			System.out.println("Calibrated wrongly! H: " + highest + "| L: " + lowest +" \nRestarting procedure...");
+			Delay.msDelay(2000);
+			if (configureLightSensors()) {
+				highestCount = 1;
+				highestTotal = highest;
+				highestAverage = highest;
+				lowestCount = 1;
+				lowestTotal = lowest;
+				lowestAverage = lowest;
+				return true;
+			}
+		}
+		System.out.println("H|L: " + highest + " | " + lowest);
+		return true;
 	}
 	
 	public synchronized void resetSoundSensor() {
@@ -173,10 +200,82 @@ public class Configuration {
 	}
 
 	/**
+	 * 
+	 * @return
+	 */
+	public synchronized boolean isAutoAdjust() {
+		return autoAdjust;
+	}
+
+	public synchronized void setAutoAdjust(boolean autoAdjust) {
+		this.autoAdjust = autoAdjust;
+		if (autoAdjust) {
+			start();
+		} else {
+			stop();
+		}
+	}
+
+	/**
 	 * Tests if the NXT has been configured.
 	 * @return <b>true</b> if configured, <b>false</b> otherwise
 	 */
 	public synchronized boolean isConfigured() {
 		return configured;
+	}
+
+	@Override
+	public void run() {
+		Globals.MCS.addListener(this);
+		Globals.MLS.addListener(this);
+		while (!t.interrupted() && autoAdjust) {
+			Thread.yield();
+		}
+		Globals.MCS.removeListener(this);
+		Globals.MLS.removeListener(this);
+	}
+	
+	public void start() {
+		if (t == null) {
+			t = new Thread(this);
+			t.start();
+		}
+	}
+	
+	public void stop() {
+		if (t != null) {
+			t.interrupt();
+			t = null;
+			t.interrupt();
+		}
+	}
+
+	@Override
+	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+		// TODO Auto-generated method stub
+		// Ignore
+	}
+
+	@Override
+	public void stateNotification(UpdatingSensor s, float value) {
+		// higher than middle ground average
+		if (value > (highestAverage + lowestAverage) / 2) {//value > highest) {
+			RConsole.println("Raising " + highest + " to " + value);
+			highestCount++;
+			highestTotal += value;
+			highestAverage = highestTotal / highestCount;
+			//highest = value;
+			Globals.MCS.setHigh((int) highestAverage);//highest);
+			Globals.MLS.setHigh((int) highestAverage);//highest);
+		}
+		if (value < (highestAverage + lowestAverage) / 2) {//value < lowest) {
+			RConsole.println("Lowering " + lowest + " to " + value);
+			//lowest = value;
+			lowestCount++;
+			lowestTotal += value;
+			lowestAverage = lowestAverage / lowestCount;
+			Globals.MCS.setLow((int) lowestAverage);//lowest);
+			Globals.MLS.setLow((int) lowestAverage);//lowest);
+		}
 	}
 }

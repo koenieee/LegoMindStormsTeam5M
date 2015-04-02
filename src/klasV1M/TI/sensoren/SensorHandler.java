@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import klasV1M.TI.Globals;
+import lejos.nxt.comm.RConsole;
 
 public class SensorHandler extends Thread {
 	private List<UpdatingSensor> theSensors;
@@ -40,6 +41,7 @@ public class SensorHandler extends Thread {
 		while(!Thread.interrupted()) {
 			try {
 				synchronized (this) {
+					//RConsole.print("#");
 					for (UpdatingSensor ses : theSensors)
 						ses.updateState();
 				}

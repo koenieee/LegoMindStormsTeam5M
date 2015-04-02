@@ -7,6 +7,7 @@ import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.SensorConstants;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 
@@ -21,7 +22,10 @@ public class Globals {
 	/**
 	 * Standard delay for updating.
 	 */
-	public static int StandardDelay = 100;
+	public static int StandardDelay = 200;
+	
+	public static int LongDelay = 10000;
+	
 	/**
 	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
 	 * need to be equal or lower to, to be considered of the color black
@@ -36,7 +40,7 @@ public class Globals {
 	/**
 	 * The {@link MyColorSensor} mounted on the front-right
 	 */
-	public static MyColorSensor MCS = new MyColorSensor(SensorPort.S1);
+	public static MyColorSensor MCS = new MyColorSensor(SensorPort.S1);//, SensorConstants.TYPE_LIGHT_ACTIVE);
 	/**
 	 * The {@link MyLightSensor} mounted on the front-left
 	 */

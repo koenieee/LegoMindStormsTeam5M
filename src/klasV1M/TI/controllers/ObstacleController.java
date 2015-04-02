@@ -6,8 +6,9 @@ import klasV1M.TI.Globals;
 import klasV1M.TI.sensoren.SensorHandler;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
+import lejos.nxt.comm.RConsole;
 
-public class ObstacleController implements Runnable, SensorListener {
+public class ObstacleController implements Runnable, SensorListener, SensorPairListener {
 
 	private Thread t;
 	private boolean objectDetected;
@@ -21,6 +22,7 @@ public class ObstacleController implements Runnable, SensorListener {
 		// Globals.MLS.addListener(this);
 		// Globals.MCS.addListener(this);
 		Globals.MUS.addListener(this);
+		
 
 		Globals.mLeft.setAcceleration(180);
 		Globals.mRight.setAcceleration(180);
@@ -132,5 +134,70 @@ public class ObstacleController implements Runnable, SensorListener {
 	public void stateNotification(UpdatingSensor s, float value) {
 		// TODO Auto-generated method stub
 		// Ignore
+	}
+
+	@Override
+	public void lineFound() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lineLost() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stateChanged(int oldState, int newState) {
+		// TODO Auto-generated method stub
+		/*if (SensorPair.lineFound()) {
+			if (oldState == SensorPair.LINE_MIDDLE) {
+				if (newState == SensorPair.LINE_LEFT) {
+					adjustToLeft();
+				} else if (newState == SensorPair.LINE_RIGHT) {
+					adjustToRight();
+				} else {
+					goSlow();
+				}
+			} else if (oldState == SensorPair.LINE_LEFT) {
+				if (newState == SensorPair.LINE_MIDDLE) {
+					goAhead();
+				} else if (newState == SensorPair.LINE_RIGHT) {
+					
+				} else if (newState == SensorPair.LINE_UNKNOWN) {
+					
+				}
+			}
+		}*/
+		if (newState == SensorPair.LINE_LEFT) {
+			adjustToLeft();
+		} else if (newState == SensorPair.LINE_RIGHT) {
+			adjustToRight();
+		} else if (newState == SensorPair.LINE_MIDDLE) {
+			goAhead();
+		} else {
+			goSlow();
+		}
+	}
+	
+	private void adjustToRight() {
+		Globals.mLeft.setSpeed(360);
+		Globals.mRight.setSpeed(360);
+	}
+	
+	private void adjustToLeft() {
+		Globals.mLeft.setSpeed(180);
+		Globals.mRight.setSpeed(440);
+	}
+	
+	private void goAhead() {
+		Globals.mLeft.setSpeed(440);
+		Globals.mRight.setSpeed(180);
+	}
+	
+	private void goSlow() {
+		Globals.mLeft.setSpeed(45);
+		Globals.mRight.setSpeed(45);
 	}
 }

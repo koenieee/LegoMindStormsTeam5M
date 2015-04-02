@@ -5,6 +5,7 @@ import java.util.List;
 
 import lejos.nxt.ColorSensor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.comm.RConsole;
 
 /**
  * Overrides ColorSensor to implement Sensor Listener Pattern
@@ -19,6 +20,11 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 
 	public MyColorSensor(SensorPort port) {
 		super(port);
+		sis = new ArrayList<SensorListener>();
+	}
+
+	public MyColorSensor(SensorPort port, int color) {
+		super(port, color);
 		sis = new ArrayList<SensorListener>();
 	}
 
@@ -56,10 +62,13 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 			return 0;
 
 		int value = super.getRawLightValue();
+		// -1 or 0 means an error occured, or the value was too low
+		if (value == -1 || value == 0) {
+			return -1;
+		}
 		value = 100 * (value - _zero) / (_hundred - _zero);
 		if (value < 0) {
 			value = 0;
-
 		} else if (value > 100) {
 			value = 100;
 		}
@@ -72,17 +81,34 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 	 * 
 	 */
 	public void updateState() {
+		//RConsole.print("^");
+		int temp = getLightValue();
+		if (temp == -1) {
+			// -1 mean an error occured
+			//RConsole.print("*");
+			return;
+		}
 		oldVal = newVal;
-		newVal = getLightValue();
+		newVal = temp;
 		if (oldVal != newVal) {
 			for (SensorListener s : sis) {
+				//RConsole.println("H|Z|T: " + _hundred + "|" + _zero + " | " + temp);
 				s.stateChanged(this, oldVal, newVal);
 			}
 		}
 		for (SensorListener s : sis) {
-			s.stateNotification(this, newVal);
+			s.stateNotification(this, getRawLightValue());//newVal);
 		}
 	}
+	
+	@Override
+	public int getRawLightValue() {
+		int val = super.getRawLightValue();
+		if (val == -1 || val == 0) {
+			return -1;
+		}
+		return val;
+	};
 
 	/**
 	 * This method adds the {@link SensorListener} to this object, and this object is
@@ -95,8 +121,9 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 	public void addListener(SensorListener senin) {
 		// Does not allow multiple of the same SensorListener
 		// HashMap and HashSet are deprecated and as of yet unoptimized, so that can't be used at the moment
-			if (hasListener(senin)) {
-				return;
+		
+		if (hasListener(senin)) {
+			return;
 		}
 
 		if (sis.size() == 0) {

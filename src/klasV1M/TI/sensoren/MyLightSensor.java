@@ -5,6 +5,7 @@ import java.util.List;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
+import lejos.nxt.comm.RConsole;
 
 /**
  * Overrides class LightSensor to implement SensorListener Pattern
@@ -21,6 +22,18 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 		super(port);
 		sis = new ArrayList<SensorListener>();
 	}
+	
+	@Override
+	public int getLightValue() {
+		int val = super.getLightValue();
+		if (val < 0) {
+			return 0;
+		} else if (val > 100) {
+			return 100;
+		} else {
+			return val;
+		}
+	}
 
 	/**
 	 * Updates calls the method that implements the SensorListener with the new
@@ -28,22 +41,18 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	 * 
 	 */
 	public void updateState() {
+		// -1 returns when error occured?
+		//RConsole.print("$");
 		oldVal = newVal;
-		newVal = super.getLightValue();
+		newVal = getLightValue();
 
 		if (oldVal != newVal) {
-			if(newVal < 0){
-				newVal = 0;
-			}
-			if(newVal > 100){
-				newVal = 100;
-			}
 			for (SensorListener s : sis) {
 				s.stateChanged(this, oldVal, newVal);
 			}
 		}
 		for (SensorListener s : sis) {
-			s.stateNotification(this, newVal);
+			s.stateNotification(this, getNormalizedLightValue());//newVal);
 		}
 	}
 
