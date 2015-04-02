@@ -24,10 +24,10 @@ public class Main {
 		c.configureLightSensors();
 		c.resetSoundSensor();
 		//c.setAutoAdjust(true); // WARNING!! HALTS THE PROGRAM FOR UNKNOWN REASONS!
-		//ObstacleController oc = new ObstacleController(200);
+		ObstacleController oc = new ObstacleController(200);
 		//oc.start();
 		SensorPair sp = new SensorPair();
-		//sp.addListener(oc);
+		sp.addListener(oc);
 		sp.start();
 		//LightTestController ltc = new LightTestController();
 		//TestController tc = new TestController(200);

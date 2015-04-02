@@ -14,6 +14,9 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	private boolean objectDetected;
 	private boolean lineLost;
 	private float heading;
+	
+	private long prevTime;
+	private long curTime;
 
 	public ObstacleController(int period) {
 		t = null;
@@ -30,6 +33,7 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		Globals.mRight.setSpeed(180);
 		Globals.mLeft.forward();
 		Globals.mRight.forward();
+		prevTime = curTime = System.currentTimeMillis();
 	}
 
 	public void calculateRoute() {
@@ -170,10 +174,20 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 				}
 			}
 		}*/
+		prevTime = curTime;
+		curTime = System.currentTimeMillis();
+		long mod = (curTime - prevTime);// / 2;
+		RConsole.println("TimeDiff: " + mod);
+		if (mod <= Globals.TimeThreshold) {
+			mod = Globals.LowSpeed;
+		} else {
+			mod = Globals.NormalSpeed;
+		}
+		
 		if (newState == SensorPair.LINE_LEFT) {
-			adjustToLeft();
+			adjustToLeft(mod);
 		} else if (newState == SensorPair.LINE_RIGHT) {
-			adjustToRight();
+			adjustToRight(mod);
 		} else if (newState == SensorPair.LINE_MIDDLE) {
 			goAhead();
 		} else {
@@ -181,23 +195,31 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		}
 	}
 	
-	private void adjustToRight() {
-		Globals.mLeft.setSpeed(360);
-		Globals.mRight.setSpeed(360);
+	private void adjustToRight(long l) {
+		float max = Math.min(Globals.mLeft.getMaxSpeed(), Globals.MaxSpeed);
+		if (max < l) {
+			l = (long) max - Globals.NormalSpeed;
+		}
+		Globals.mLeft.setSpeed(Globals.NormalSpeed + l);
+		Globals.mRight.setSpeed(Globals.NormalSpeed);
 	}
 	
-	private void adjustToLeft() {
-		Globals.mLeft.setSpeed(180);
-		Globals.mRight.setSpeed(440);
+	private void adjustToLeft(long l) {
+		float max = Math.min(Globals.mRight.getMaxSpeed(), Globals.MaxSpeed);
+		if (max < l) {
+			l = (long) max - Globals.NormalSpeed;
+		}
+		Globals.mLeft.setSpeed(Globals.NormalSpeed);
+		Globals.mRight.setSpeed(Globals.NormalSpeed + l);
 	}
 	
 	private void goAhead() {
-		Globals.mLeft.setSpeed(440);
-		Globals.mRight.setSpeed(180);
+		Globals.mLeft.setSpeed(Globals.NormalSpeed);
+		Globals.mRight.setSpeed(Globals.NormalSpeed);
 	}
 	
 	private void goSlow() {
-		Globals.mLeft.setSpeed(45);
-		Globals.mRight.setSpeed(45);
+		Globals.mLeft.setSpeed(Globals.LowSpeed);
+		Globals.mRight.setSpeed(Globals.LowSpeed);
 	}
 }

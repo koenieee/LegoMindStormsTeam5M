@@ -15,6 +15,7 @@ public class SensorPair implements Runnable, SensorListener {
 	
 	private static boolean lost;
 	private static boolean found;
+	private static boolean onLine;
 
 	private int oldVal = LINE_UNKNOWN;
 	private int newVal = LINE_UNKNOWN;
@@ -35,6 +36,10 @@ public class SensorPair implements Runnable, SensorListener {
 	private int rSensorCount = 0;
 	private int lLast = 0;
 	private int rLast = 0;
+	private long lLastTime = 0;
+	private long lPrevTime = 0;
+	private long rLastTime = 0;
+	private long rPrevTime = 0;
 	
 	private List<SensorPairListener> spl;
 
@@ -48,12 +53,10 @@ public class SensorPair implements Runnable, SensorListener {
 		spl = new ArrayList<SensorPairListener>();
 		list = new ArrayList<Integer>();
 		
-		if (Globals.MLS.getLightValue() <= Globals.BlackThreshold) {
-			left = true;
-		}
-		if (Globals.MCS.getLightValue() <= Globals.BlackThreshold) {
-			right = true;
-		}
+		left = Globals.MLS.getLightValue() <= Globals.BlackThreshold;
+		lPrevTime = lLastTime = System.currentTimeMillis();
+		right = Globals.MCS.getLightValue() <= Globals.BlackThreshold;
+		rPrevTime = rLastTime = System.currentTimeMillis();
 		
 		relativePosition = left && right ? LINE_MIDDLE : left ? LINE_LEFT : right ? LINE_RIGHT : LINE_UNKNOWN; 
 		
@@ -99,15 +102,17 @@ public class SensorPair implements Runnable, SensorListener {
 		
 		RConsole.println(left && right ? "Middle" : left ? "Left" : right ? "Right" : "Unknown");
 		
+		if (!found && temp != LINE_UNKNOWN) {
+			found = true;
+		}
 		
+		lineRelative = temp;
 		
-		
-		
-		
-		
-		
-		
-		
+		if (found && temp != LINE_UNKNOWN) {
+			for (SensorPairListener s : spl) {
+				s.stateChanged(oldVal, temp);
+			}
+		}
 		
 		
 		
@@ -211,10 +216,14 @@ public class SensorPair implements Runnable, SensorListener {
 			left = value <= Globals.BlackThreshold;
 			lSensorCount++;
 			lLast = (int)value;
+			lPrevTime = lLastTime;
+			lLastTime = System.currentTimeMillis();
 		} else if (s.equals(Globals.MCS)) {
 			right = value <= Globals.BlackThreshold;
 			rLast = (int)value;
 			rSensorCount++;
+			lPrevTime = lLastTime;
+			lLastTime = System.currentTimeMillis();
 		}
 		
 		if (lSensorCount >= 1 && rSensorCount >= 1) {

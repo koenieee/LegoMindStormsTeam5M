@@ -31,7 +31,14 @@ public class Globals {
 	 * need to be equal or lower to, to be considered of the color black.
 	 * Value needs to be between 0-100
 	 */
-	public static int BlackThreshold = 50;
+	public static int BlackThreshold = 35;
+	
+	public static int LowSpeed = 20;
+	public static int NormalSpeed = 2 * LowSpeed;
+	public static int HighSpeed = 3 * LowSpeed;
+	public static int MaxSpeed = 5 * LowSpeed;
+	
+	public static int TimeThreshold = 10000 / LowSpeed;
 	
 	/**
 	 * The cone of vision in degrees of the {@link MyUltraSonicSensor}
