@@ -148,19 +148,29 @@ public class ObAvoid implements SensorListener, Runnable {
 	public void calculateObstacleWidth() {
 		System.out.println("Obstacle width is called");
 		ArrayList<Number> anglas = returnHighAngles();
-		double angleWhenObjectIsGone = averageOfList(anglas);
-		System.out.println("Angle:" + angleWhenObjectIsGone);
+		int angleWhenObjectIsGone = (int)averageOfList(anglas);
+		System.out.println("Angle: " + angleWhenObjectIsGone);
 		//System.out.println("");
 		double cmWhenAngleIsZero = averageOfList(lowDistances());
 		
-		double widthObject = (Math.sin(angleWhenObjectIsGone)) * 10;
+		double widthObject = (Math.sin(Math.toRadians(angleWhenObjectIsGone))) * 10;
 		
 		System.out.println("The half of the object is: " + widthObject);
 		
-		DifferentialPilot pilot = new DifferentialPilot(3.4, 13, mLeft,
+		DifferentialPilot pilot = new DifferentialPilot(3.4, 13.5, mLeft,
 				mRight, false);
+		  pilot.setTravelSpeed(7);
+		pilot.travelArc(-(widthObject + 30), ((widthObject + 30)/ 4 ) * Math.PI);
+		pilot.travelArc((widthObject + 30), ((widthObject + 30)/ 2 ) * Math.PI);
+		pilot.travelArc(-(widthObject + 30), ((widthObject + 30)/ 4 ) * Math.PI);
 		//pilot.setTravelSpeed(9);
-		pilot.arc(-10, 53);
+        //pilot.setRotateSpeed(15);
+       // pilot.rotate(-angleWhenObjectIsGone, false);
+      
+       // pilot.travel(widthObject + 30);
+       // pilot.rotate(angleWhenObjectIsGone, false);
+       // pilot.travel(widthObject + 30);
+        
 		
 		
 		/*
@@ -309,7 +319,7 @@ public class ObAvoid implements SensorListener, Runnable {
 	}
 
 	@Override
-	public void stateNotification(UpdatingSensor s, float value) {
+	public void stateNotification(UpdatingSensor s, float value, float RawValue) {
 		// TODO Auto-generated method stub
 
 	}
