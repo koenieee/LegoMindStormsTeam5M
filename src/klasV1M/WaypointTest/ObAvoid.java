@@ -21,12 +21,12 @@ public class ObAvoid implements SensorListener, Runnable {
 
 	public static void main(String[] args) {
 		RConsole.open();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	//	try {
+	//		Thread.sleep(000);
+	//	} catch (InterruptedException e) {
+	//		// TODO Auto-generated catch block
+	//		e.printStackTrace();
+	//	}
 		ObAvoid aob = new ObAvoid();
 		// aob.start();
 		Button.waitForAnyPress();
@@ -46,12 +46,10 @@ public class ObAvoid implements SensorListener, Runnable {
 	public static NXTRegulatedMotor mLeft = Motor.C;
 	public static ArrayList<Integer> angles = new ArrayList<Integer>();
 	public static ArrayList<Float> distances = new ArrayList<Float>();
-	public int[] obRechts = new int[]{};
-	public int[] obLinks = new int[]{};
-	private boolean left, right, middle = false;
-	private boolean doneScanning = false;
-	private boolean startOmzeilen;
-	private boolean drivingViaLeft;
+	public int[] obRechts = new int[2];
+	public int[] obLinks = new int[2];
+	private boolean left, right = false;
+	
 	private int aantalKeer = 0;
 
 	public ObAvoid() {
@@ -94,7 +92,8 @@ public class ObAvoid implements SensorListener, Runnable {
 			aantalKeer++;
 
 		}
-		//calculateObstacleWidth();
+		mMiddle.stop();
+		calculateObstacleWidth();
 
 		// driveAroundObstacle();
 
@@ -151,11 +150,25 @@ public class ObAvoid implements SensorListener, Runnable {
 
 	public void calculateObstacleWidth() {
 		System.out.println("Obstacle width is called");
-		ArrayList<Number> anglas = returnFreeAngles();
-		ArrayList<Number> distances = lowDistances();
+		//ArrayList<Number> anglas = returnFreeAngles();
+		//ArrayList<Number> distances = lowDistances();
 		//int angleWhenObjectIsGone = (int)averageOfList(anglas);
-		System.out.println("Angles: " + anglas);
-		System.out.println("Distances: " + distances);
+		//if(obLinks[0] != 0){
+			
+			int sidea = obLinks[0];//links
+			int sideb = obRechts[0];//rechts
+			int theAngle = Math.abs(obRechts[1]) + Math.abs(obLinks[1]);
+			double theWidth = Math.sqrt( (Math.pow(sidea, 2) + Math.pow(sideb, 2)) - (2 * sidea * sideb * Math.cos(Math.toRadians(theAngle)) ));
+			System.out.println("Width: " + theWidth);
+			System.out.println("Angle: " + theAngle);
+			System.out.println("Right: " + sidea);
+			System.out.println("Left : " + sideb);
+			
+			beginScan = false;
+			
+			
+		//}
+		
 		
 		//System.out.println("");
 		//double cmWhenAngleIsZero = averageOfList(lowDistances());
@@ -273,22 +286,26 @@ public class ObAvoid implements SensorListener, Runnable {
 	
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-
+		//RConsole.println("nw " + newVal);
+	//	RConsole.println("ov " + oldVal);
 		if (s.equals(MUS)) {
 			if (beginScan) { // linksom of rechtsom?
 				int angle = mMiddle.getTachoCount();
-				if(100 < newVal  && newVal <= 255 && angle > 0){ //rechts
+
+				if((100 < newVal && newVal <= 255) && angle > 0 && !right){ //rechts
+					
 					obRechts[0] = (int) oldVal;
 					obRechts[1] = (int) angle;
-					
+					right = true;
 					
 					RConsole.println("Rechts Centi: " + oldVal);
 					RConsole.println("Rechts Angle: " + angle);
 					mMiddle.stop(true);
 				}
-				else if(100 < newVal  && newVal <= 255 && angle < 0){ //rechts
+				else if((100 < newVal  && newVal <= 255) && angle < 0 && !left){ //rechts
 					obLinks[0] = (int) oldVal;
 					obLinks[1] = (int) angle;
+					left = true;
 					RConsole.println("Links Centi: " + oldVal);
 					RConsole.println("Links Angle: " + angle);
 					mMiddle.stop(true);
