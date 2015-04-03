@@ -46,6 +46,8 @@ public class ObAvoid implements SensorListener, Runnable {
 	public static NXTRegulatedMotor mLeft = Motor.C;
 	public static ArrayList<Integer> angles = new ArrayList<Integer>();
 	public static ArrayList<Float> distances = new ArrayList<Float>();
+	public int[] obRechts = new int[]{};
+	public int[] obLinks = new int[]{};
 	private boolean left, right, middle = false;
 	private boolean doneScanning = false;
 	private boolean startOmzeilen;
@@ -57,12 +59,12 @@ public class ObAvoid implements SensorListener, Runnable {
 		SensorHandler.PERIOD = 100;
 		mMiddle.resetTachoCount();
 		MUS.addListener(this);
-		mLeft.setAcceleration(180);
+	/*	mLeft.setAcceleration(180);
 	     mRight.setAcceleration(180);
 		 mLeft.setSpeed(180);
 		 mRight.setSpeed(180);
 		 mLeft.forward();
-		 mRight.forward();
+		 mRight.forward();*/
 	}
 
 	public void start() {
@@ -80,17 +82,19 @@ public class ObAvoid implements SensorListener, Runnable {
 		 */
 		// mMiddle.setSpeed(90);
 		mMiddle.setSpeed(30);
-		while (aantalKeer < 2) {
+		while (aantalKeer < 1) {
 			mMiddle.rotateTo(+70, false);// rechts
+			
 			// try {
 			// Thread.sleep(400);
 			// } catch (InterruptedException e) {
 			// }
-			mMiddle.rotateTo(0, false);
+			mMiddle.rotateTo(-70, false); //links
+			mMiddle.rotateTo(0, false); //links
 			aantalKeer++;
 
 		}
-		calculateObstacleWidth();
+		//calculateObstacleWidth();
 
 		// driveAroundObstacle();
 
@@ -147,12 +151,15 @@ public class ObAvoid implements SensorListener, Runnable {
 
 	public void calculateObstacleWidth() {
 		System.out.println("Obstacle width is called");
-		ArrayList<Number> anglas = returnHighAngles();
-		int angleWhenObjectIsGone = (int)averageOfList(anglas);
-		System.out.println("Angle: " + angleWhenObjectIsGone);
-		//System.out.println("");
-		double cmWhenAngleIsZero = averageOfList(lowDistances());
+		ArrayList<Number> anglas = returnFreeAngles();
+		ArrayList<Number> distances = lowDistances();
+		//int angleWhenObjectIsGone = (int)averageOfList(anglas);
+		System.out.println("Angles: " + anglas);
+		System.out.println("Distances: " + distances);
 		
+		//System.out.println("");
+		//double cmWhenAngleIsZero = averageOfList(lowDistances());
+		/*
 		double widthObject = (Math.sin(Math.toRadians(angleWhenObjectIsGone))) * 10;
 		
 		System.out.println("The half of the object is: " + widthObject);
@@ -163,6 +170,7 @@ public class ObAvoid implements SensorListener, Runnable {
 		pilot.travelArc(-(widthObject + 30), ((widthObject + 30)/ 4 ) * Math.PI);
 		pilot.travelArc((widthObject + 30), ((widthObject + 30)/ 2 ) * Math.PI);
 		pilot.travelArc(-(widthObject + 30), ((widthObject + 30)/ 4 ) * Math.PI);
+		*/
 		//pilot.setTravelSpeed(9);
         //pilot.setRotateSpeed(15);
        // pilot.rotate(-angleWhenObjectIsGone, false);
@@ -196,7 +204,7 @@ public class ObAvoid implements SensorListener, Runnable {
 	  return average;
 	}
 	
-	public ArrayList<Number> returnHighAngles(){
+	public ArrayList<Number> returnFreeAngles(){
 		ArrayList<Integer> allTheHighs = getMaxes(distances);
 		ArrayList<Number> tempAngles = new ArrayList<Number>();
 		if(allTheHighs.size() != 0){
@@ -209,48 +217,31 @@ public class ObAvoid implements SensorListener, Runnable {
 	}
 	
 	public ArrayList<Number> lowDistances(){
-		ArrayList<Integer> ind = returnLowAngles();
+		ArrayList<Integer> ind = getMaxes(distances);
 		ArrayList<Number> tempDista = new ArrayList<Number>();
 		if(ind.size() != 0){
 			for(int index : ind){
-				tempDista.add(distances.get(index));
+				tempDista.add(distances.get(index-3));
 			}
 			
 		}
 		return tempDista;
 	}
 	
-	
-	public ArrayList<Integer> returnLowAngles(){
-		ArrayList<Integer> tempAngles = new ArrayList<Integer>();
-		int itera = 0;
-		if(angles.size() != 0){
-			for(int ang : angles){
-				if(-1 < ang  && ang <= 2){
-					tempAngles.add(itera);
-				}
-				itera++;
-			}
-		}
-		return tempAngles;
-		
-	}
-	
-
 	public ArrayList<Integer> getMaxes(ArrayList<Float> list) {
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 		int i = 0;
 		for (float dista : list) {
 			
 			if (100 < dista  && dista <= 255 ) {
-				RConsole.println("Float: " + dista) ;
+				RConsole.println("Float: " + dista);
 				indexes.add(i);
 			}
 			i++;
 		}
 		return indexes;
 	}
-
+/*
 	public void driveAroundObstacle() {
 		beginScan = false;
 		if (right && left) { // zowel links als rechts is niet vrij, wat nu??
@@ -277,19 +268,39 @@ public class ObAvoid implements SensorListener, Runnable {
 
 		}
 	}
-
+*/
+	
+	
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 
 		if (s.equals(MUS)) {
 			if (beginScan) { // linksom of rechtsom?
 				int angle = mMiddle.getTachoCount();
-				RConsole.println("Centi: " + newVal);
-				RConsole.println("Angle: " + angle);
-				synchronized (this) {
-					angles.add(angle);
-					distances.add(newVal);
+				if(100 < newVal  && newVal <= 255 && angle > 0){ //rechts
+					obRechts[0] = (int) oldVal;
+					obRechts[1] = (int) angle;
+					
+					
+					RConsole.println("Rechts Centi: " + oldVal);
+					RConsole.println("Rechts Angle: " + angle);
+					mMiddle.stop(true);
 				}
+				else if(100 < newVal  && newVal <= 255 && angle < 0){ //rechts
+					obLinks[0] = (int) oldVal;
+					obLinks[1] = (int) angle;
+					RConsole.println("Links Centi: " + oldVal);
+					RConsole.println("Links Angle: " + angle);
+					mMiddle.stop(true);
+				}
+				
+				
+				//RConsole.println("Centi: " + newVal);
+				//RConsole.println("Angle: " + angle);
+				//synchronized (this) {
+				//	angles.add(angle);
+				//	distances.add(newVal);
+				//}
 
 				// angleAndCM.add(new Float[]{angle, newVal} );
 				//RConsole.println("Centi: " + newVal);
@@ -298,8 +309,8 @@ public class ObAvoid implements SensorListener, Runnable {
 			else if (newVal < 26  && !beginScan) { // object detected in front
 												// of us, scan right and
 												// left to find new path.
-				 mLeft.setSpeed(0); //stop driving
-				 mRight.setSpeed(0); //stop driving
+				// mLeft.setSpeed(0); //stop driving
+				// mRight.setSpeed(0); //stop driving
 				 aantalKeer = 0;
 				// doneScanning = false;
 				start(); // start scanning
