@@ -6,6 +6,7 @@ import java.util.Set;
 
 import lejos.nxt.I2CPort;
 import lejos.nxt.UltrasonicSensor;
+import lejos.nxt.comm.RConsole;
 
 /**
  * Overrides class UltraSonicSensor to implement SensorListener Pattern
