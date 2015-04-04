@@ -20,13 +20,13 @@ import lejos.robotics.navigation.Waypoint;
 public class ObAvoid implements SensorListener, Runnable {
 
 	public static void main(String[] args) {
-		RConsole.open();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// RConsole.open();
+		// try {
+		// Thread.sleep(000);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 		ObAvoid aob = new ObAvoid();
 		// aob.start();
 		Button.waitForAnyPress();
@@ -44,25 +44,27 @@ public class ObAvoid implements SensorListener, Runnable {
 	 * The left {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
-	public static ArrayList<Integer> angles = new ArrayList<Integer>();
-	public static ArrayList<Float> distances = new ArrayList<Float>();
-	private boolean left, right, middle = false;
-	private boolean doneScanning = false;
-	private boolean startOmzeilen;
-	private boolean drivingViaLeft;
+
+	public int[] obRechts = new int[2];
+	public int[] obLinks = new int[2];
+	private boolean left, right = false;
+	DifferentialPilot pilot; 
 	private int aantalKeer = 0;
+	private int avoidingObstacle = 0;
 
 	public ObAvoid() {
+		pilot = new DifferentialPilot(3.4, 13.5, mLeft,
+				mRight, false);
 		t = null;
 		SensorHandler.PERIOD = 100;
 		mMiddle.resetTachoCount();
 		MUS.addListener(this);
 		mLeft.setAcceleration(180);
-	     mRight.setAcceleration(180);
-		 mLeft.setSpeed(180);
-		 mRight.setSpeed(180);
-		 mLeft.forward();
-		 mRight.forward();
+		mRight.setAcceleration(180);
+		mLeft.setSpeed(180);
+		mRight.setSpeed(180);
+		mLeft.forward();
+		mRight.forward();
 	}
 
 	public void start() {
@@ -80,236 +82,182 @@ public class ObAvoid implements SensorListener, Runnable {
 		 */
 		// mMiddle.setSpeed(90);
 		mMiddle.setSpeed(30);
-		while (aantalKeer < 2) {
-			mMiddle.rotateTo(+70, false);// rechts
+		while (aantalKeer < 1) {
+			mMiddle.rotateTo(+90, false);// rechts
+
 			// try {
 			// Thread.sleep(400);
 			// } catch (InterruptedException e) {
 			// }
-			mMiddle.rotateTo(0, false);
+			mMiddle.rotateTo(-90, false); // links
+			mMiddle.rotateTo(0, false); // links
 			aantalKeer++;
 
 		}
+		mMiddle.stop();
 		calculateObstacleWidth();
 
 		// driveAroundObstacle();
 
 	}
 
-	/*
-	 * public void calculateRoute(float newVal, int angle) {
-	 * System.out.println("Centi: " + newVal); System.out.println("Angle: " +
-	 * mMiddle.getTachoCount()); if(-5 < angle && angle < 5 && newVal < 30){
-	 * //object in front System.out.println("front is blocked");
-	 * //RConsole.println("front"); //middle = true; } else if(angle > 5 &&
-	 * newVal < 30){ System.out.println("right is blocked"); //
-	 * RConsole.println("right"); //right = true; //object at the right side
-	 * 
-	 * } else if(angle < -5 && newVal < 30){
-	 * System.out.println("left is blocked"); //left = true; //
-	 * RConsole.println("left"); //object at the right side
-	 * 
-	 * } }
-	 */
-	// doneScanning = false;
-
-	/*
-	 * if(-5 < hoek && hoek < 5 && distance < 30){ //object in front
-	 * System.out.println("Obstacle in front of us");
-	 * //RConsole.println("front"); //middle = true; } else if(hoek > 5 &&
-	 * distance < 30){ System.out.println("Obstacle at the right side"); //
-	 * RConsole.println("right"); //right = true; //object at the right side
-	 * 
-	 * } else if(hoek < -5 && distance < 30){
-	 * System.out.println("Obstacle at the left side"); //left = true; //
-	 * RConsole.println("left"); //object at the right side
-	 * 
-	 * } /* if(right && middle){ // determine if you want to drive left or right
-	 * the obstacle. //left = false; right = false; middle = false;
-	 * mLeft.setSpeed(140); mRight.setSpeed(220);
-	 * System.out.println("driving via left side"); } else if(left && middle){
-	 * // determine if you want to drive left or right the obstacle. left =
-	 * false; middle = false; // middle = false; mLeft.setSpeed(140);
-	 * mRight.setSpeed(220); System.out.println("driving via right side"); }
-	 * else if(middle){ //obstacle still in middle mLeft.setSpeed(90);
-	 * mRight.setSpeed(220); }
-	 */
-
-	/*
-	 * if (angleAndCM.get(angleAndCM.size() - 1)[1] <= 40) { Iterator<Float[]>
-	 * theIterator = angleAndCM.iterator();
-	 * 
-	 * while (theIterator.hasNext()) { Float[] input = theIterator.next(); Float
-	 * distance = input[0]; Float angle = input[1];
-	 * System.out.println("distance: " + distance + " angle: " + angle); } }
-	 */
-	// }
-
 	public void calculateObstacleWidth() {
 		System.out.println("Obstacle width is called");
-		ArrayList<Number> anglas = returnHighAngles();
-		double angleWhenObjectIsGone = averageOfList(anglas);
-		System.out.println("Angle:" + angleWhenObjectIsGone);
-		//System.out.println("");
-		double cmWhenAngleIsZero = averageOfList(lowDistances());
+		// ArrayList<Number> anglas = returnFreeAngles();
+		// ArrayList<Number> distances = lowDistances();
+		// int angleWhenObjectIsGone = (int)averageOfList(anglas);
+		// if(obLinks[0] != 0){
+
+		int sidea = obLinks[0];// links
+		int sideb = obRechts[0];// rechts
+		int theAngle = Math.abs(obRechts[1]) + Math.abs(obLinks[1]);
+		double theWidth = Math.sqrt((Math.pow(sidea, 2) + Math.pow(sideb, 2))
+				- (2 * sidea * sideb * Math.cos(Math.toRadians(theAngle))));
+		System.out.println("Width: " + theWidth);
+		System.out.println("Angle: " + theAngle);
+		System.out.println("Left: " + sidea);
+		System.out.println("Right : " + sideb);
+
+		// beginScan = false;
+
 		
-		double widthObject = (Math.sin(angleWhenObjectIsGone)) * 10;
-		
-		System.out.println("The half of the object is: " + widthObject);
-		
-		DifferentialPilot pilot = new DifferentialPilot(3.4, 13, mLeft,
-				mRight, false);
-		//pilot.setTravelSpeed(9);
-		pilot.arc(-10, 53);
-		
-		
+		pilot.setTravelSpeed(5);
+		pilot.setRotateSpeed(15);
+
+		if (sidea < sideb) { // via links
+			
+			mMiddle.rotateTo(+90, false); // links
+			pilot.rotate(150, false);
+			avoidingObstacle = 1;
+			//
+			//pilot.travel(90);
+
+			//pilot.rotate(-(theAngle + 30), false);
+			//pilot.travel(theWidth);
+		} else // via rechts
+			{
+			
+			mMiddle.rotateTo(-90, false); // links
+			pilot.rotate(-150, false);
+			avoidingObstacle = 1;
+			//pilot.rotate(-90, false);
+			//pilot.travel(theWidth);
+
+			//pilot.rotate((theAngle + 30), false);
+			//pilot.travel(theWidth);
+		}
+
+		// pilot.setTravelSpeed(7);
+		// pilot.travelArc(-(theWidth + 30), ((theWidth + 30)/ 4 ) * Math.PI);
+		// pilot.travelArc((theWidth + 30), ((theWidth + 30)/ 2 ) * Math.PI);
+		// pilot.travelArc(-(theWidth + 30), ((theWidth + 30)/ 4 ) * Math.PI);
+
+		// }
+
+		// System.out.println("");
+		// double cmWhenAngleIsZero = averageOfList(lowDistances());
 		/*
-		for (int flan : angles) {
-			itera++;
-			RConsole.println("Iterator: " + itera);
-			if (flan == 0) {
-				System.out.println("Lengte bij 0 graden: "	+ distances.get(itera));
-				//System.out.println("Hoek bij hoogste afstand: "	+ angles.get(indexKeydistance));
-			}
-		}*/
-	}
-	
-	
-	
-	public double averageOfList(ArrayList<Number> NUMBERS){
-		   double total = 0;
-		    for (Number element : NUMBERS) {
-		    		total += element.floatValue();
-		    }
-		    
-		    double average = total / NUMBERS.size();
-	  return average;
-	}
-	
-	public ArrayList<Number> returnHighAngles(){
-		ArrayList<Integer> allTheHighs = getMaxes(distances);
-		ArrayList<Number> tempAngles = new ArrayList<Number>();
-		if(allTheHighs.size() != 0){
-			for(int index : allTheHighs){
-				tempAngles.add(angles.get(index-1)+1);
-			}
-		}
-		return tempAngles;
-		
-	}
-	
-	public ArrayList<Number> lowDistances(){
-		ArrayList<Integer> ind = returnLowAngles();
-		ArrayList<Number> tempDista = new ArrayList<Number>();
-		if(ind.size() != 0){
-			for(int index : ind){
-				tempDista.add(distances.get(index));
-			}
-			
-		}
-		return tempDista;
-	}
-	
-	
-	public ArrayList<Integer> returnLowAngles(){
-		ArrayList<Integer> tempAngles = new ArrayList<Integer>();
-		int itera = 0;
-		if(angles.size() != 0){
-			for(int ang : angles){
-				if(-1 < ang  && ang <= 2){
-					tempAngles.add(itera);
-				}
-				itera++;
-			}
-		}
-		return tempAngles;
-		
-	}
-	
+		 * double widthObject =
+		 * (Math.sin(Math.toRadians(angleWhenObjectIsGone))) * 10;
+		 * 
+		 * System.out.println("The half of the object is: " + widthObject);
+		 * 
+		 * DifferentialPilot pilot = new DifferentialPilot(3.4, 13.5, mLeft,
+		 * mRight, false); pilot.setTravelSpeed(7);
+		 * pilot.travelArc(-(widthObject + 30), ((widthObject + 30)/ 4 ) *
+		 * Math.PI); pilot.travelArc((widthObject + 30), ((widthObject + 30)/ 2
+		 * ) * Math.PI); pilot.travelArc(-(widthObject + 30), ((widthObject +
+		 * 30)/ 4 ) * Math.PI);
+		 */
+		// pilot.setTravelSpeed(9);
+		// pilot.setRotateSpeed(15);
+		// pilot.rotate(-angleWhenObjectIsGone, false);
 
-	public ArrayList<Integer> getMaxes(ArrayList<Float> list) {
-		ArrayList<Integer> indexes = new ArrayList<Integer>();
-		int i = 0;
-		for (float dista : list) {
-			
-			if (100 < dista  && dista <= 255 ) {
-				RConsole.println("Float: " + dista) ;
-				indexes.add(i);
-			}
-			i++;
-		}
-		return indexes;
-	}
+		// pilot.travel(widthObject + 30);
+		// pilot.rotate(angleWhenObjectIsGone, false);
+		// pilot.travel(widthObject + 30);
 
-	public void driveAroundObstacle() {
-		beginScan = false;
-		if (right && left) { // zowel links als rechts is niet vrij, wat nu??
-			System.out.println("Rechts en Links is bezet");
-		} else if (right && !left) { // rechts is geblokkeerd, dus links er om
-										// heen
-			mMiddle.setSpeed(50);
-			mMiddle.rotateTo(+60);
-			System.out.println("Rechts omzeilen");
-		} else if (left && !right) { // links is geblokkeerd, dus rechts er om
-										// heen.
-			mMiddle.setSpeed(50);
-			mMiddle.rotateTo(-60);
-			DifferentialPilot pilot = new DifferentialPilot(3.4, 13, mLeft,
-					mRight, false);
-			Navigator navigator = new Navigator(pilot);
-
-			navigator.addWaypoint(new Waypoint(50, 50));
-			navigator.addWaypoint(new Waypoint(-50, -50));
-
-			navigator.followPath();
-
-			System.out.println("Links omzeilen");
-
-		}
+		/*
+		 * for (int flan : angles) { itera++; RConsole.println("Iterator: " +
+		 * itera); if (flan == 0) { System.out.println("Lengte bij 0 graden: " +
+		 * distances.get(itera));
+		 * //System.out.println("Hoek bij hoogste afstand: " +
+		 * angles.get(indexKeydistance)); } }
+		 */
 	}
 
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-
+		// RConsole.println("nw " + newVal);
+		// RConsole.println("ov " + oldVal);
 		if (s.equals(MUS)) {
+			if(avoidingObstacle == 1){
+				if((100 < newVal && newVal <= 255)){
+					pilot.travelArc(oldVal, 70, false);
+				}
+				else{
+					pilot.travel(15, false);
+				}
+			}
 			if (beginScan) { // linksom of rechtsom?
 				int angle = mMiddle.getTachoCount();
-				RConsole.println("Centi: " + newVal);
-				RConsole.println("Angle: " + angle);
-				synchronized (this) {
-					angles.add(angle);
-					distances.add(newVal);
+
+				if ((100 < newVal && newVal <= 255) && angle > 0 && !right) { // rechts
+
+					obRechts[0] = (int) oldVal;
+					obRechts[1] = (int) angle;
+					right = true;
+
+					RConsole.println("Rechts Centi: " + oldVal);
+					RConsole.println("Rechts Angle: " + angle);
+					mMiddle.stop(true);
+				} else if ((100 < newVal && newVal <= 255) && angle < 0
+						&& !left) { // rechts
+					obLinks[0] = (int) oldVal;
+					obLinks[1] = (int) angle;
+					left = true;
+					RConsole.println("Links Centi: " + oldVal);
+					RConsole.println("Links Angle: " + angle);
+					mMiddle.stop(true);
+				}
+				else{
+					//todo
 				}
 
+				// RConsole.println("Centi: " + newVal);
+				// RConsole.println("Angle: " + angle);
+				// synchronized (this) {
+				// angles.add(angle);
+				// distances.add(newVal);
+				// }
+
 				// angleAndCM.add(new Float[]{angle, newVal} );
-				//RConsole.println("Centi: " + newVal);
-				//RConsole.println("Angle: " + angle);
-			}
-			else if (newVal < 26  && !beginScan) { // object detected in front
-												// of us, scan right and
-												// left to find new path.
-				 mLeft.setSpeed(0); //stop driving
-				 mRight.setSpeed(0); //stop driving
-				 aantalKeer = 0;
+				// RConsole.println("Centi: " + newVal);
+				// RConsole.println("Angle: " + angle);
+			} else if (newVal < 26 && !beginScan) { // object detected in front
+													// of us, scan right and
+													// left to find new path.
+				mLeft.stop(true); // stop driving
+				mRight.stop(); // stop driving
+				aantalKeer = 0;
 				// doneScanning = false;
 				start(); // start scanning
-				
+
 				beginScan = true;
 
-			} 
-			else {
-				//doneScanning = true;
-				//synchronized (this) {
-					//aantalKeer = 0;
-				//	angles.clear();
-				//	distances.clear();
-				//}
+			} else {
+				// doneScanning = true;
+				// synchronized (this) {
+				// aantalKeer = 0;
+				// angles.clear();
+				// distances.clear();
+				// }
 			}
 		}
 	}
 
 	@Override
-	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
+	public void stateNotification(UpdatingSensor s, float value, float RawValue) {
 		// TODO Auto-generated method stub
 
 	}
