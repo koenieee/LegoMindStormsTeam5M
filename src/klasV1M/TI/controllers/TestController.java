@@ -5,6 +5,7 @@ import klasV1M.TI.sensoren.SensorHandler;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.LCD;
+import lejos.nxt.comm.RConsole;
 
 /**
  * Example TestController to test the working and implementation of Sensors and
@@ -26,6 +27,10 @@ public class TestController implements SensorListener {
 		SensorHandler.PERIOD = period;
 		Globals.MLS.addListener(this);
 		Globals.MCS.addListener(this);
+		Globals.mLeft.setAcceleration(180);
+		Globals.mRight.setAcceleration(180);
+		Globals.mLeft.setSpeed(250);
+		Globals.mRight.setSpeed(250);
 	}
 
 	/**
@@ -42,47 +47,43 @@ public class TestController implements SensorListener {
 	
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-		boolean whiteC = true;
-		boolean whiteL = true;
-		if (s.equals(Globals.MLS)) {
+		if (s.equals(Globals.MLS)) { //lightsensor
 			// LCD.clear();
 			String text = "";
-			if(newVal < 50){
+			if(newVal < 50){ //lightsensor zit op lijn
 				
 				text = "Black";
 				Globals.mLeft.stop();
 				Globals.mRight.forward();
-				whiteL=false;
 			}
 			else
 			{
 				text = "White";
-				whiteL=true;
 			}
 			
-			LCD.drawString(("LightSensor: " + text),
-					0, 0);
+			
 		}
 		
-		if (s.equals(Globals.MCS)) { //
+		if (s.equals(Globals.MCS)) { //colorsensor
 			
 			String text = "";
-			if(newVal < 50){
+			if(newVal < 50){ //kleuren sensor zit op de lijn
 				text = "Black";
-
 				Globals.mLeft.forward();
 				Globals.mRight.stop();
+				//Globals.mLeft.setSpeed(200);
+				//Globals.mRight.setSpeed(4);
 				
-				whiteC=false;
+				
+				
 			}
 			else
 			{
 				text = "White";
-				whiteC=true;
+				
 			}
 			
-			LCD.drawString(("ColorSensor: " + text),
-					0, 3);
+			RConsole.println("ColorSensr: " + newVal);
 		}
 		
 		/*if(whiteL && whiteC){
