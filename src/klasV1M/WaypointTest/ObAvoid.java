@@ -44,15 +44,17 @@ public class ObAvoid implements SensorListener, Runnable {
 	 * The left {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
-	public static ArrayList<Integer> angles = new ArrayList<Integer>();
-	public static ArrayList<Float> distances = new ArrayList<Float>();
+
 	public int[] obRechts = new int[2];
 	public int[] obLinks = new int[2];
 	private boolean left, right = false;
-
+	DifferentialPilot pilot; 
 	private int aantalKeer = 0;
+	private int avoidingObstacle = 0;
 
 	public ObAvoid() {
+		pilot = new DifferentialPilot(3.4, 13.5, mLeft,
+				mRight, false);
 		t = null;
 		SensorHandler.PERIOD = 100;
 		mMiddle.resetTachoCount();
@@ -118,26 +120,31 @@ public class ObAvoid implements SensorListener, Runnable {
 
 		// beginScan = false;
 
-		DifferentialPilot pilot = new DifferentialPilot(3.4, 13.5, mLeft,
-				mRight, false);
+		
 		pilot.setTravelSpeed(5);
 		pilot.setRotateSpeed(15);
 
 		if (sidea < sideb) { // via links
-			mMiddle.rotateTo(-90, true); // links
-			pilot.rotate((theAngle + 30), false);
-			pilot.travel(theWidth);
+			
+			mMiddle.rotateTo(+90, false); // links
+			pilot.rotate(150, false);
+			avoidingObstacle = 1;
+			//
+			//pilot.travel(90);
 
-			pilot.rotate(-(theAngle + 30), false);
-			pilot.travel(theWidth);
+			//pilot.rotate(-(theAngle + 30), false);
+			//pilot.travel(theWidth);
 		} else // via rechts
-		{
-			mMiddle.rotateTo(+90, true); // links
-			pilot.rotate(-(theAngle + 30), false);
-			pilot.travel(theWidth);
+			{
+			
+			mMiddle.rotateTo(-90, false); // links
+			pilot.rotate(-150, false);
+			avoidingObstacle = 1;
+			//pilot.rotate(-90, false);
+			//pilot.travel(theWidth);
 
-			pilot.rotate((theAngle + 30), false);
-			pilot.travel(theWidth);
+			//pilot.rotate((theAngle + 30), false);
+			//pilot.travel(theWidth);
 		}
 
 		// pilot.setTravelSpeed(7);
@@ -184,6 +191,14 @@ public class ObAvoid implements SensorListener, Runnable {
 		// RConsole.println("nw " + newVal);
 		// RConsole.println("ov " + oldVal);
 		if (s.equals(MUS)) {
+			if(avoidingObstacle == 1){
+				if((100 < newVal && newVal <= 255)){
+					pilot.travelArc(oldVal, 70, false);
+				}
+				else{
+					pilot.travel(15, false);
+				}
+			}
 			if (beginScan) { // linksom of rechtsom?
 				int angle = mMiddle.getTachoCount();
 
@@ -205,6 +220,9 @@ public class ObAvoid implements SensorListener, Runnable {
 					RConsole.println("Links Angle: " + angle);
 					mMiddle.stop(true);
 				}
+				else{
+					//todo
+				}
 
 				// RConsole.println("Centi: " + newVal);
 				// RConsole.println("Angle: " + angle);
@@ -219,8 +237,8 @@ public class ObAvoid implements SensorListener, Runnable {
 			} else if (newVal < 26 && !beginScan) { // object detected in front
 													// of us, scan right and
 													// left to find new path.
-				mLeft.setSpeed(0); // stop driving
-				mRight.setSpeed(0); // stop driving
+				mLeft.stop(true); // stop driving
+				mRight.stop(); // stop driving
 				aantalKeer = 0;
 				// doneScanning = false;
 				start(); // start scanning
