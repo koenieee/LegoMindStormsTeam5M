@@ -10,6 +10,7 @@ import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorConstants;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
+import lejos.robotics.navigation.DifferentialPilot;
 
 /**
  * Provides global access to the sensors and motors.
@@ -25,6 +26,10 @@ public class Globals {
 	public static int StandardDelay = 200;
 	
 	public static int LongDelay = 10000;
+	
+	// TODO:
+	// Use DifferentialPilot for moving?
+	public static DifferentialPilot diffPilot = null;
 	
 	/**
 	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
