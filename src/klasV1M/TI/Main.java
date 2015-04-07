@@ -20,13 +20,14 @@ public class Main {
 	public static void main(String[] args) {
 		RConsole.open();
 		Configuration c = new Configuration();
-		System.out.println("Starting application...");
+		System.out.println("Starting...");
 		//c.resetAndConfigureAll();
 		c.configureLightSensors();
+		//c.setAutoAdjust(true);
 		//c.resetSoundSensor();
 		//c.setAutoAdjust(true); // WARNING!! HALTS THE PROGRAM FOR UNKNOWN REASONS!
 		ObstacleController oc = new ObstacleController();
-		//oc.start();
+		oc.start();
 		SensorPair sp = new SensorPair();
 		sp.addListener(oc);
 		sp.start();

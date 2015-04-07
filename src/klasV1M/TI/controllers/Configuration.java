@@ -268,7 +268,7 @@ public class Configuration implements Runnable, SensorListener {
 	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
 		// higher than middle ground average
 		if (rawValue > (highestAverage + lowestAverage) / 2) {//rawValue > highest) {
-			RConsole.println("Raising " + highest + " to " + rawValue);
+			//RConsole.println("Raising " + highest + " to " + rawValue);
 			highestCount++;
 			highestTotal += rawValue;
 			highestAverage = highestTotal / highestCount;
@@ -277,7 +277,7 @@ public class Configuration implements Runnable, SensorListener {
 			Globals.MLS.setHigh((int) highestAverage);//highest);
 		}
 		if (rawValue < (highestAverage + lowestAverage) / 2) {//rawValue < lowest) {
-			RConsole.println("Lowering " + lowest + " to " + rawValue);
+			//RConsole.println("Lowering " + lowest + " to " + rawValue);
 			//lowest = rawValue;
 			lowestCount++;
 			lowestTotal += rawValue;

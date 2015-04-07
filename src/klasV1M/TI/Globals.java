@@ -23,7 +23,7 @@ public class Globals {
 	/**
 	 * Standard delay for updating.
 	 */
-	public static int StandardDelay = 200;
+	public static int StandardDelay = 100;
 	
 	public static int LongDelay = 10000;
 	

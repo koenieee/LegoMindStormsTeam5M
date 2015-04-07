@@ -15,6 +15,8 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	private boolean objectDetected;
 	private boolean lineLost;
 	private float heading;
+	private int headingIncrement = 5;
+	private int standardHeading = 25;
 	
 	private long prevTime;
 	private long curTime;
@@ -62,11 +64,16 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		 * Globals.mLeft.setSpeed(360); Globals.mRight.setSpeed(360);
 		 * Globals.mLeft.forward(); Globals.mRight.forward();
 		 */
-		Globals.mMiddle.setSpeed(50);
 		while (true) {
-			scanEnvironment();
+			//scanEnvironment();
 			try {
-				Thread.sleep(500);
+				if (heading < 0) {
+					heading -= headingIncrement;
+				} else if (heading > 0) {
+					heading += headingIncrement;
+				}
+				Globals.diffPilot.steer(heading);
+				Thread.sleep(Globals.StandardDelay);
 			} catch (InterruptedException e) {
 
 			}
@@ -103,21 +110,21 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(Globals.MUS)) {
-			if (newVal < 255) {
-				Globals.angleAndCM.add(new Float[] { newVal,
-						(float) Globals.mMiddle.getTachoCount() });
-
-				// Object detected
-				System.out.println("Obstacle cm: " + newVal);
-				System.out.println("Angle: " + Globals.mMiddle.getTachoCount());
-
-				// angleAndCM
-				objectDetected = true;
-				// TODO: Scan area now or do so while driving?
-
-			} else {
-				objectDetected = false;
-			}
+//			if (newVal < 255) {
+//				Globals.angleAndCM.add(new Float[] { newVal,
+//						(float) Globals.mMiddle.getTachoCount() });
+//
+//				// Object detected
+//				System.out.println("Obstacle cm: " + newVal);
+//				System.out.println("Angle: " + Globals.mMiddle.getTachoCount());
+//
+//				// angleAndCM
+//				objectDetected = true;
+//				// TODO: Scan area now or do so while driving?
+//
+//			} else {
+//				objectDetected = false;
+//			}
 		}
 		
 		/*int diff = 0;
@@ -159,81 +166,16 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 
 	@Override
 	public void stateChanged(int oldState, int newState) {
-		// TODO Auto-generated method stub
-		/*if (SensorPair.lineFound()) {
-			if (oldState == SensorPair.LINE_MIDDLE) {
-				if (newState == SensorPair.LINE_LEFT) {
-					adjustToLeft();
-				} else if (newState == SensorPair.LINE_RIGHT) {
-					adjustToRight();
-				} else {
-					goSlow();
-				}
-			} else if (oldState == SensorPair.LINE_LEFT) {
-				if (newState == SensorPair.LINE_MIDDLE) {
-					goAhead();
-				} else if (newState == SensorPair.LINE_RIGHT) {
-					
-				} else if (newState == SensorPair.LINE_UNKNOWN) {
-					
-				}
-			}
-		}*/
-		//Globals.diffPilot.steer(turnRate, angle, immediateReturn);
-		prevTime = curTime;
-		curTime = System.currentTimeMillis();
-		long mod = (curTime - prevTime);// / 2;
-		RConsole.println("TimeDiff: " + mod);
-		if (mod <= Globals.TimeThreshold) {
-			mod = Globals.LowSpeed;
-		} else {
-			mod = Globals.NormalSpeed;
-		}
 		
 		if (newState == SensorPair.LINE_LEFT) {
-			//adjustToLeft(mod);
-			//Globals.diffPilot.setTravelSpeed(Globals.LowSpeed);
+			heading = 25;
 			Globals.diffPilot.steer(25);//arcForward(30);//steer(25, 5, true);//steer to the right, incrementing the angle slightly
 		} else if (newState == SensorPair.LINE_RIGHT) {
-			//adjustToRight(mod);
-			//Globals.diffPilot.setTravelSpeed(Globals.LowSpeed);
+			heading = -25;
 			Globals.diffPilot.steer(-25);//;arcForward(30);//steer(-25, -5, true);//steer to the right, incrementing the angle slightly
 		} else if (newState == SensorPair.LINE_MIDDLE) {
-			//goAhead();
-			//Globals.diffPilot.setTravelSpeed(Globals.NormalSpeed);
+			heading = 0;
 			Globals.diffPilot.steer(0);//forward();
-		} else {
-			//Globals.diffPilot.setTravelSpeed(Globals.LowSpeed);
-			//Globals.diffPilot.forward();
-			//goSlow();
 		}
-	}
-	
-	private void adjustToRight(long l) {
-		float max = Math.min(Globals.mLeft.getMaxSpeed(), Globals.MaxSpeed);
-		if (max < l) {
-			l = (long) max - Globals.NormalSpeed;
-		}
-		Globals.mLeft.setSpeed(Globals.NormalSpeed + l);
-		Globals.mRight.setSpeed(Globals.NormalSpeed);
-	}
-	
-	private void adjustToLeft(long l) {
-		float max = Math.min(Globals.mRight.getMaxSpeed(), Globals.MaxSpeed);
-		if (max < l) {
-			l = (long) max - Globals.NormalSpeed;
-		}
-		Globals.mLeft.setSpeed(Globals.NormalSpeed);
-		Globals.mRight.setSpeed(Globals.NormalSpeed + l);
-	}
-	
-	private void goAhead() {
-		Globals.mLeft.setSpeed(Globals.NormalSpeed);
-		Globals.mRight.setSpeed(Globals.NormalSpeed);
-	}
-	
-	private void goSlow() {
-		Globals.mLeft.setSpeed(Globals.LowSpeed);
-		Globals.mRight.setSpeed(Globals.LowSpeed);
 	}
 }

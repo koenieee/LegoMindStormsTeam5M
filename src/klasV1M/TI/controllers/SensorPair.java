@@ -107,7 +107,7 @@ public class SensorPair implements Runnable, SensorListener {
 		}
 		list.add(temp); // remove list?
 		
-		RConsole.println(left && right ? "Middle" : left ? "Left" : right ? "Right" : "Unknown");
+		//RConsole.println(left && right ? "Middle" : left ? "Left" : right ? "Right" : "Unknown");
 		
 		if (!found && temp != LINE_UNKNOWN) {
 			found = true;
@@ -117,55 +117,10 @@ public class SensorPair implements Runnable, SensorListener {
 		
 		if (found && temp != LINE_UNKNOWN) {
 			for (SensorPairListener s : spl) {
+				RConsole.println(left && right ? "Middle" : left ? "Left" : right ? "Right" : "Unknown");
 				s.stateChanged(oldVal, temp);
 			}
 		}
-		
-		
-		
-		/*oldVal = newVal;
-		
-		if (left && right) {
-			RConsole.println("On line");
-			if (!found) {
-				for (SensorPairListener s : spl) {
-					s.lineFound();
-				}
-				RConsole.println("Found!");
-			}
-			newVal = LINE_MIDDLE;//lineRelative = LINE_MIDDLE;
-			relativePosition = LINE_MIDDLE;
-			found = true;
-		} else if (left) {
-			if (relativePosition != LINE_RIGHT) {
-				newVal = LINE_LEFT; //lineRelative = LINE_LEFT;
-				RConsole.println("Left");
-				relativePosition = LINE_LEFT;
-			}
-		} else if (right) {
-			if (relativePosition != LINE_LEFT) {
-				newVal = LINE_RIGHT; //lineRelative = LINE_RIGHT;
-				RConsole.println("Right");
-				relativePosition = LINE_RIGHT;
-			}
-		} else if (!left && !right) {
-			if (!lost) {
-				for (SensorPairListener s : spl) {
-					s.lineLost();
-				}
-				RConsole.println("Now lost!");
-			}
-			newVal = relativePosition;//LINE_UNKNOWN; //lineRelative = LINE_UNKNOWN;
-			//relativePosition = LINE_UNKNOWN;
-			lost = true;
-		}
-		
-		if (oldVal != newVal) {
-			for (SensorPairListener s : spl) {
-				s.stateChanged(oldVal, newVal);
-			}
-		}
-		RConsole.println("Rel: " + (relativePosition == LINE_MIDDLE ? "Middle" : relativePosition == LINE_LEFT ? "Left" : relativePosition == LINE_RIGHT ? "Right" : "Unknown"));*/
 	}
 	
 	public static boolean isLost() {
