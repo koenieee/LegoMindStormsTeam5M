@@ -1,26 +1,26 @@
 package klasV1M.TI.controllers;
 
 import klasV1M.TI.Globals;
+import klasV1M.TI.sensoren.SensorListener;
+import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.comm.RConsole;
 
-public class LightTestController extends Thread {
+public class LightTestController implements SensorListener {
 	public LightTestController() {
-		start();
+		Globals.MLS.addListener(this);
 	}
 
 	@Override
-	public void run() {
-		while (true) {
-			int l = Globals.MLS.getLightValue();
-			int r = Globals.MCS.getLightValue();
+	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+		// TODO Auto-generated method stub
+		
+	}
 
-			RConsole.println(System.currentTimeMillis() % 10000 + "L: " + l
-					+ " | R: " + r);
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-			}
+	@Override
+	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
+		// TODO Auto-generated method stub
+		if (s.equals(Globals.MLS)) {
+			RConsole.println("L: " + value);
 		}
 	}
 }

@@ -3,8 +3,7 @@ package klasV1M.TI;
 import klasV1M.TI.controllers.Configuration;
 import klasV1M.TI.controllers.LightTestController;
 import klasV1M.TI.controllers.ObstacleController;
-import klasV1M.TI.controllers.SensorPair;
-import klasV1M.TI.controllers.TestController;
+import lejos.nxt.Button;
 import lejos.nxt.comm.RConsole;
 
 /**
@@ -25,14 +24,15 @@ public class Main {
 		c.configureLightSensors();
 		//c.setAutoAdjust(true);
 		//c.resetSoundSensor();
-		//c.setAutoAdjust(true); // WARNING!! HALTS THE PROGRAM FOR UNKNOWN REASONS!
+		System.out.println("Place lightsensor to the left of the black line");
+		Button.waitForAnyPress();
 		ObstacleController oc = new ObstacleController();
 		oc.start();
-		SensorPair sp = new SensorPair();
-		sp.addListener(oc);
-		sp.start();
-		//LightTestController ltc = new LightTestController();
-		//TestController tc = new TestController(200);
+//		SensorPair sp = new SensorPair();
+//		sp.addListener(oc);
+//		sp.start();
+		LightTestController lc = new LightTestController();
+		
 		while (true) {
 			Thread.yield();
 		}

@@ -42,7 +42,6 @@ public class Configuration implements Runnable, SensorListener {
 	public synchronized void resetAndConfigureAll() {
 		measureWheelRadius();
 		configureLightSensors();
-		resetSoundSensor();
 	}
 	
 	/**
@@ -138,13 +137,6 @@ public class Configuration implements Runnable, SensorListener {
 		return true;
 	}
 	
-	public synchronized void resetSoundSensor() {
-		Globals.mMiddle.flt();
-		System.out.println("Please put the sound sensor in the default position");
-		Button.waitForAnyPress();
-		Globals.mMiddle.resetTachoCount();
-	}
-	
 	/**
 	 * Returns the radius of the wheels.
 	 * @return the radius of the wheels
@@ -196,12 +188,10 @@ public class Configuration implements Runnable, SensorListener {
 
 	@Override
 	public void run() {
-		Globals.MCS.addListener(this);
 		Globals.MLS.addListener(this);
 		while (!t.interrupted() && autoAdjust) {
 			Thread.yield();
 		}
-		Globals.MCS.removeListener(this);
 		Globals.MLS.removeListener(this);
 	}
 	
@@ -234,8 +224,6 @@ public class Configuration implements Runnable, SensorListener {
 			highestCount++;
 			highestTotal += rawValue;
 			highestAverage = highestTotal / highestCount;
-			//highest = rawValue;
-			Globals.MCS.setHigh((int) highestAverage);//highest);
 			Globals.MLS.setHigh((int) highestAverage);//highest);
 		}
 		if (rawValue < (highestAverage + lowestAverage) / 2) {//rawValue < lowest) {
@@ -244,7 +232,6 @@ public class Configuration implements Runnable, SensorListener {
 			lowestCount++;
 			lowestTotal += rawValue;
 			lowestAverage = lowestAverage / lowestCount;
-			Globals.MCS.setLow((int) lowestAverage);//lowest);
 			Globals.MLS.setLow((int) lowestAverage);//lowest);
 		}
 	}

@@ -2,7 +2,6 @@ package klasV1M.TI;
 
 import java.util.LinkedList;
 
-import klasV1M.TI.sensoren.MyColorSensor;
 import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import lejos.nxt.Motor;
@@ -55,10 +54,6 @@ public class Globals {
 	 */
 	public static int ConeOfVision = 20;
 
-	/**
-	 * The {@link MyColorSensor} mounted on the front-right
-	 */
-	public static MyColorSensor MCS = new MyColorSensor(SensorPort.S1);//, SensorConstants.TYPE_LIGHT_ACTIVE);
 	/**
 	 * The {@link MyLightSensor} mounted on the front-left
 	 */

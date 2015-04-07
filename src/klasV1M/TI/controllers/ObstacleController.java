@@ -3,23 +3,33 @@ package klasV1M.TI.controllers;
 import java.util.Iterator;
 
 import klasV1M.TI.Globals;
-import klasV1M.TI.sensoren.SensorHandler;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
-import lejos.nxt.comm.RConsole;
 import lejos.robotics.navigation.DifferentialPilot;
 
-public class ObstacleController implements Runnable, SensorListener, SensorPairListener {
+public class ObstacleController implements Runnable, SensorListener {
 
 	private Thread t;
+	
+	private boolean lost;
+	private boolean found;
+	private boolean onLine;
+	
 	private boolean objectDetected;
-	private boolean lineLost;
+	private boolean evadingObject;
 	private float heading;
 	private int headingIncrement = 5;
 	private int standardHeading = 25;
 	
-	private long prevTime;
-	private long curTime;
+	public static final int LINE_UNKNOWN = -1;
+	public static final int LINE_MIDDLE = 0;
+	public static final int LINE_LEFT = 1;
+	public static final int LINE_RIGHT = 2;
+	
+	private int relativePosition = 0;
+	
+	private long prevTime; // remove?
+	private long curTime; // remove?
 
 	public ObstacleController() {
 		t = null;
@@ -30,7 +40,7 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		Globals.diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);//RotateSpeed(1);//360);//Globals.LowSpeed);
 		Globals.diffPilot.forward();
 		Globals.MUS.addListener(this);
-		
+		Globals.MLS.addListener(this);
 
 		//Globals.mLeft.setAcceleration(180);
 		//Globals.mRight.setAcceleration(180);
@@ -126,23 +136,19 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 				objectDetected = false;
 			}
 		}
-		
-		/*int diff = 0;
-		if (newVal < 20) {
-			diff = (int) ((20 - newVal) * (36 + 18));
-		}*/
-		
-		//System.out.println("Diff: " + diff);
-		
-		// LightSensor
 		if (s.equals(Globals.MLS)) {
-			// Test
-			//Globals.mLeft.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
-		}
-		// ColorSensor
-		if (s.equals(Globals.MCS)) {
-			// Test
-			//Globals.mRight.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
+			int curHeading = LINE_UNKNOWN;
+			if (newVal > 40 && newVal < 60) {
+				// on line, go straight
+				curHeading = LINE_MIDDLE;
+			} else if (newVal < 40 && newVal < oldVal) {
+				// darker
+				curHeading = LINE_LEFT;
+			} else if (newVal > 60 && newVal > oldVal) {
+				// lighter
+				curHeading = LINE_RIGHT;
+			}
+			Globals.diffPilot.steer(newVal - 50);
 		}
 	}
 
@@ -150,32 +156,5 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
 		// TODO Auto-generated method stub
 		// Ignore
-	}
-
-	@Override
-	public void lineFound() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void lineLost() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void stateChanged(int oldState, int newState) {
-		
-		if (newState == SensorPair.LINE_LEFT) {
-			heading = 25;
-			Globals.diffPilot.steer(50);//arcForward(30);//steer(25, 5, true);//steer to the right, incrementing the angle slightly
-		} else if (newState == SensorPair.LINE_RIGHT) {
-			heading = -25;
-			Globals.diffPilot.steer(50);//;arcForward(30);//steer(-25, -5, true);//steer to the right, incrementing the angle slightly
-		} else if (newState == SensorPair.LINE_MIDDLE) {
-			heading = 0;
-			Globals.diffPilot.steer(0);//forward();
-		}
 	}
 }
