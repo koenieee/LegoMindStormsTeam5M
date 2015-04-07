@@ -13,13 +13,13 @@ import lejos.nxt.SensorPort;
  *
  */
 public class MyLightSensor extends LightSensor implements UpdatingSensor {
-	private List<SensorListener> sis;
+	private List<SensorListener> listeners;
 	private float oldVal, newVal;
 	private static MyLightSensor sensor = null;
 
 	private MyLightSensor() {
 		super(SensorPort.S2);
-		sis = new ArrayList<SensorListener>();
+		listeners = new ArrayList<SensorListener>();
 	}
 	
 	public static MyLightSensor getInstance() {
@@ -47,18 +47,13 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	 * 
 	 */
 	public void updateState() {
-		// -1 returns when error occured?
-		//RConsole.print("$");
 		oldVal = newVal;
 		newVal = getLightValue();
 
 		if (oldVal != newVal) {
-			for (SensorListener s : sis) {
+			for (SensorListener s : listeners) {
 				s.stateChanged(this, oldVal, newVal);
 			}
-		}
-		for (SensorListener s : sis) {
-			s.stateNotification(this, newVal, getNormalizedLightValue());//newVal);
 		}
 	}
 
@@ -76,22 +71,22 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 		if (hasListener(senin)) {
 			return;
 		}
-		if (sis.size() == 0) {
+		if (listeners.size() == 0) {
 			SensorHandler.getInstance().addSensor(this);
 		}
-		sis.add(senin);
+		listeners.add(senin);
 	}
 	
 	public void removeListener(SensorListener senin) {
 		if (hasListener(senin)) {
-			sis.remove(senin);
-			if (sis.size() == 0) {
+			listeners.remove(senin);
+			if (listeners.size() == 0) {
 				SensorHandler.getInstance().removeSensor(this);
 			}
 		}
 	}
 
 	public boolean hasListener(SensorListener sensor) {
-		return sis.contains(sensor);
+		return listeners.contains(sensor);
 	}
 }

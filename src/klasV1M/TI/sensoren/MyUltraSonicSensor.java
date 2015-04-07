@@ -9,8 +9,8 @@ import lejos.nxt.UltrasonicSensor;
 /**
  * Overrides class UltraSonicSensor to implement SensorListener Pattern
  * 
- * @author koen
- *
+ * @author Remco, Koen, & Medzo
+ * @version 1.0.0.0
  */
 public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSensor {
 	private float oldVal, newVal;
@@ -46,9 +46,6 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 			for (SensorListener s : listeners) {
 				s.stateChanged(this, oldVal, newVal);
 			}
-		}
-		for (SensorListener s : listeners) {
-			s.stateNotification(this, newVal, newVal);
 		}
 	}
 

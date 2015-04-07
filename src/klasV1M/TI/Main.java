@@ -1,26 +1,23 @@
 package klasV1M.TI;
 
-import klasV1M.TI.controllers.Configuration;
-import klasV1M.TI.controllers.ObstacleController;
 import lejos.nxt.Button;
 
 /**
- * @author koen
- *
+ * 
+ * @author Remco, Koen, & Medzo
+ * @version 1.0.0.0
  */
 public class Main {
 
 	/**
 	 * Entrypoint for the application
-	 * @param args
+	 * @param args Arguments that can be passed into the application. Current implementation ignores these
 	 */
 	public static void main(String[] args) {
 		//RConsole.open();
-		Configuration c = new Configuration();
 		System.out.println("Starting...");
-		//c.resetAndConfigureAll();
+		Configuration c = new Configuration();
 		c.configureLightSensors();
-		//c.setAutoAdjust(true);
 		System.out.println("Place lightsensor to the left of the black line");
 		Button.waitForAnyPress();
 		ObstacleController oc = new ObstacleController();
