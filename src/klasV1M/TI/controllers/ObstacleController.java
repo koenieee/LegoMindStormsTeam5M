@@ -90,13 +90,28 @@ public class ObstacleController implements Runnable, SensorListener {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(Globals.MUS)) {
-			if (newVal < 255) {
-
+			if (newVal < 30) { //if object is in 30cm of us.
+				//Globals.diffPilot.rotate(30);
+				evadingObject = true;
 			} else {
 				
+				if(evadingObject){
+					
+					Globals.diffPilot.stop();
+					Globals.diffPilot.rotate(90);
+					Globals.diffPilot.travel(30);
+					Globals.diffPilot.rotate(-90);
+					Globals.diffPilot.travel(50);
+					Globals.diffPilot.rotate(-90);
+					Globals.diffPilot.travel(30);
+					Globals.diffPilot.rotate(90);
+					evadingObject = false;
+					
+					//Globals.diffPilot.arcForward(-40);
+				}
 			}
 		}
-		if (s.equals(Globals.MLS)) {
+		if (s.equals(Globals.MLS) && !evadingObject) {
 			int curHeading = LINE_UNKNOWN;
 			if (newVal > 40 && newVal < 60) {
 				// on line, go straight

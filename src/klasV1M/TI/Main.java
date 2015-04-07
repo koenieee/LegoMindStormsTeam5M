@@ -17,7 +17,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		RConsole.open();
+	//	RConsole.open();
 		Configuration c = new Configuration();
 		System.out.println("Starting...");
 		//c.resetAndConfigureAll();
@@ -31,7 +31,7 @@ public class Main {
 //		SensorPair sp = new SensorPair();
 //		sp.addListener(oc);
 //		sp.start();
-		LightTestController lc = new LightTestController();
+		//LightTestController lc = new LightTestController();
 		
 		while (true) {
 			Thread.yield();
