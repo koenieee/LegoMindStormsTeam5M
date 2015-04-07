@@ -1,7 +1,5 @@
 package klasV1M.TI;
 
-import java.util.LinkedList;
-
 import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import lejos.nxt.Motor;
@@ -67,18 +65,13 @@ public class Globals {
 	 * The right {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mRight = Motor.A;
-	/**
-	 * The middle {@link NXTRegulatedMotor}
-	 */
-	public static NXTRegulatedMotor mMiddle = Motor.B;
+
 	/**
 	 * The left {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
 	
 	public static DifferentialPilot diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2, TrackWidth, mLeft, mRight);
-
-	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
 
 	public static void playSong() {
 		Sound.setVolume(Sound.VOL_MAX);

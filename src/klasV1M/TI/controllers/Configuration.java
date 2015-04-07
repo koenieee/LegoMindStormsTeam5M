@@ -50,7 +50,6 @@ public class Configuration implements Runnable, SensorListener {
 	public synchronized void measureWheelRadius() {
 		// Force motors off
 		Globals.mLeft.stop(true);
-		Globals.mMiddle.stop(true);
 		Globals.mRight.stop();
 		
 		System.out.println("Please place a solid object about 50 cm away from this robot\nIncomplete method!");
