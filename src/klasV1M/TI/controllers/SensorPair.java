@@ -48,19 +48,20 @@ public class SensorPair implements Runnable, SensorListener {
 
 	public SensorPair() {
 		Globals.MLS.addListener(this);
-		Globals.MCS.addListener(this);
+		//Globals.MCS.addListener(this);
 		
 		spl = new ArrayList<SensorPairListener>();
 		list = new ArrayList<Integer>();
 		
-		left = Globals.MLS.getLightValue() <= Globals.BlackThreshold;
-		lPrevTime = lLastTime = System.currentTimeMillis();
-		right = Globals.MCS.getLightValue() <= Globals.BlackThreshold;
-		rPrevTime = rLastTime = System.currentTimeMillis();
+		lLast = Globals.MLS.getLightValue();
+		left = lLast <= Globals.BlackThreshold;
+		//lPrevTime = lLastTime = System.currentTimeMillis();
+		//right = Globals.MCS.getLightValue() <= Globals.BlackThreshold;
+		//rPrevTime = rLastTime = System.currentTimeMillis();
 		
-		relativePosition = left && right ? LINE_MIDDLE : left ? LINE_LEFT : right ? LINE_RIGHT : LINE_UNKNOWN; 
+		relativePosition = LINE_UNKNOWN;//left && right ? LINE_MIDDLE : left ? LINE_LEFT : right ? LINE_RIGHT : LINE_UNKNOWN; 
 		
-		determineLine();
+		//determineLine();
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class SensorPair implements Runnable, SensorListener {
 			}
 			
 			// active polling
-			determineLine();
+			//determineLine();
 			
 			//lineRelative = left && right ? 0 : left ? -1 : right ? 1 : 8;
 			
@@ -152,49 +153,30 @@ public class SensorPair implements Runnable, SensorListener {
 
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-//		//System.out.println("old: " + oldVal + " | new: " + newVal);
-//		//System.out.println(System.currentTimeMillis() % 1000 + ": " + (s.equals(Globals.MLS) ? "MLS" : "MCS"));
-//		//RConsole.println(System.currentTimeMillis() % 100000 + ": " + (s.equals(Globals.MLS) ? "MLS" : "MCS") + " old|new: " + oldVal + "|" + newVal);
-//		// Ignore?
-//		if (s.equals(Globals.MLS)) {
-//			left = newVal <= Globals.BlackThreshold;
-//		}
-//
-//		if (s.equals(Globals.MCS)) {
-//			//RConsole.println(System.currentTimeMillis() % 100000 + ": old|new: " + oldVal + "|" + newVal);
-//			right = newVal <= Globals.BlackThreshold;
-//		}
-//		//t.interrupt();
-//		// passive polling
-//		determineLine();
+		
+		if (s.equals(Globals.MLS)) {
+			int curHeading = LINE_UNKNOWN;
+			if (newVal > 40 && newVal < 60) {
+				// on line, go straight
+				curHeading = LINE_MIDDLE;
+			} else if (newVal < 40 && newVal < oldVal) {
+				// darker
+				curHeading = LINE_LEFT;
+			} else if (newVal > 60 && newVal > oldVal) {
+				// lighter
+				curHeading = LINE_RIGHT;
+			}
+			Globals.diffPilot.steer(newVal - 50);
+			for (SensorPairListener sen : spl) {
+					//sen.stateChanged(LINE_UNKNOWN, curHeading);
+			}
+		}
 	}
 
 	@Override
 	public void stateNotification(UpdatingSensor s, float value, float rawValue) {
 		// TODO Auto-generated method stub
 		// Ignore?
-		RConsole.print("*");
-		if (s.equals(Globals.MLS)) {
-			left = value <= Globals.BlackThreshold;
-			lSensorCount++;
-			lLast = (int)value;
-			lPrevTime = lLastTime;
-			lLastTime = System.currentTimeMillis();
-		} else if (s.equals(Globals.MCS)) {
-			right = value <= Globals.BlackThreshold;
-			rLast = (int)value;
-			rSensorCount++;
-			lPrevTime = lLastTime;
-			lLastTime = System.currentTimeMillis();
-		}
-		
-		if (lSensorCount >= 1 && rSensorCount >= 1) {
-			RConsole.println("(" + lSensorCount + "|" + rSensorCount + ")\nLast: " + lLast + "|" + rLast);
-			lSensorCount = 0;
-			rSensorCount = 0;
-			//t.interrupt();
-			determineLine();
-		}
 	}
 	
 	public void addListener(SensorPairListener listener) {

@@ -120,59 +120,21 @@ public class Configuration implements Runnable, SensorListener {
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating white...");
-		highest = Globals.MCS.getRawLightValue(); //Math.max(Globals.MCS.getRawLightValue(), Globals.MLS.getNormalizedLightValue());
-		if (highest == 0) {
-			System.out.println("Faulty value! Restarting...");
-			return configureLightSensors();
-		}
-		Globals.MCS.setHigh((int) highest);
-		Globals.MLS.setHigh((int) highest);//calibrateHigh();
-		
-		//System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getHigh());
-		/*
-		Globals.mLeft.setAcceleration(60);
-		Globals.mRight.setAcceleration(60);
-		Globals.mLeft.forward();
-		Globals.mRight.forward();
-		
-		try{
-			Thread.sleep(700);
-		}
-		catch (InterruptedException e){}
-		Globals.mLeft.stop();
-		Globals.mRight.stop();*/
-		
+		Globals.MLS.calibrateHigh();
 		
 		System.out.println("Place on black spot in five seconds");
 
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating black...");
-		lowest = Globals.MCS.getRawLightValue(); //Math.max(Globals.MCS.getRawLightValue(), Globals.MLS.getNormalizedLightValue());
-		if (lowest == 0) {
-			System.out.println("Warning! Calibration may have failed!");
-			Delay.msDelay(2000);
-		}
-		Globals.MCS.setLow((int) lowest);
-		Globals.MLS.setLow((int) lowest);//calibrateLow();
+		Globals.MLS.calibrateLow();
 		
-		System.out.println(Globals.MCS.getLightValue() + "\n" + Globals.MCS.getLow());
-		//Globals.playSong();
-		
-		if (lowest >= highest || lowest == -1 || highest == -1) {
-			System.out.println("Calibrated wrongly! H: " + highest + "| L: " + lowest +" \nRestarting procedure...");
-			Delay.msDelay(2000);
-			if (configureLightSensors()) {
-				return true;
-			}
-		}
 		highestCount = 1;
 		highestTotal = highest;
 		highestAverage = highest;
 		lowestCount = 1;
 		lowestTotal = lowest;
 		lowestAverage = lowest;
-		System.out.println("H|L: " + highest + " | " + lowest);
 		return true;
 	}
 	

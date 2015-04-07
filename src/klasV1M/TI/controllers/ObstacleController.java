@@ -67,12 +67,12 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		while (true) {
 			//scanEnvironment();
 			try {
-				if (heading < 0) {
-					heading -= headingIncrement;
-				} else if (heading > 0) {
-					heading += headingIncrement;
-				}
-				Globals.diffPilot.steer(heading);
+//				if (heading < 0) {
+//					heading -= headingIncrement;
+//				} else if (heading > 0) {
+//					heading += headingIncrement;
+//				}
+//				Globals.diffPilot.steer(heading);
 				Thread.sleep(Globals.StandardDelay);
 			} catch (InterruptedException e) {
 
@@ -110,21 +110,21 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(Globals.MUS)) {
-//			if (newVal < 255) {
-//				Globals.angleAndCM.add(new Float[] { newVal,
-//						(float) Globals.mMiddle.getTachoCount() });
-//
-//				// Object detected
-//				System.out.println("Obstacle cm: " + newVal);
-//				System.out.println("Angle: " + Globals.mMiddle.getTachoCount());
-//
-//				// angleAndCM
-//				objectDetected = true;
-//				// TODO: Scan area now or do so while driving?
-//
-//			} else {
-//				objectDetected = false;
-//			}
+			if (newVal < 255) {
+				Globals.angleAndCM.add(new Float[] { newVal,
+						(float) Globals.mMiddle.getTachoCount() });
+
+				// Object detected
+				System.out.println("Obstacle cm: " + newVal);
+				System.out.println("Angle: " + Globals.mMiddle.getTachoCount());
+
+				// angleAndCM
+				objectDetected = true;
+				// TODO: Scan area now or do so while driving?
+
+			} else {
+				objectDetected = false;
+			}
 		}
 		
 		/*int diff = 0;
@@ -169,10 +169,10 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		
 		if (newState == SensorPair.LINE_LEFT) {
 			heading = 25;
-			Globals.diffPilot.steer(25);//arcForward(30);//steer(25, 5, true);//steer to the right, incrementing the angle slightly
+			Globals.diffPilot.steer(50);//arcForward(30);//steer(25, 5, true);//steer to the right, incrementing the angle slightly
 		} else if (newState == SensorPair.LINE_RIGHT) {
 			heading = -25;
-			Globals.diffPilot.steer(-25);//;arcForward(30);//steer(-25, -5, true);//steer to the right, incrementing the angle slightly
+			Globals.diffPilot.steer(50);//;arcForward(30);//steer(-25, -5, true);//steer to the right, incrementing the angle slightly
 		} else if (newState == SensorPair.LINE_MIDDLE) {
 			heading = 0;
 			Globals.diffPilot.steer(0);//forward();
