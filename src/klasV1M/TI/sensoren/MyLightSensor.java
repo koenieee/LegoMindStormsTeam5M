@@ -5,7 +5,6 @@ import java.util.List;
 
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
-import lejos.nxt.comm.RConsole;
 
 /**
  * Overrides class LightSensor to implement SensorListener Pattern
@@ -15,12 +14,19 @@ import lejos.nxt.comm.RConsole;
  */
 public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	private List<SensorListener> sis;
-	private float oldVal;
-	private float newVal;
+	private float oldVal, newVal;
+	private static MyLightSensor sensor = null;
 
-	public MyLightSensor(SensorPort port) {
-		super(port);
+	private MyLightSensor() {
+		super(SensorPort.S2);
 		sis = new ArrayList<SensorListener>();
+	}
+	
+	public static MyLightSensor getInstance() {
+		if (sensor == null) {
+			sensor = new MyLightSensor();
+		}
+		return sensor;
 	}
 	
 	@Override
@@ -77,9 +83,11 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	}
 	
 	public void removeListener(SensorListener senin) {
-		sis.remove(senin);
-		if (sis.size() == 0) {
-			SensorHandler.getInstance().removeSensor(this);
+		if (hasListener(senin)) {
+			sis.remove(senin);
+			if (sis.size() == 0) {
+				SensorHandler.getInstance().removeSensor(this);
+			}
 		}
 	}
 

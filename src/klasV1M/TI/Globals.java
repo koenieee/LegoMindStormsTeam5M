@@ -18,49 +18,10 @@ import lejos.robotics.navigation.DifferentialPilot;
  */
 public class Globals {
 	/**
-	 * Standard delay for updating.
+	 * The track width used by the {@link DifferentialPilot}
 	 */
-	public static int StandardDelay = 100;
-	
-	public static int LongDelay = 10000;
-	
-	// TODO:
-	// Use DifferentialPilot for moving?
-	public static double WheelDiameter = 3.4f;
 	public static double TrackWidth = 13;
 	
-
-	
-	
-	
-	/**
-	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
-	 * need to be equal or lower to, to be considered of the color black.
-	 * Value needs to be between 0-100
-	 */
-	public static int BlackThreshold = 35;
-	
-	public static int LowSpeed = 20;
-	public static int NormalSpeed = 2 * LowSpeed;
-	public static int HighSpeed = 3 * LowSpeed;
-	public static int MaxSpeed = 5 * LowSpeed;
-	
-	public static int TimeThreshold = 10000 / LowSpeed;
-	
-	/**
-	 * The cone of vision in degrees of the {@link MyUltraSonicSensor}
-	 */
-	public static int ConeOfVision = 20;
-
-	/**
-	 * The {@link MyLightSensor} mounted on the front-left
-	 */
-	public static MyLightSensor MLS = new MyLightSensor(SensorPort.S2);
-	/**
-	 * The {@link MyUltraSonicSensor} mounted on the front
-	 */
-	public static MyUltraSonicSensor MUS = new MyUltraSonicSensor(SensorPort.S4);
-
 	/**
 	 * The right {@link NXTRegulatedMotor}
 	 */

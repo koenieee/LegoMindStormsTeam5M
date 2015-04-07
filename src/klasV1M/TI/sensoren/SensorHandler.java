@@ -3,16 +3,17 @@ package klasV1M.TI.sensoren;
 import java.util.ArrayList;
 import java.util.List;
 
-import klasV1M.TI.Globals;
-import lejos.nxt.comm.RConsole;
-
+/**
+ * 
+ * @author Remco, Koen, & Medzo
+ * @version 1.0.0.0
+ */
 public class SensorHandler extends Thread {
 	private List<UpdatingSensor> theSensors;
 	/**
 	 * The period time that the {@link SensorHandler} polls the Sensors.
-	 * Defaults to {@link Globals}'s StandardDelay.
 	 */
-	public static int PERIOD = Globals.StandardDelay; ///< Period time that the SensorHandler polls the Sensors.
+	public static int PERIOD = 100;
 	private static SensorHandler theHandler = null;
 
 	private SensorHandler() {
@@ -21,8 +22,7 @@ public class SensorHandler extends Thread {
 	}
 
 	/**
-	 * This creates an single instance of {@link SensorHandler} as there should only be one.
-	 * 
+	 * Creates and starts a single instance of {@link SensorHandler} if there is not already one
 	 */
 	public static SensorHandler getInstance() {
 		if (theHandler == null)
@@ -41,27 +41,29 @@ public class SensorHandler extends Thread {
 		while(!Thread.interrupted()) {
 			try {
 				synchronized (this) {
-					//RConsole.print("#");
 					for (UpdatingSensor ses : theSensors)
 						ses.updateState();
 				}
 				Thread.sleep(PERIOD);
 			} catch (InterruptedException e) {
-				
 			}
 		}
 	}
 
 	/**
-	 * This adds an {@link UpdatingSensor} to the sensor list of {@link SensorHandler} to see if there
+	 * Adds an {@link UpdatingSensor} to the list of {@link SensorHandler} to see if there
 	 * are any updates.
 	 * 
-	 * @param inS The {@link UpdatingSensor} to add
+	 * @param sensor The {@link UpdatingSensor} to add
 	 */
-	public synchronized void addSensor(UpdatingSensor inS) {
-		theSensors.add(inS);
+	public synchronized void addSensor(UpdatingSensor sensor) {
+		theSensors.add(sensor);
 	}
 
+	/**
+	 * Removes an {@link UpdatingSensor} from the list of {@link SensorHandler} if it exists therein
+	 * @param sensor The {@link UpdatingSensor} to add
+	 */
 	public synchronized void removeSensor(UpdatingSensor sensor) {
 		theSensors.remove(sensor);
 	}

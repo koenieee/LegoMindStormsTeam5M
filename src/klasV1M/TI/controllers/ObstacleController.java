@@ -1,13 +1,20 @@
 package klasV1M.TI.controllers;
 
 import klasV1M.TI.Globals;
+import klasV1M.TI.sensoren.MyLightSensor;
+import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.robotics.navigation.DifferentialPilot;
 
-public class ObstacleController implements Runnable, SensorListener {
+/**
+ * 
+ * @author Remco
+ *
+ */
+public class ObstacleController implements SensorListener {
 
-	private Thread t;
+	private Thread t = null;
 	
 	private boolean lost;
 	private boolean found;
@@ -25,71 +32,18 @@ public class ObstacleController implements Runnable, SensorListener {
 	public static final int LINE_RIGHT = 2;
 	
 	private int relativePosition = 0;
-	
-	private long prevTime; // remove?
-	private long curTime; // remove?
 
 	public ObstacleController() {
-		t = null;
-		//SensorHandler.PERIOD = period;
-		// Light sensor are being handled by sensorpair
-		// Globals.MLS.addListener(this);
-		// Globals.MCS.addListener(this);
 		Globals.diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);//RotateSpeed(1);//360);//Globals.LowSpeed);
 		Globals.diffPilot.forward();
-		Globals.MUS.addListener(this);
-		Globals.MLS.addListener(this);
-
-		//Globals.mLeft.setAcceleration(180);
-		//Globals.mRight.setAcceleration(180);
-		//Globals.mLeft.setSpeed(180);
-		//Globals.mRight.setSpeed(180);
-		//Globals.mLeft.forward();
-		//Globals.mRight.forward();
-		prevTime = curTime = System.currentTimeMillis();
-	}
-
-	@Override
-	public void run() {
-		/*
-		 * Globals.mLeft.setSpeed(360); Globals.mRight.setSpeed(360);
-		 * Globals.mLeft.forward(); Globals.mRight.forward();
-		 */
-		while (true) {
-			//scanEnvironment();
-			try {
-//				if (heading < 0) {
-//					heading -= headingIncrement;
-//				} else if (heading > 0) {
-//					heading += headingIncrement;
-//				}
-//				Globals.diffPilot.steer(heading);
-				Thread.sleep(Globals.StandardDelay);
-			} catch (InterruptedException e) {
-
-			}
-		}
-	}
-
-	public void start() {
-		if (t == null) {
-			t = new Thread(this);
-			t.start();
-		}
-	}
-
-	public void stop() {
-		if (t != null) {
-			t.interrupt();
-			t = null;
-			t.interrupt();
-		}
+		MyUltraSonicSensor.getInstance().addListener(this);
+		MyLightSensor.getInstance().addListener(this);
 	}
 
 	@Override
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
-		if (s.equals(Globals.MUS)) {
+		if (s.equals(MyUltraSonicSensor.getInstance())) {
 			if (newVal < 30) { //if object is in 30cm of us.
 				//Globals.diffPilot.rotate(30);
 				evadingObject = true;
@@ -111,7 +65,7 @@ public class ObstacleController implements Runnable, SensorListener {
 				}
 			}
 		}
-		if (s.equals(Globals.MLS) && !evadingObject) {
+		if (s.equals(MyLightSensor.getInstance()) && !evadingObject) {
 			int curHeading = LINE_UNKNOWN;
 			if (newVal > 40 && newVal < 60) {
 				// on line, go straight

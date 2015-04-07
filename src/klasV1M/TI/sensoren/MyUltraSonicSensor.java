@@ -2,11 +2,9 @@ package klasV1M.TI.sensoren;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import lejos.nxt.I2CPort;
+import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
-import lejos.nxt.comm.RConsole;
 
 /**
  * Overrides class UltraSonicSensor to implement SensorListener Pattern
@@ -16,12 +14,24 @@ import lejos.nxt.comm.RConsole;
  */
 public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSensor {
 	private float oldVal, newVal;
-	private List<SensorListener> upd;
+	private List<SensorListener> listeners;
+	private static MyUltraSonicSensor sensor = null;
 
-	public MyUltraSonicSensor(I2CPort port) {
-		super(port);
-		upd = new ArrayList<SensorListener>();
+	private MyUltraSonicSensor() {
+		super(SensorPort.S4);
+		listeners = new ArrayList<SensorListener>();
 	}
+	
+	/**
+	 * The {@link MyUltraSonicSensor} mounted on the front
+	 */
+	public static MyUltraSonicSensor getInstance() {
+		if (sensor == null) {
+			sensor = new MyUltraSonicSensor();
+		}
+		return sensor;
+	}
+
 
 	/**
 	 * Updates calls the method that implements the SensorListener with the new
@@ -33,11 +43,11 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 		oldVal = newVal;
 		newVal = super.getRange();
 		if (oldVal != newVal) {
-			for (SensorListener s : upd) {
+			for (SensorListener s : listeners) {
 				s.stateChanged(this, oldVal, newVal);
 			}
 		}
-		for (SensorListener s : upd) {
+		for (SensorListener s : listeners) {
 			s.stateNotification(this, newVal, newVal);
 		}
 	}
@@ -57,20 +67,22 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 			return;
 		}
 		
-		if (upd.size() == 0) {
+		if (listeners.size() == 0) {
 			SensorHandler.getInstance().addSensor(this);
 		}
-		upd.add(senin);
+		listeners.add(senin);
 	}
 	
 	public void removeListener(SensorListener sensor) {
-		upd.remove(sensor);
-		if (upd.size() == 0) {
-			SensorHandler.getInstance().removeSensor(this);
+		if (hasListener(sensor)) {
+			listeners.remove(sensor);
+			if (listeners.size() == 0) {
+				SensorHandler.getInstance().removeSensor(this);
+			}
 		}
 	}
 
 	public boolean hasListener(SensorListener sensor) {
-		return upd.contains(sensor);
+		return listeners.contains(sensor);
 	}
 }
