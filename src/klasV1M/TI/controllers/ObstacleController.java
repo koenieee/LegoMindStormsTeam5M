@@ -7,6 +7,7 @@ import klasV1M.TI.sensoren.SensorHandler;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.comm.RConsole;
+import lejos.robotics.navigation.DifferentialPilot;
 
 public class ObstacleController implements Runnable, SensorListener, SensorPairListener {
 
@@ -24,8 +25,8 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		// Light sensor are being handled by sensorpair
 		// Globals.MLS.addListener(this);
 		// Globals.MCS.addListener(this);
-		Globals.diffPilot.setRotateSpeed(1);//Globals.LowSpeed);
-		
+		Globals.diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);//RotateSpeed(1);//360);//Globals.LowSpeed);
+		Globals.diffPilot.forward();
 		Globals.MUS.addListener(this);
 		
 
