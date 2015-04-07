@@ -21,8 +21,8 @@ public class SensorHandler extends Thread {
 	}
 
 	/**
-	 * This creates an single instance of SensorHandler to there is only one
-	 * SensorHandler
+	 * This creates an single instance of {@link SensorHandler} as there should only be one.
+	 * 
 	 */
 	public static SensorHandler getInstance() {
 		if (theHandler == null)
@@ -31,7 +31,7 @@ public class SensorHandler extends Thread {
 	}
 
 	/**
-	 * Main function of SensorHandler to ask every <PERIOD> seconds if the
+	 * Main function of {@link SensorHandler} to ask every <PERIOD> seconds if the
 	 * sensor has been changes
 	 * @exception If the thread has been interrupted there will be an exception thrown.
 	 */
@@ -53,11 +53,10 @@ public class SensorHandler extends Thread {
 	}
 
 	/**
-	 * This adds the Sensor the the sensor list of SensorHandler to see if there
+	 * This adds an {@link UpdatingSensor} to the sensor list of {@link SensorHandler} to see if there
 	 * are any updates.
 	 * 
-	 * @param inS
-	 *            UpdatingSensor
+	 * @param inS The {@link UpdatingSensor} to add
 	 */
 	public synchronized void addSensor(UpdatingSensor inS) {
 		theSensors.add(inS);

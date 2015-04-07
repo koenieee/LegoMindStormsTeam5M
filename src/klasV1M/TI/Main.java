@@ -14,6 +14,7 @@ import lejos.nxt.comm.RConsole;
 public class Main {
 
 	/**
+	 * Entrypoint for the application
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -22,9 +23,9 @@ public class Main {
 		System.out.println("Starting application...");
 		//c.resetAndConfigureAll();
 		c.configureLightSensors();
-		c.resetSoundSensor();
+		//c.resetSoundSensor();
 		//c.setAutoAdjust(true); // WARNING!! HALTS THE PROGRAM FOR UNKNOWN REASONS!
-		ObstacleController oc = new ObstacleController(200);
+		ObstacleController oc = new ObstacleController();
 		//oc.start();
 		SensorPair sp = new SensorPair();
 		sp.addListener(oc);

@@ -52,7 +52,7 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 	/**
 	 * getLightValue overrides the lightvalue of ColorSensor because that one is
 	 * not implement in LejOs
-	 * 
+	 * <br><b>NOTE: might return 0 when an error occures</b>
 	 * @return a value between 0 and 100 to see what color is under the Color
 	 *         Sensor
 	 */
@@ -62,10 +62,6 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 			return 0;
 
 		int value = super.getRawLightValue();
-		// -1 or 0 means an error occured, or the value was too low
-		if (value == -1 || value == 0) {
-			return -1;
-		}
 		value = 100 * (value - _zero) / (_hundred - _zero);
 		if (value < 0) {
 			value = 0;
@@ -101,13 +97,14 @@ public class MyColorSensor extends ColorSensor implements UpdatingSensor {
 		}
 	}
 	
+	/**
+	 * Return the Raw light reading.
+	 * <br><b>NOTE: might return 0 when an error occures</b>
+	 * @return Raw light reading 0-1023
+	 */
 	@Override
 	public int getRawLightValue() {
-		int val = super.getRawLightValue();
-		if (val == -1 || val == 0) {
-			return -1;
-		}
-		return val;
+		return super.getRawLightValue();
 	};
 
 	/**

@@ -18,21 +18,23 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 	private long prevTime;
 	private long curTime;
 
-	public ObstacleController(int period) {
+	public ObstacleController() {
 		t = null;
-		SensorHandler.PERIOD = period;
+		//SensorHandler.PERIOD = period;
 		// Light sensor are being handled by sensorpair
 		// Globals.MLS.addListener(this);
 		// Globals.MCS.addListener(this);
+		Globals.diffPilot.setRotateSpeed(1);//Globals.LowSpeed);
+		
 		Globals.MUS.addListener(this);
 		
 
-		Globals.mLeft.setAcceleration(180);
-		Globals.mRight.setAcceleration(180);
-		Globals.mLeft.setSpeed(180);
-		Globals.mRight.setSpeed(180);
-		Globals.mLeft.forward();
-		Globals.mRight.forward();
+		//Globals.mLeft.setAcceleration(180);
+		//Globals.mRight.setAcceleration(180);
+		//Globals.mLeft.setSpeed(180);
+		//Globals.mRight.setSpeed(180);
+		//Globals.mLeft.forward();
+		//Globals.mRight.forward();
 		prevTime = curTime = System.currentTimeMillis();
 	}
 
@@ -85,6 +87,8 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		}
 	}
 
+	// TODO:
+	// Remove as it is deemed unnecessary
 	public void scanEnvironment() {
 		// Globals.mMiddle.setAcceleration(20);
 		// Globals.mMiddle
@@ -125,12 +129,12 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		// LightSensor
 		if (s.equals(Globals.MLS)) {
 			// Test
-			Globals.mLeft.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
+			//Globals.mLeft.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
 		}
 		// ColorSensor
 		if (s.equals(Globals.MCS)) {
 			// Test
-			Globals.mRight.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
+			//Globals.mRight.setSpeed(newVal < 50 ? 360 : 180);//180 + diff);//3.6f * (100 - newVal) + 180);
 		}
 	}
 
@@ -174,6 +178,7 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 				}
 			}
 		}*/
+		//Globals.diffPilot.steer(turnRate, angle, immediateReturn);
 		prevTime = curTime;
 		curTime = System.currentTimeMillis();
 		long mod = (curTime - prevTime);// / 2;
@@ -185,13 +190,21 @@ public class ObstacleController implements Runnable, SensorListener, SensorPairL
 		}
 		
 		if (newState == SensorPair.LINE_LEFT) {
-			adjustToLeft(mod);
+			//adjustToLeft(mod);
+			//Globals.diffPilot.setTravelSpeed(Globals.LowSpeed);
+			Globals.diffPilot.steer(25);//arcForward(30);//steer(25, 5, true);//steer to the right, incrementing the angle slightly
 		} else if (newState == SensorPair.LINE_RIGHT) {
-			adjustToRight(mod);
+			//adjustToRight(mod);
+			//Globals.diffPilot.setTravelSpeed(Globals.LowSpeed);
+			Globals.diffPilot.steer(-25);//;arcForward(30);//steer(-25, -5, true);//steer to the right, incrementing the angle slightly
 		} else if (newState == SensorPair.LINE_MIDDLE) {
-			goAhead();
+			//goAhead();
+			//Globals.diffPilot.setTravelSpeed(Globals.NormalSpeed);
+			Globals.diffPilot.steer(0);//forward();
 		} else {
-			goSlow();
+			//Globals.diffPilot.setTravelSpeed(Globals.LowSpeed);
+			//Globals.diffPilot.forward();
+			//goSlow();
 		}
 	}
 	

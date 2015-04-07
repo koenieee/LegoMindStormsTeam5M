@@ -97,8 +97,15 @@ public class SensorPair implements Runnable, SensorListener {
 	}
 	
 	private void determineLine() {
-		int temp = left && right ? LINE_MIDDLE : left ? LINE_LEFT : right ? LINE_RIGHT : LINE_UNKNOWN;
-		list.add(temp);
+		int temp = LINE_UNKNOWN;
+		if (left && right) {
+			temp = LINE_MIDDLE;
+		} else if (left) {
+			temp = LINE_LEFT;
+		} else if (right) {
+			temp = LINE_RIGHT;
+		}
+		list.add(temp); // remove list?
 		
 		RConsole.println(left && right ? "Middle" : left ? "Left" : right ? "Right" : "Unknown");
 		

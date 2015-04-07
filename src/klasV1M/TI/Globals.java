@@ -7,7 +7,6 @@ import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.SensorConstants;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
@@ -16,6 +15,7 @@ import lejos.robotics.navigation.DifferentialPilot;
  * Provides global access to the sensors and motors.
  * TODO:
  * - Test if synchronized access is needed/change class into a Singleton?
+ * - Make (certain) statics final?
  * @author Remco
  *
  */
@@ -29,7 +29,12 @@ public class Globals {
 	
 	// TODO:
 	// Use DifferentialPilot for moving?
-	public static DifferentialPilot diffPilot = null;
+	public static double WheelDiameter = 3.4f;
+	public static double TrackWidth = 13;
+	
+
+	
+	
 	
 	/**
 	 * The threshold {@link MyLightSensor}'s and {@link MyColorSensor}'s values
@@ -75,6 +80,8 @@ public class Globals {
 	 * The left {@link NXTRegulatedMotor}
 	 */
 	public static NXTRegulatedMotor mLeft = Motor.C;
+	
+	public static DifferentialPilot diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2, TrackWidth, mLeft, mRight);
 
 	public static LinkedList<Float[]> angleAndCM = new LinkedList<Float[]>();
 
