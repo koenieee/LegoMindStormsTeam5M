@@ -36,6 +36,7 @@ public class ObstacleController implements SensorListener, Runnable {
 				trackWidth, Motor.C, Motor.A);
 		// Set speed to 1 rot/sec
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
+		Motor.B.resetTachoCount();
 		// Move forward
 		diffPilot.forward();
 		// Register listeners
