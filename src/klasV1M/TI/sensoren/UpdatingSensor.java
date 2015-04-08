@@ -8,18 +8,18 @@ package klasV1M.TI.sensoren;
 public interface UpdatingSensor {
 	/**
 	 * 
-	 * @param s
+	 * @param s The {@link SensorListener} to be added to the {@link SensorHandler} list. 
 	 */
 	public void addListener(SensorListener s);
 	/**
 	 * 
-	 * @param s
+	 * @param s  The {@link SensorListener} to be removed from the {@link SensorHandler} list. 
 	 */
 	public void removeListener(SensorListener s);
 	/**
 	 * 
-	 * @param s
-	 * @return
+	 * @param s The {@link SensorListener} that wants to be checked if it does exists in the list that of {@link SensorHandler} calls. 
+	 * @return True; if the {@link SensorListener} exists in the list, False; if the {@link SensorListener} doesn't exists in the list.
 	 */
 	public boolean hasListener(SensorListener s);
 	/**

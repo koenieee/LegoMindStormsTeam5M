@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class SensorHandler extends Thread {
 	private List<UpdatingSensor> theSensors;
+	
 	/**
 	 * The period time that the {@link SensorHandler} polls the Sensors.
 	 */
