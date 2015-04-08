@@ -8,6 +8,7 @@ import lejos.nxt.Motor;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
+ * Avoids obstacles, reacting to input from the {@link MyLightSensor} and {@link MyUltraSonicSensor}.
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0

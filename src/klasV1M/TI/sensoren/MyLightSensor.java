@@ -7,7 +7,7 @@ import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 
 /**
- * Overrides class LightSensor to implement SensorListener Pattern
+ * Overrides the {@link LightSensor} to implement the listener-pattern
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
@@ -58,23 +58,20 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	}
 
 	/**
-	 * This method adds the SensorListener to this object, and this object is
-	 * added to the SensorHandler. It also starts the Thread of SensorHandler to
-	 * keep track of new sensor values.
+	 * Adds a {@link SensorListener} to the internal list, if it does not contain it already.
 	 * 
-	 * @param senin
-	 *            SensorListener
+	 * @param listener The {@link SensorListener} to add
 	 */
-	public void addListener(SensorListener senin) {
+	public void addListener(SensorListener listener) {
 		// Does not allow multiple of the same SensorListener
 		// HashMap and HashSet are deprecated and as of yet unoptimized, so that can't be used at the moment
-		if (hasListener(senin)) {
+		if (hasListener(listener)) {
 			return;
 		}
 		if (listeners.size() == 0) {
 			SensorHandler.getInstance().addSensor(this);
 		}
-		listeners.add(senin);
+		listeners.add(listener);
 	}
 	
 	public void removeListener(SensorListener senin) {
