@@ -17,6 +17,7 @@ public class ObstacleController implements SensorListener {
 	private DifferentialPilot diffPilot;
 	private double trackWidth = 13;
 	private boolean avoidingObject;
+	private boolean busyAvoidingObject;
 
 	public ObstacleController() {
 		// Motor.A is the right motor
@@ -36,23 +37,35 @@ public class ObstacleController implements SensorListener {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
-			if (newVal < 30) { // if object is in 30cm of us.
+			if (newVal < 20) { // if object is in 20cm of us.
+				//diffPilot.stop();
 				avoidingObject = true;
 			} else if (avoidingObject) {
 				diffPilot.stop();
 				diffPilot.rotate(90);
-				diffPilot.travel(30);
-				diffPilot.rotate(-90);
-				diffPilot.travel(50);
+				diffPilot.travel(20);
 				diffPilot.rotate(-90);
 				diffPilot.travel(30);
+				busyAvoidingObject = true;
+				diffPilot.rotate(-90);
+				diffPilot.travel(20);
 				diffPilot.rotate(90);
 				avoidingObject = false;
 			}
 		}
 		// Light Sensor
+		
 		if (s.equals(MyLightSensor.getInstance()) && !avoidingObject) {
+			
 			diffPilot.steer(newVal - 50);
+		}
+		if (s.equals(MyLightSensor.getInstance()) && busyAvoidingObject){
+			if(newVal < 60){
+				diffPilot.stop();
+				diffPilot.rotate(-90);
+				avoidingObject = false;
+				busyAvoidingObject = false;
+			}
 		}
 	}
 }
