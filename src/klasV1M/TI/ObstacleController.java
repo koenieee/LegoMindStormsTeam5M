@@ -8,7 +8,9 @@ import lejos.nxt.Motor;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * Avoids obstacles, reacting to input from the {@link MyLightSensor} and {@link MyUltraSonicSensor}.
+ * Avoids obstacles, reacting to input from the {@link MyLightSensor} and
+ * {@link MyUltraSonicSensor}. The maximum width of the obstacle is
+ * {@value #obstacleWidth} centimeter.
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
@@ -17,6 +19,11 @@ public class ObstacleController implements SensorListener {
 
 	private DifferentialPilot diffPilot;
 	private double trackWidth = 13;
+
+	/**
+	 * The maximum width of the obstacle that the robot can avoid.
+	 */
+	private static final int obstacleWidth = 20;
 	private boolean avoidingObject;
 
 	public ObstacleController() {
@@ -37,18 +44,21 @@ public class ObstacleController implements SensorListener {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
-			if (newVal < 30) { // if object is in 30cm of us.
+			if (newVal < obstacleWidth + 5) { // if object is in 30cm of us.
 				avoidingObject = true;
 			} else if (avoidingObject) {
 				diffPilot.stop();
 				diffPilot.rotate(90);
-				diffPilot.travel(30);
+				diffPilot.travel(obstacleWidth);
 				diffPilot.rotate(-90);
-				diffPilot.travel(50);
+				diffPilot.travel(obstacleWidth + 20);
+
 				diffPilot.rotate(-90);
-				diffPilot.travel(30);
-				diffPilot.rotate(90);
+				diffPilot.travel(10);
 				avoidingObject = false;
+				diffPilot.travel(obstacleWidth, true);
+				diffPilot.rotate(90, true);
+
 			}
 		}
 		// Light Sensor

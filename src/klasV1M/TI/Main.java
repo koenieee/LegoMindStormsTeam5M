@@ -4,6 +4,7 @@ import lejos.nxt.Button;
 
 /**
  * The Entrypoint for the application
+ * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
@@ -18,8 +19,8 @@ public class Main {
 		System.out.println("Press button to start...");
 		Button.waitForAnyPress();
 		Configuration c = new Configuration();
-		c.configureLightSensors();
-		System.out.println("Place lightsensor on the black line");
+		c.configureLightSensors(); //calibrate lightSensor 
+		System.out.println("Place lightsensor above the middle of the black line.");
 		Button.waitForAnyPress();
 		ObstacleController oc = new ObstacleController();
 		

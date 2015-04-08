@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class SensorHandler extends Thread {
 	private List<UpdatingSensor> theSensors;
+	
 	/**
 	 * The interval in milliseconds that the {@link SensorHandler} polls the {@link UpdatingSensor}s.
 	 */
