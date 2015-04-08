@@ -126,7 +126,7 @@ public class ObstacleController implements SensorListener, Runnable {
 	
 		diffPilot.travel(obstWidth + 5);
 		diffPilot.rotate(90);
-		avoidingObject = false;
+		beginScan = false;
 	}
 	
 	public void start() {
