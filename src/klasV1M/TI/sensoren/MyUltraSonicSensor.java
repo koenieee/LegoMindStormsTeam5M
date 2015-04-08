@@ -15,49 +15,41 @@ import lejos.nxt.UltrasonicSensor;
 public class MyUltraSonicSensor extends UltrasonicSensor implements
 		UpdatingSensor {
 	private float oldVal, newVal;
+	/**
+	 * Internal list of listeners
+	 */
 	private List<SensorListener> listeners;
 	private static MyUltraSonicSensor sensor = null;
 
 	private MyUltraSonicSensor() {
-		super(SensorPort.S4);
+		super(SensorPort.S4); // Super call to instantiate the UltraSonicSensor
 		listeners = new ArrayList<SensorListener>();
 	}
 
 	/**
-	 * The {@link MyUltraSonicSensor} mounted on the front
+	 * The {@link MyUltraSonicSensor} mounted on the front.<br>
+	 * Creates a single instance of {@link MyUltraSonicSensor} if it does not yet exist.
 	 */
 	public static MyUltraSonicSensor getInstance() {
+		// lazy initialization
 		if (sensor == null) {
 			sensor = new MyUltraSonicSensor();
 		}
 		return sensor;
 	}
 
-	/**
-	 * Updates calls the method that implements the SensorListener with the new
-	 * and old values
-	 * 
-	 */
-	@Override
 	public void updateState() {
 		oldVal = newVal;
 		newVal = super.getRange();
+		
 		if (oldVal != newVal) {
+			// notify listeners about a change
 			for (SensorListener s : listeners) {
 				s.stateChanged(this, oldVal, newVal);
 			}
 		}
 	}
 
-	/**
-	 * This method adds the {@link SensorListener} to this object, and this
-	 * object is added to the {@link SensorHandler}. It also starts the
-	 * {@link Thread} of {@link SensorHandler} to keep track of new sensor
-	 * values.
-	 * 
-	 * @param senin
-	 *            SensorListener
-	 */
 	public void addListener(SensorListener senin) {
 		// Does not allow multiple of the same SensorListener
 		// HashMap and HashSet are deprecated and as of yet unoptimized, so that

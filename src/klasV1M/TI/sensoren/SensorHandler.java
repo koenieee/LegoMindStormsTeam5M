@@ -26,7 +26,7 @@ public class SensorHandler extends Thread {
 	}
 
 	/**
-	 * Creates and starts a single instance of {@link SensorHandler} if there is not already one
+	 * Creates and starts a single instance of {@link SensorHandler} if it does not yet exist.
 	 */
 	public static SensorHandler getInstance() {
 		// lazy initialization
@@ -37,7 +37,6 @@ public class SensorHandler extends Thread {
 
 	/**
 	 * Calls <code>updateState()</code> of every registered {@link UpdatingSensor} every {@value #PERIOD} milliseconds.
-	 * @exception InterruptedException If the thread has been interrupted an exception will be thrown.
 	 */
 	public void run() {
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);

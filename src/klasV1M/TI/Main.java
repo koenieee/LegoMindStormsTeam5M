@@ -12,7 +12,7 @@ public class Main {
 
 	/**
 	 * Entrypoint for the application
-	 * @param args Arguments that can be passed into the application. Current implementation ignores these
+	 * @param args Arguments that can be passed into the application. Current implementation ignores these.
 	 */
 	public static void main(String[] args) {
 		//RConsole.open();
@@ -22,7 +22,7 @@ public class Main {
 		c.configureLightSensors(); //calibrate lightSensor 
 		System.out.println("Place lightsensor above the middle of the black line.");
 		Button.waitForAnyPress();
-		ObstacleController oc = new ObstacleController();
+		ObstacleController oc = new ObstacleController(); // initializes and starts the obstacle controller
 		
 		while (true) {
 			Thread.yield();

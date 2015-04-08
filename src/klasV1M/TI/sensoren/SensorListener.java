@@ -3,6 +3,8 @@ package klasV1M.TI.sensoren;
 /**
  * Allows a listener to receive notifications from an {@link UpdatingSensor}.
  * <br>Before a listener can receive notifications it needs to register itself at the {@link UpdatingSensor} to listen to.
+ * <br>Implementing classes should keep an internal {@link List} of
+ * {@link UpdatingSensor}s.
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
