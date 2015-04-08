@@ -1,7 +1,7 @@
 package klasV1M.TI.sensoren;
 
 /**
- * 
+ * Interface to create a generic Sensor Handler system. This can be used as implementation to listen to the Sensors.
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */

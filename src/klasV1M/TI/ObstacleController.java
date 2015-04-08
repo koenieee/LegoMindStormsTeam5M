@@ -8,7 +8,7 @@ import lejos.nxt.Motor;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * 
+ * The ObstacleController drives the wheels and decides if there is a obstacle in front. The max width of the obstacle is {@value #obstacleWidth} cm.
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
@@ -16,6 +16,11 @@ public class ObstacleController implements SensorListener {
 
 	private DifferentialPilot diffPilot;
 	private double trackWidth = 13;
+	
+	/**
+	 * The maximum width of the obstacle that the robot can avoid.  
+	 */
+	private static final int obstacleWidth = 20;
 	private boolean avoidingObject;
 
 	public ObstacleController() {
@@ -36,18 +41,18 @@ public class ObstacleController implements SensorListener {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
-			if (newVal < 20) { // if object is in 30cm of us.
+			if (newVal < obstacleWidth) { // if object is in 30cm of us.
 				avoidingObject = true;
 			} else if (avoidingObject) {
 				diffPilot.stop();
 				diffPilot.rotate(90);
-				diffPilot.travel(20);
+				diffPilot.travel(obstacleWidth);
 				diffPilot.rotate(-90);
-				diffPilot.travel(50);
+				diffPilot.travel(obstacleWidth + 30);
 				
 				diffPilot.rotate(-90);
 				avoidingObject = false;
-				diffPilot.travel(20, true);
+				diffPilot.travel(obstacleWidth, true);
 				diffPilot.rotate(90, true);
 				
 			}
