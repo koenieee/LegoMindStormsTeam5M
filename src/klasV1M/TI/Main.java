@@ -15,7 +15,8 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		//RConsole.open();
-		System.out.println("Starting...");
+		System.out.println("Starting!...");
+		Button.waitForAnyPress();
 		Configuration c = new Configuration();
 		c.configureLightSensors();
 		System.out.println("Place lightsensor to the left of the black line");

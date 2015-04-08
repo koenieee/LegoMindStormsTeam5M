@@ -13,7 +13,7 @@ public class SensorHandler extends Thread {
 	/**
 	 * The period time that the {@link SensorHandler} polls the Sensors.
 	 */
-	public static int PERIOD = 100;
+	public static int PERIOD = 10;
 	private static SensorHandler theHandler = null;
 
 	private SensorHandler() {

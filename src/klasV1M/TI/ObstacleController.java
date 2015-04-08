@@ -4,8 +4,6 @@ import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
-import lejos.nxt.Motor;
-import lejos.robotics.navigation.DifferentialPilot;
 
 /**
  * 
@@ -14,19 +12,12 @@ import lejos.robotics.navigation.DifferentialPilot;
  */
 public class ObstacleController implements SensorListener {
 
-	private DifferentialPilot diffPilot;
-	private double trackWidth = 13;
-	private boolean avoidingObject;
+	private boolean avoidingObject = false;
 
 	public ObstacleController() {
 		// Motor.A is the right motor
 		// Motor.C is the left motor
-		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
-				trackWidth, Motor.C, Motor.A);
-		// Set speed to 1 rot/sec
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
-		// Move forward
-		diffPilot.forward();
+		Driver.getInstance().getDifferentialPilot().forward();
 		// Register listeners
 		MyUltraSonicSensor.getInstance().addListener(this);
 		MyLightSensor.getInstance().addListener(this);
@@ -39,20 +30,20 @@ public class ObstacleController implements SensorListener {
 			if (newVal < 30) { // if object is in 30cm of us.
 				avoidingObject = true;
 			} else if (avoidingObject) {
-				diffPilot.stop();
-				diffPilot.rotate(90);
-				diffPilot.travel(30);
-				diffPilot.rotate(-90);
-				diffPilot.travel(50);
-				diffPilot.rotate(-90);
-				diffPilot.travel(30);
-				diffPilot.rotate(90);
+				Driver.getInstance().stop();
+				Driver.getInstance().getDifferentialPilot().rotate(90);
+				Driver.getInstance().getDifferentialPilot().travel(30);
+				System.out.println("Starting...");
+				Driver.getInstance().start();
+				System.out.println("False");
 				avoidingObject = false;
 			}
 		}
 		// Light Sensor
 		if (s.equals(MyLightSensor.getInstance()) && !avoidingObject) {
-			diffPilot.steer(newVal - 50);
+			System.out.println("#");
+			Driver.getInstance().stopThread();
+			Driver.getInstance().getDifferentialPilot().steer((newVal - 50) * 2);
 		}
 	}
 }
