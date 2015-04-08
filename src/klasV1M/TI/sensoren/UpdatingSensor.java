@@ -2,8 +2,8 @@ package klasV1M.TI.sensoren;
 
 /**
  * 
- * @author Remco
- *
+ * @author Remco, Koen, & Medzo
+ * @version 1.0.0.0
  */
 public interface UpdatingSensor {
 	/**

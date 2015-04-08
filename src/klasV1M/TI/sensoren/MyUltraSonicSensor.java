@@ -7,12 +7,13 @@ import lejos.nxt.SensorPort;
 import lejos.nxt.UltrasonicSensor;
 
 /**
- * Overrides class UltraSonicSensor to implement SensorListener Pattern
+ * Overrides the {@link UltrasonicSensor} to implement the listener-pattern
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
-public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSensor {
+public class MyUltraSonicSensor extends UltrasonicSensor implements
+		UpdatingSensor {
 	private float oldVal, newVal;
 	private List<SensorListener> listeners;
 	private static MyUltraSonicSensor sensor = null;
@@ -21,7 +22,7 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 		super(SensorPort.S4);
 		listeners = new ArrayList<SensorListener>();
 	}
-	
+
 	/**
 	 * The {@link MyUltraSonicSensor} mounted on the front
 	 */
@@ -31,7 +32,6 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 		}
 		return sensor;
 	}
-
 
 	/**
 	 * Updates calls the method that implements the SensorListener with the new
@@ -50,26 +50,28 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements UpdatingSens
 	}
 
 	/**
-	 * This method adds the SensorListener to this object, and this object is
-	 * added to the SensorHandler. It also starts the Thread of SensorHandler to
-	 * keep track of new sensor values.
+	 * This method adds the {@link SensorListener} to this object, and this
+	 * object is added to the {@link SensorHandler}. It also starts the
+	 * {@link Thread} of {@link SensorHandler} to keep track of new sensor
+	 * values.
 	 * 
 	 * @param senin
 	 *            SensorListener
 	 */
 	public void addListener(SensorListener senin) {
 		// Does not allow multiple of the same SensorListener
-		// HashMap and HashSet are deprecated and as of yet unoptimized, so that can't be used at the moment
+		// HashMap and HashSet are deprecated and as of yet unoptimized, so that
+		// can't be used at the moment
 		if (hasListener(senin)) {
 			return;
 		}
-		
+
 		if (listeners.size() == 0) {
 			SensorHandler.getInstance().addSensor(this);
 		}
 		listeners.add(senin);
 	}
-	
+
 	public void removeListener(SensorListener sensor) {
 		if (hasListener(sensor)) {
 			listeners.remove(sensor);

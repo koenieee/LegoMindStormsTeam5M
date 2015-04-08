@@ -4,7 +4,7 @@ import klasV1M.TI.sensoren.MyLightSensor;
 import lejos.nxt.Button;
 
 /**
- * Configuration class can be used to configure some settings on the Lego Mindstorm Robot
+ * Provides access to methods that can be used to configure some settings on the Lego Mindstorm Robot
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0

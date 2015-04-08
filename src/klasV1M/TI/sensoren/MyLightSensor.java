@@ -9,8 +9,8 @@ import lejos.nxt.SensorPort;
 /**
  * Overrides class LightSensor to implement SensorListener Pattern
  * 
- * @author koen
- *
+ * @author Remco, Koen, & Medzo
+ * @version 1.0.0.0
  */
 public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	private List<SensorListener> listeners;
