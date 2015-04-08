@@ -3,7 +3,8 @@ package klasV1M.TI;
 import lejos.nxt.Button;
 
 /**
- * The Main class to call the ObstacleController and starts driving the Robot.
+ * The Entrypoint for the application
+ * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
@@ -15,9 +16,9 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		//RConsole.open();
-		System.out.println("Starting...");
+		System.out.println("Press button to start...");
+		Button.waitForAnyPress();
 		Configuration c = new Configuration();
-		
 		c.configureLightSensors(); //calibrate lightSensor 
 		System.out.println("Place lightsensor above the middle of the black line.");
 		Button.waitForAnyPress();
