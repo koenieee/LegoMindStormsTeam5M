@@ -41,16 +41,17 @@ public class ObstacleController implements SensorListener {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
-			if (newVal < obstacleWidth) { // if object is in 30cm of us.
+			if (newVal < obstacleWidth + 5) { // if object is in 30cm of us.
 				avoidingObject = true;
 			} else if (avoidingObject) {
 				diffPilot.stop();
 				diffPilot.rotate(90);
 				diffPilot.travel(obstacleWidth);
 				diffPilot.rotate(-90);
-				diffPilot.travel(obstacleWidth + 30);
+				diffPilot.travel(obstacleWidth + 20);
 				
 				diffPilot.rotate(-90);
+				diffPilot.travel(10);
 				avoidingObject = false;
 				diffPilot.travel(obstacleWidth, true);
 				diffPilot.rotate(90, true);
