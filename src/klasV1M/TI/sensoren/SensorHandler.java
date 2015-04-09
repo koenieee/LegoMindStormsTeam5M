@@ -17,7 +17,7 @@ public class SensorHandler extends Thread {
 	/**
 	 * The interval in milliseconds that the {@link SensorHandler} polls the {@link UpdatingSensor}s.
 	 */
-	public static final int PERIOD = 100;
+	public static final int PERIOD = 50;
 	private static SensorHandler theHandler = null; // handle to itself
 
 	private SensorHandler() {

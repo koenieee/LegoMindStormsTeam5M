@@ -37,6 +37,7 @@ public class ObstacleController implements SensorListener, Runnable {
 		// Set speed to 1 rot/sec
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
 		Motor.B.resetTachoCount();
+		
 		// Move forward
 		diffPilot.forward();
 		// Register listeners
@@ -56,7 +57,7 @@ public class ObstacleController implements SensorListener, Runnable {
 		int theAngle = Math.abs(obRechts[1]) + Math.abs(obLinks[1]);
 		double theWidth = Math.sqrt((Math.pow(sidea, 2) + Math.pow(sideb, 2))
 				- (2 * sidea * sideb * Math.cos(Math.toRadians(theAngle))));
-
+		System.out.println("The Width: " + theWidth);
 		return theWidth;
 	}
 
@@ -78,22 +79,22 @@ public class ObstacleController implements SensorListener, Runnable {
 
 					//RConsole.println("Rechts Centi: " + oldVal);
 					//RConsole.println("Rechts Angle: " + angle);
-					Motor.C.stop(true);
+					Motor.B.stop(true);
 				} else if ((100 < newVal && newVal <= 255) && angle < 0) { // left
 					obLinks[0] = (int) oldVal;
 					obLinks[1] = (int) angle;
 					
 					//RConsole.println("Links Centi: " + oldVal);
 					//RConsole.println("Links Angle: " + angle);
-					Motor.C.stop(true);
+					Motor.B.stop(true);
 				}
 				else{
-					aantalKeer = 2;
-					driveAroundObstacle(obstacleWidth);
+					//aantalKeer = 2;
+					//driveAroundObstacle(obstacleWidth);
 				}
 			} 
 			
-			if (newVal <= 30 && !beginScan) { // if object is in 30cm of us.
+			else if (newVal <= 20 && !beginScan) { // if object is in 30cm of us.
 				
 				beginScan = true;
 					// left to find new path.
@@ -127,6 +128,7 @@ public class ObstacleController implements SensorListener, Runnable {
 	
 		diffPilot.travel(obstWidth + 5);
 		diffPilot.rotate(90);
+		diffPilot.forward(); 
 		beginScan = false;
 	}
 	
@@ -144,7 +146,7 @@ public class ObstacleController implements SensorListener, Runnable {
 		 * Globals.mLeft.forward(); Globals.mRight.forward();
 		 */
 		// mMiddle.setSpeed(90);
-		Motor.B.setSpeed(30);
+		Motor.B.setSpeed(20);
 		while (aantalKeer < 1) {
 			Motor.B.rotateTo(+90, false);// rechts
 
