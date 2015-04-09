@@ -38,7 +38,7 @@ public class Configuration {
 		MyLightSensor.getInstance().setLow(low);//calibrateLow();
 		System.out.println("High: " + high + " | Low: " + low);
 		Delay.msDelay(2000);
-		if (high == 0 || high <= low) {
+		if (high == 0 || high <= low) { // error checking
 			System.out.println("Calibration failed! Restarting procedure...");
 			configureLightSensors(); // restart procedure
 		}

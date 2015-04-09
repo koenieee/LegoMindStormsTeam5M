@@ -6,6 +6,7 @@ import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
+import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
@@ -17,7 +18,7 @@ import lejos.robotics.navigation.DifferentialPilot;
  * @version 1.0.0.0
  */
 public class ObstacleController implements Runnable, SensorListener {
-	
+
 	/**
 	 * The left {@link NXTRegulatedMotor}.
 	 */
@@ -27,35 +28,59 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	private NXTRegulatedMotor mRight = Motor.A;
 
-	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 	/**
-	 * The trackwidth from the robot, measured from the center of the left wheel to the center of the right wheel.
-	 * <br>Used by diffPilot for accurate driving.
+	 * The {@link DifferentialPilot} used for advanced maneuvers.
+	 */
+	private DifferentialPilot diffPilot; // Used for advanced maneuvers
+
+	/**
+	 * The track width in centimeters from the robot, measured from the center
+	 * of the left wheel to the center of the right wheel. <br>
+	 * Used by {@link #diffPilot} for accurate driving.
 	 */
 	private double trackWidth = 13;
 
 	/**
-	 * The maximum width of an obstacle that the robot can avoid.
+	 * The maximum width of an obstacle that the robot can avoid in centimeters.
+	 * Also used as the threshold range to react to detected objects.
 	 */
 	private static final int obstacleWidth = 20;
-	
-	private double heading;
-	private int leftLastTachoCount;
-	private int rightLastTachoCount;
+
 	/**
-	 * The threshold
+	 * The last known heading of the robot. Should be between -100 and 100.
+	 */
+	private double heading;
+	/**
+	 * The amount of rotations measured by the {@link Tachometer} of
+	 * {@link #mLeft} when the line was lost.
+	 */
+	private int leftLastTachoCount;
+	/**
+	 * The amount of rotations measured by the {@link Tachometer} of
+	 * {@link #mRight} when the line was lost.
+	 */
+	private int rightLastTachoCount;
+
+	/**
+	 * The threshold combined with {@link #leftLastTachoCount} or
+	 * {@link #rightLastTachoCount} that needs to be exceeded by the current
+	 * amount of rotations by a {@link Tachometer}.
 	 */
 	private int tachoCountThreshold = 360 * 2;
+
+	/**
+	 * The {@link Thread} the method {@link #run()} will use.
+	 */
 	private Thread t;
 
 	/**
-	 * Initializes the {@link #diffPilot} and starts moving forward.
-	 * <br>Also registers itself at the {@link MyLightSensor} and {@link MyUltraSonicSensor}.
+	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
+	 * Also registers itself at the {@link MyLightSensor} and
+	 * {@link MyUltraSonicSensor}.
 	 */
 	public ObstacleController() {
 		/*
-		 * Motor.A is the right motor
-		 * Motor.C is the left motor
+		 * Motor.A is the right motor Motor.C is the left motor
 		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
@@ -80,7 +105,8 @@ public class ObstacleController implements Runnable, SensorListener {
 				rightLastTachoCount = mRight.getTachoCount();
 				start();
 			} else {
-				// Steers between -50 (left) and +50 (right) to adjust direction
+				/* Steers between -100 (left) and +100 (right) to adjust direction,
+				 * since newVal is always between 0 and 100. */
 				stop();
 				heading = (newVal - 50) * 2;
 				diffPilot.steer(heading);
@@ -88,31 +114,37 @@ public class ObstacleController implements Runnable, SensorListener {
 		}
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
-			if (newVal <= obstacleWidth) { // if object is in 30cm of us.
-			
+			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
+				// travel a pre-programmed path around an object.
 				diffPilot.rotate(90);
 				diffPilot.travel(obstacleWidth + 5);
 				diffPilot.rotate(-90);
 				diffPilot.travel(obstacleWidth + 30);
-				
+
 				diffPilot.rotate(-90);
-			
+
 				diffPilot.travel(obstacleWidth);
 				diffPilot.rotate(90);
 				diffPilot.travel(3);
 			}
 
 		}
-	
+
 	}
-	
+
+	/**
+	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
+	 */
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);
 			t.start();
 		}
 	}
-	
+
+	/**
+	 * Stops the {@link Thread} of {@link #t} if it already exists.
+	 */
 	public void stop() {
 		if (t != null) {
 			t.interrupt();
@@ -121,14 +153,15 @@ public class ObstacleController implements Runnable, SensorListener {
 	}
 
 	/**
-	 * Corrects overshooting by reversing the direction it is traveling
+	 * Corrects overshooting by reversing the direction it is traveling, when a
+	 * certain threshold is exceeded.
 	 */
 	@Override
 	public void run() {
 		while (!Thread.interrupted()) {
 			if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
 					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
-				diffPilot.steer(-heading);
+				diffPilot.steer(-heading); // reverse current heading
 			}
 		}
 	}
