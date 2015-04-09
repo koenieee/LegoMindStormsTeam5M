@@ -32,7 +32,7 @@ public class ObstacleController implements SensorListener {
 	/**
 	 * <code>true</code> if the robot is busy avoiding an object, <code>false</code> otherwise.
 	 */
-	private boolean avoidingObject;
+
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward.
@@ -46,19 +46,27 @@ public class ObstacleController implements SensorListener {
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, Motor.C, Motor.A);
 		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
+		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2*3);
 		// Start moving forward
 		diffPilot.forward();
+		diffPilot.setRotateSpeed(30);
 		// Register listeners
-		MyUltraSonicSensor.getInstance().addListener(this);
 		MyLightSensor.getInstance().addListener(this);
+		MyUltraSonicSensor.getInstance().addListener(this);
+
 	}
 
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+		// Light Sensor
+		if (s.equals(MyLightSensor.getInstance())) {
+			System.out.println("Newval: " + newVal);
+			// Steers between -50 (left) and +50 (right) to adjust direction
+			diffPilot.steer(newVal - 50);
+		}
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
-			if (newVal <= obstacleWidth || avoidingObject) { // if object is in 30cm of us.
-				avoidingObject = true;
+			if (newVal <= obstacleWidth) { // if object is in 30cm of us.
+			
 				diffPilot.rotate(90);
 				diffPilot.travel(obstacleWidth + 5);
 				diffPilot.rotate(-90);
@@ -66,16 +74,12 @@ public class ObstacleController implements SensorListener {
 				
 				diffPilot.rotate(-90);
 			
-				diffPilot.travel(obstacleWidth + 5);
+				diffPilot.travel(obstacleWidth);
 				diffPilot.rotate(90);
-				avoidingObject = false;
+				diffPilot.travel(3);
 			}
 
 		}
-		// Light Sensor
-		if (s.equals(MyLightSensor.getInstance()) && !avoidingObject) {
-			// Steers between -50 (left) and +50 (right) to adjust direction
-			diffPilot.steer(newVal - 50);
-		}
+	
 	}
 }
