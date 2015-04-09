@@ -5,6 +5,7 @@ import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Motor;
+import lejos.nxt.NXTRegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
@@ -15,7 +16,16 @@ import lejos.robotics.navigation.DifferentialPilot;
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
-public class ObstacleController implements SensorListener {
+public class ObstacleController implements Runnable, SensorListener {
+	
+	/**
+	 * The left {@link NXTRegulatedMotor}.
+	 */
+	private NXTRegulatedMotor mLeft = Motor.C;
+	/**
+	 * The right {@link NXTRegulatedMotor}
+	 */
+	private NXTRegulatedMotor mRight = Motor.A;
 
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 	/**
@@ -29,10 +39,14 @@ public class ObstacleController implements SensorListener {
 	 */
 	private static final int obstacleWidth = 20;
 	
+	private double heading;
+	private int leftLastTachoCount;
+	private int rightLastTachoCount;
 	/**
-	 * <code>true</code> if the robot is busy avoiding an object, <code>false</code> otherwise.
+	 * The threshold
 	 */
-
+	private int tachoCountThreshold = 360 * 2;
+	private Thread t;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward.
@@ -44,9 +58,9 @@ public class ObstacleController implements SensorListener {
 		 * Motor.C is the left motor
 		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
-				trackWidth, Motor.C, Motor.A);
+				trackWidth, mLeft, mRight);
 		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2*3);
+		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
 		// Start moving forward
 		diffPilot.forward();
 		diffPilot.setRotateSpeed(30);
@@ -60,8 +74,17 @@ public class ObstacleController implements SensorListener {
 		// Light Sensor
 		if (s.equals(MyLightSensor.getInstance())) {
 			System.out.println("Newval: " + newVal);
-			// Steers between -50 (left) and +50 (right) to adjust direction
-			diffPilot.steer(newVal - 50);
+			if (newVal > 90) {
+				// lost the line
+				leftLastTachoCount = mLeft.getTachoCount();
+				rightLastTachoCount = mRight.getTachoCount();
+				start();
+			} else {
+				// Steers between -50 (left) and +50 (right) to adjust direction
+				stop();
+				heading = (newVal - 50) * 2;
+				diffPilot.steer(heading);
+			}
 		}
 		// Ultrasonic Sensor
 		if (s.equals(MyUltraSonicSensor.getInstance())) {
@@ -81,5 +104,32 @@ public class ObstacleController implements SensorListener {
 
 		}
 	
+	}
+	
+	public void start() {
+		if (t == null) {
+			t = new Thread(this);
+			t.start();
+		}
+	}
+	
+	public void stop() {
+		if (t != null) {
+			t.interrupt();
+			t = null;
+		}
+	}
+
+	/**
+	 * Corrects overshooting by reversing the direction it is traveling
+	 */
+	@Override
+	public void run() {
+		while (!Thread.interrupted()) {
+			if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
+					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
+				diffPilot.steer(-heading);
+			}
+		}
 	}
 }
