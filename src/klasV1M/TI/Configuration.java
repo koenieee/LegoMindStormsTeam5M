@@ -2,6 +2,7 @@ package klasV1M.TI;
 
 import klasV1M.TI.sensoren.MyLightSensor;
 import lejos.nxt.Button;
+import lejos.util.Delay;
 
 /**
  * Provides methods to configure the LEGO NXT
@@ -25,13 +26,29 @@ public class Configuration {
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating white...");
-		MyLightSensor.getInstance().calibrateHigh();
+		int high = MyLightSensor.getInstance().getNormalizedLightValue();
+		MyLightSensor.getInstance().setHigh(high);//calibrateHigh();
 		
 		System.out.println("Place on black spot in five seconds");
 
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating black...");
-		MyLightSensor.getInstance().calibrateLow();
+		int low = MyLightSensor.getInstance().getNormalizedLightValue();
+		MyLightSensor.getInstance().setLow(low);//calibrateLow();
+		System.out.println("High: " + high + " | Low: " + low);
+		Delay.msDelay(2000);
+		if (high == 0 || high <= low) {
+			System.out.println("Calibration failed! Restarting procedure...");
+			configureLightSensors(); // restart procedure
+		}
+		if (high - low < 100) {
+			System.out.println("Values differ less than 100 (" + (high - low) + "). Might be less accurate");
+			Delay.msDelay(2000);
+		}
+		System.out.println("Press the enter button in 2 seconds to recalibrate");
+		if (Button.waitForAnyPress(2000) == Button.ID_ENTER) {
+			configureLightSensors();
+		}
 	}
 }
