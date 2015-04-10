@@ -3,8 +3,8 @@ package klasV1M.TI.sensoren;
 import java.util.ArrayList;
 import java.util.List;
 
+import lejos.nxt.ADSensorPort;
 import lejos.nxt.LightSensor;
-import lejos.nxt.SensorPort;
 
 /**
  * Overrides the {@link LightSensor} to implement the listener-pattern
@@ -18,23 +18,14 @@ public class MyLightSensor extends LightSensor implements UpdatingSensor {
 	 */
 	private List<SensorListener> listeners;
 	private float oldVal, newVal;
-	private static MyLightSensor sensor = null;
-
-	private MyLightSensor() {
-		super(SensorPort.S2); // Super call to instantiate the UltraSonicSensor
-		listeners = new ArrayList<SensorListener>();
-	}
 
 	/**
-	 * The {@link MyLightSensor} mounted on the front.<br>
-	 * Creates a single instance of {@link MyLightSensor} if it does not yet exist.
+	 * Creates and instantiates a new instance of {@link MyLightSensor}.
+	 * @param port The {@link ADSensorPort} this object will be attached to.
 	 */
-	public static MyLightSensor getInstance() {
-		// lazy initialization
-		if (sensor == null) {
-			sensor = new MyLightSensor();
-		}
-		return sensor;
+	public MyLightSensor(ADSensorPort port) {
+		super(port);
+		listeners = new ArrayList<SensorListener>();
 	}
 
 	public int getLightValue() {

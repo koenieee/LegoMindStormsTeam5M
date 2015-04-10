@@ -5,14 +5,21 @@ import lejos.nxt.Button;
 import lejos.util.Delay;
 
 /**
- * Provides methods to configure the LEGO NXT
+ * Provides methods to calibrate the LEGO NXT
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
-public class Configuration {
+public class CalibrationController {
 	
-	public Configuration() {
+	private MyLightSensor lightSensor;
+	
+	/**
+	 * 
+	 * @param sensor The {@link MyLightSensor} to use for the calibration.
+	 */
+	public CalibrationController(MyLightSensor sensor) {
+		lightSensor = sensor;
 	}
 	
 	/** Function to calibrate both the {@link MyLightSensor} to work in a range of 0 to 100 
@@ -26,16 +33,16 @@ public class Configuration {
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating white...");
-		int high = MyLightSensor.getInstance().getNormalizedLightValue();
-		MyLightSensor.getInstance().setHigh(high);//calibrateHigh();
+		int high = lightSensor.getNormalizedLightValue();
+		lightSensor.setHigh(high);//calibrateHigh();
 		
 		System.out.println("Place on black spot in five seconds");
 
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating black...");
-		int low = MyLightSensor.getInstance().getNormalizedLightValue();
-		MyLightSensor.getInstance().setLow(low);//calibrateLow();
+		int low = lightSensor.getNormalizedLightValue();
+		lightSensor.setLow(low);//calibrateLow();
 		System.out.println("High: " + high + " | Low: " + low);
 		Delay.msDelay(2000);
 		if (high == 0 || high <= low) { // error checking

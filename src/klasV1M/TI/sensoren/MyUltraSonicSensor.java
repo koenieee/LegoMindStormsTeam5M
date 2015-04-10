@@ -3,7 +3,7 @@ package klasV1M.TI.sensoren;
 import java.util.ArrayList;
 import java.util.List;
 
-import lejos.nxt.SensorPort;
+import lejos.nxt.I2CPort;
 import lejos.nxt.UltrasonicSensor;
 
 /**
@@ -19,23 +19,14 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements
 	 * Internal list of listeners
 	 */
 	private List<SensorListener> listeners;
-	private static MyUltraSonicSensor sensor = null;
-
-	private MyUltraSonicSensor() {
-		super(SensorPort.S4); // Super call to instantiate the UltraSonicSensor
-		listeners = new ArrayList<SensorListener>();
-	}
 
 	/**
-	 * The {@link MyUltraSonicSensor} mounted on the front.<br>
-	 * Creates a single instance of {@link MyUltraSonicSensor} if it does not yet exist.
+	 * Creates and instantiates a new instance of {@link MyUltraSonicSensor}.
+	 * @param port The {@link I2CPort} this object will be attached to.
 	 */
-	public static MyUltraSonicSensor getInstance() {
-		// lazy initialization
-		if (sensor == null) {
-			sensor = new MyUltraSonicSensor();
-		}
-		return sensor;
+	public MyUltraSonicSensor(I2CPort port) {
+		super(port);
+		listeners = new ArrayList<SensorListener>();
 	}
 
 	public void updateState() {

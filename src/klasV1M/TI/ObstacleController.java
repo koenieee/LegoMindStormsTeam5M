@@ -89,15 +89,14 @@ public class ObstacleController implements Runnable, SensorListener {
 		// Start moving forward
 		diffPilot.forward();
 		diffPilot.setRotateSpeed(30);
-		// Register listeners
-		MyLightSensor.getInstance().addListener(this);
-		MyUltraSonicSensor.getInstance().addListener(this);
-
 	}
 
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Light Sensor
-		if (s.equals(MyLightSensor.getInstance())) {
+		if (s instanceof MyLightSensor) {
+			/* instanceof could be replaces by .equals()
+			 * if sensors are fields and parameters for constructor
+			 */ 
 			System.out.println("Newval: " + newVal);
 			if (newVal > 90) {
 				// lost the line
@@ -113,7 +112,10 @@ public class ObstacleController implements Runnable, SensorListener {
 			}
 		}
 		// Ultrasonic Sensor
-		if (s.equals(MyUltraSonicSensor.getInstance())) {
+		if (s instanceof MyUltraSonicSensor) {
+			/* instanceof could be replaces by .equals()
+			 * if sensors are fields and parameters for constructor
+			 */ 
 			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
 				// travel a pre-programmed path around an object.
 				diffPilot.rotate(90);
