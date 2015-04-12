@@ -28,10 +28,12 @@ public class Main {
 		System.out.println("Place lightsensor above the middle of the black line.");
 		Button.waitForAnyPress();
 		ObstacleController oc = new ObstacleController(); // initializes and starts the obstacle controller
+		DriveController dc = new DriveController();
 		
 		// Register listeners
 		mls.addListener(oc);
 		muss.addListener(oc);
+		mls.addListener(dc);
 		
 		while (true) {
 			Thread.yield();

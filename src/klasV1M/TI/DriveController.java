@@ -17,7 +17,7 @@ import lejos.robotics.navigation.DifferentialPilot;
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
-public class ObstacleController implements Runnable, SensorListener {
+public class DriveController implements Runnable, SensorListener {
 
 	/**
 	 * The left {@link NXTRegulatedMotor}.
@@ -78,48 +78,39 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * Also registers itself at the {@link MyLightSensor} and
 	 * {@link MyUltraSonicSensor}.
 	 */
-	private boolean isRunning = false;
-	public ObstacleController() {
+	public DriveController() {
 		/*
 		 * Motor.A is the right motor Motor.C is the left motor
 		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
 		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
+		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 5);
 		// Start moving forward
 		diffPilot.forward();
 		diffPilot.setRotateSpeed(30);
 	}
 
-	public synchronized void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-
-		// Ultrasonic Sensor
-		if (s instanceof MyUltraSonicSensor) {
+	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+		// Light Sensor
+		if (s instanceof MyLightSensor) {
 			/* instanceof could be replaces by .equals()
 			 * if sensors are fields and parameters for constructor
 			 */ 
-			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
-				// travel a pre-programmed path around an object.
-				isRunning = true;
-				diffPilot.rotate(90);
-				diffPilot.travel(obstacleWidth + 5);;
-				diffPilot.rotate(-90);
-				diffPilot.travel(obstacleWidth + 30);
-
-				diffPilot.rotate(-90);
-				while(newVal >= 25){
-					while(newVal <= 40){
-				diffPilot.travel(obstacleWidth);
-					}
-				}
-				diffPilot.arc(30, 90);
-				//diffPilot.travel(3);
+			System.out.println("Newval: " + newVal);
+			if (newVal > 90) {
+				// lost the line
+				leftLastTachoCount = mLeft.getTachoCount();
+				rightLastTachoCount = mRight.getTachoCount();
+				start();
+			} else {
+				/* Steers between -100 (left) and +100 (right) to adjust direction,
+				 * since newVal is always between 0 and 100. */
+				stop();
+				heading = (newVal - 50) * 2;
+				diffPilot.steer(heading);
 			}
-			isRunning = false;
-
 		}
-
 	}
 
 	/**
