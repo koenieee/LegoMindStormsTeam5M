@@ -79,6 +79,8 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * {@link MyUltraSonicSensor}.
 	 */
 	private boolean isRunning = false;
+	private MyLightSensor val;
+	private CalibrationController CC;
 	public ObstacleController() {
 		/*
 		 * Motor.A is the right motor Motor.C is the left motor
@@ -105,22 +107,22 @@ public class ObstacleController implements Runnable, SensorListener {
 				diffPilot.rotate(90);
 				diffPilot.travel(obstacleWidth + 5);;
 				diffPilot.rotate(-90);
-				diffPilot.travel(obstacleWidth + 30);
+				diffPilot.travel(obstacleWidth + 10);
 
 				diffPilot.rotate(-90);
-				while(newVal >= 25){
-					while(newVal <= 40){
+				
+				while(val.getLightValue() >= 30 ){
 				diffPilot.travel(obstacleWidth);
 					}
-				}
-				diffPilot.arc(30, 90);
+				
+				diffPilot.rotate(90);
 				//diffPilot.travel(3);
 			}
 			isRunning = false;
 
 		}
 
-	}
+}
 
 	/**
 	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.

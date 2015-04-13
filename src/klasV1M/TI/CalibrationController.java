@@ -27,13 +27,15 @@ public class CalibrationController {
 	 * With 100 as most White
 	 * @return <code>true</code> when configuration was succesfull, <code>false</code> otherwise.
 	 */
+	private int low;
+	private int high;
 	public void configureLightSensors() {
 		System.out.println("Place on white spot in five seconds");
 
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating white...");
-		int high = lightSensor.getNormalizedLightValue();
+		 high = lightSensor.getNormalizedLightValue();
 		lightSensor.setHigh(high);//calibrateHigh();
 		
 		System.out.println("Place on black spot in five seconds");
@@ -41,7 +43,7 @@ public class CalibrationController {
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating black...");
-		int low = lightSensor.getNormalizedLightValue();
+		 low = lightSensor.getNormalizedLightValue();
 		lightSensor.setLow(low);//calibrateLow();
 		System.out.println("High: " + high + " | Low: " + low);
 		Delay.msDelay(2000);
@@ -57,5 +59,8 @@ public class CalibrationController {
 		if (Button.waitForAnyPress(2000) == Button.ID_ENTER) {
 			configureLightSensors();
 		}
+	}
+	public int getLow(){
+		return low;
 	}
 }
