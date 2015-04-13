@@ -111,8 +111,14 @@ public class ObstacleController implements Runnable, SensorListener {
 
 				diffPilot.rotate(-90);
 				
-				while(val.getLightValue() >= 30 ){
+				while(isRunning){
+					if (val.getLightValue() > 50){
 				diffPilot.travel(obstacleWidth);
+					}
+					else{
+						isRunning = false;
+					}
+					
 					}
 				
 				diffPilot.rotate(90);
