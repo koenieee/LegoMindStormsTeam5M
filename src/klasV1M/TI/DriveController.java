@@ -112,6 +112,7 @@ public class DriveController implements SensorListener {
 					Sound.beep();
 					diffPilot.rotate(100);
 					diffPilot.forward();
+					oc.isAvoiding = false;
 					oc.setIsRunning(false);
 				}
 			}
