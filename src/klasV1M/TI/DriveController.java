@@ -6,6 +6,7 @@ import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
@@ -18,7 +19,7 @@ import lejos.robotics.navigation.DifferentialPilot;
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
-public class DriveController implements Runnable, SensorListener {
+public class DriveController implements SensorListener {
 
 	/**
 	 * The left {@link NXTRegulatedMotor}.
@@ -68,7 +69,7 @@ public class DriveController implements Runnable, SensorListener {
 	 * amount of rotations by a {@link Tachometer}.
 	 */
 	private int tachoCountThreshold = 360 * 2;
-
+	private ObstacleController oc;
 	/**
 	 * The {@link Thread} the method {@link #run()} will use.
 	 */
@@ -86,6 +87,11 @@ public class DriveController implements Runnable, SensorListener {
 		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
+		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
+		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
+		// Register listeners
+		muss.addListener(oc);
+		
 		// Set speed to 1 rotation/second
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 5);
 		// Start moving forward
@@ -100,61 +106,22 @@ public class DriveController implements Runnable, SensorListener {
 			 * if sensors are fields and parameters for constructor
 			 */ 
 			System.out.println("Newval: " + newVal);
-			if (ObstacleController.getIsRunning() == true){
+			if (oc.getIsRunning() == true){
 				if(newVal < 40){
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.rotate(90);
-					ObstacleController.setIsRunning(false);
+					diffPilot.forward();
+					oc.setIsRunning(false);
 				}
 			}
-			else if (newVal > 90) {
-				// lost the line
-				leftLastTachoCount = mLeft.getTachoCount();
-				rightLastTachoCount = mRight.getTachoCount();
-				start();
-			} else {
+			else {
 				/* Steers between -100 (left) and +100 (right) to adjust direction,
 				 * since newVal is always between 0 and 100. */
-				stop();
 				heading = (newVal - 50) * 2;
 				diffPilot.steer(heading);
 			}
 			
-		}
-	}
-
-	/**
-	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
-	 */
-	public void start() {
-		if (t == null) {
-			t = new Thread(this);
-			t.start();
-		}
-	}
-
-	/**
-	 * Stops the {@link Thread} of {@link #t} if it already exists.
-	 */
-	public void stop() {
-		if (t != null) {
-			t.interrupt();
-			t = null;
-		}
-	}
-
-	/**
-	 * Corrects overshooting by reversing the direction it is traveling, when a
-	 * certain threshold is exceeded.
-	 */
-	@Override
-	public void run() {
-		while (!Thread.interrupted()) {
-			if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
-					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
-				diffPilot.steer(-heading); // reverse current heading
-			}
 		}
 	}
 }

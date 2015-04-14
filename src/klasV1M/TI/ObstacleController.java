@@ -20,58 +20,15 @@ import lejos.robotics.navigation.DifferentialPilot;
  */
 public class ObstacleController implements Runnable, SensorListener {
 
-	/**
-	 * The left {@link NXTRegulatedMotor}.
-	 */
-	private NXTRegulatedMotor mLeft = Motor.C;
-	/**
-	 * The right {@link NXTRegulatedMotor}
-	 */
-	private NXTRegulatedMotor mRight = Motor.A;
-
-	/**
-	 * The {@link DifferentialPilot} used for advanced maneuvers.
-	 */
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
-
-	/**
-	 * The track width in centimeters from the robot, measured from the center
-	 * of the left wheel to the center of the right wheel. <br>
-	 * Used by {@link #diffPilot} for accurate driving.
-	 */
-	private double trackWidth = 13;
 
 	/**
 	 * The maximum width of an obstacle that the robot can avoid in centimeters.
 	 * Also used as the threshold range to react to detected objects.
 	 */
 	private static final int obstacleWidth = 20;
+	private boolean isRunning = false;
 
-	/**
-	 * The last known heading of the robot. Should be between -100 and 100.
-	 */
-	private double heading;
-	/**
-	 * The amount of rotations measured by the {@link Tachometer} of
-	 * {@link #mLeft} when the line was lost.
-	 */
-	private int leftLastTachoCount;
-	/**
-	 * The amount of rotations measured by the {@link Tachometer} of
-	 * {@link #mRight} when the line was lost.
-	 */
-	private int rightLastTachoCount;
-
-	/**
-	 * The threshold combined with {@link #leftLastTachoCount} or
-	 * {@link #rightLastTachoCount} that needs to be exceeded by the current
-	 * amount of rotations by a {@link Tachometer}.
-	 */
-	private int tachoCountThreshold = 360 * 2;
-
-	/**
-	 * The {@link Thread} the method {@link #run()} will use.
-	 */
 	private Thread t;
 
 	/**
@@ -79,51 +36,44 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * Also registers itself at the {@link MyLightSensor} and
 	 * {@link MyUltraSonicSensor}.
 	 */
-	private static boolean isRunning = false;
-	public ObstacleController() {
-		/*
-		 * Motor.A is the right motor Motor.C is the left motor
-		 */
-		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
-				trackWidth, mLeft, mRight);
-		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
-		// Start moving forward
-		diffPilot.forward();
-		diffPilot.setRotateSpeed(30);
+
+	public ObstacleController(DifferentialPilot dp) {
+		diffPilot = dp;
 	}
 
-	public synchronized void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+	public synchronized void stateChanged(UpdatingSensor s, float oldVal,
+			float newVal) {
 
 		// Ultrasonic Sensor
-		if (s instanceof MyUltraSonicSensor) {
-			/* instanceof could be replaces by .equals()
-			 * if sensors are fields and parameters for constructor
-			 */ 
+		if (s instanceof MyUltraSonicSensor && isRunning == false) {
+			/*
+			 * instanceof could be replaces by .equals() if sensors are fields
+			 * and parameters for constructor
+			 */
 			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
 				// travel a pre-programmed path around an object.
-				
+
 				diffPilot.rotate(90, false);
 				diffPilot.travel(obstacleWidth + 5);
-				
+
 				this.start();
 			}
 
 		}
-	
-		}
 
-
+	}
 
 	/**
 	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
 	 */
-	public static void setIsRunning(boolean isr){
+	public void setIsRunning(boolean isr) {
 		isRunning = isr;
 	}
-	public static boolean getIsRunning(){
-		return isRunning ;
+
+	public boolean getIsRunning() {
+		return isRunning;
 	}
+
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);
@@ -147,14 +97,14 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
-		
+
 		diffPilot.rotate(-90, false);
 		diffPilot.travel(obstacleWidth + 10, false);
 		diffPilot.rotate(-90, false);
 		Sound.beep();
 		isRunning = true;
-			//maak 2 threads 1 thread gaat vooruit rijden.
-			// thread 2 kijkt of die op de lijn 
-		//diffPilot.travel(3);	
+		// maak 2 threads 1 thread gaat vooruit rijden.
+		// thread 2 kijkt of die op de lijn
+		// diffPilot.travel(3);
 	}
 }
