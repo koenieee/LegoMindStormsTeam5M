@@ -6,6 +6,7 @@ import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.Sound;
 import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
 
@@ -102,10 +103,10 @@ public class ObstacleController implements Runnable, SensorListener {
 			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
 				// travel a pre-programmed path around an object.
 				
-				diffPilot.rotate(90);
+				diffPilot.rotate(90, false);
 				diffPilot.travel(obstacleWidth + 5);
 				
-				start();
+				this.start();
 			}
 
 		}
@@ -146,10 +147,11 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
-		diffPilot.rotate(-90);
-		diffPilot.travel(obstacleWidth + 10);
-		diffPilot.rotate(-90);
-		diffPilot.forward();
+		
+		diffPilot.rotate(-90, false);
+		diffPilot.travel(obstacleWidth + 10, false);
+		diffPilot.rotate(-90, false);
+		Sound.beep();
 		isRunning = true;
 			//maak 2 threads 1 thread gaat vooruit rijden.
 			// thread 2 kijkt of die op de lijn 

@@ -31,7 +31,6 @@ public class Main {
 		DriveController dc = new DriveController();
 		
 		// Register listeners
-		mls.addListener(oc);
 		muss.addListener(oc);
 		mls.addListener(dc);
 		

@@ -6,6 +6,7 @@ import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
+import lejos.nxt.Sound;
 import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
 
@@ -99,7 +100,15 @@ public class DriveController implements Runnable, SensorListener {
 			 * if sensors are fields and parameters for constructor
 			 */ 
 			System.out.println("Newval: " + newVal);
-			if (newVal > 90) {
+			if (ObstacleController.getIsRunning() == true){
+				if(newVal < 40){
+					Sound.setVolume(Sound.VOL_MAX);
+					Sound.beep();
+					diffPilot.rotate(90);
+					ObstacleController.setIsRunning(false);
+				}
+			}
+			else if (newVal > 90) {
 				// lost the line
 				leftLastTachoCount = mLeft.getTachoCount();
 				rightLastTachoCount = mRight.getTachoCount();
@@ -111,18 +120,7 @@ public class DriveController implements Runnable, SensorListener {
 				heading = (newVal - 50) * 2;
 				diffPilot.steer(heading);
 			}
-			if (ObstacleController.getIsRunning() == true){
-				if(newVal < 40){
-					ObstacleController.setIsRunning(false);
-					diffPilot.stop();
-					try {
-						diffPilot.wait(1000);
-					} catch (InterruptedException e) {
-					
-					}
-					diffPilot.rotate(90);
-				}
-			}
+			
 		}
 	}
 
