@@ -106,16 +106,16 @@ public class DriveController implements SensorListener {
 			 * if sensors are fields and parameters for constructor
 			 */ 
 			System.out.println("Newval: " + newVal);
-			if (oc.getIsRunning() == true){
+			if (oc.getIsRunning() && oc.isAvoiding){
 				if(newVal < 40){
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
-					diffPilot.rotate(90);
+					diffPilot.rotate(100);
 					diffPilot.forward();
 					oc.setIsRunning(false);
 				}
 			}
-			else {
+			else if(!oc.getIsRunning() && !oc.isAvoiding) {
 				/* Steers between -100 (left) and +100 (right) to adjust direction,
 				 * since newVal is always between 0 and 100. */
 				heading = (newVal - 50) * 2;

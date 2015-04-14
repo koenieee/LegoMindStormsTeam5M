@@ -28,7 +28,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	private static final int obstacleWidth = 20;
 	private boolean isRunning = false;
-
+	public boolean isAvoiding = false;
 	private Thread t;
 
 	/**
@@ -52,7 +52,7 @@ public class ObstacleController implements Runnable, SensorListener {
 			 */
 			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
 				// travel a pre-programmed path around an object.
-
+				isAvoiding = true;
 				diffPilot.rotate(90, false);
 				diffPilot.travel(obstacleWidth + 5);
 
@@ -101,6 +101,7 @@ public class ObstacleController implements Runnable, SensorListener {
 		diffPilot.rotate(-90, false);
 		diffPilot.travel(obstacleWidth + 10, false);
 		diffPilot.rotate(-90, false);
+		diffPilot.forward();
 		Sound.beep();
 		isRunning = true;
 		// maak 2 threads 1 thread gaat vooruit rijden.
