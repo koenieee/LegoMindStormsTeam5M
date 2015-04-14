@@ -78,6 +78,7 @@ public class DriveController implements Runnable, SensorListener {
 	 * Also registers itself at the {@link MyLightSensor} and
 	 * {@link MyUltraSonicSensor}.
 	 */
+	
 	public DriveController() {
 		/*
 		 * Motor.A is the right motor Motor.C is the left motor
@@ -109,6 +110,18 @@ public class DriveController implements Runnable, SensorListener {
 				stop();
 				heading = (newVal - 50) * 2;
 				diffPilot.steer(heading);
+			}
+			if (ObstacleController.getIsRunning() == true){
+				if(newVal < 40){
+					ObstacleController.setIsRunning(false);
+					diffPilot.stop();
+					try {
+						diffPilot.wait(1000);
+					} catch (InterruptedException e) {
+					
+					}
+					diffPilot.rotate(90);
+				}
 			}
 		}
 	}

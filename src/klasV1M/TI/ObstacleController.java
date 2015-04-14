@@ -78,9 +78,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * Also registers itself at the {@link MyLightSensor} and
 	 * {@link MyUltraSonicSensor}.
 	 */
-	private boolean isRunning = false;
-	private MyLightSensor val;
-	private CalibrationController CC;
+	private static boolean isRunning = false;
 	public ObstacleController() {
 		/*
 		 * Motor.A is the right motor Motor.C is the left motor
@@ -103,36 +101,28 @@ public class ObstacleController implements Runnable, SensorListener {
 			 */ 
 			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
 				// travel a pre-programmed path around an object.
-				isRunning = true;
-				diffPilot.rotate(90);
-				diffPilot.travel(obstacleWidth + 5);;
-				diffPilot.rotate(-90);
-				diffPilot.travel(obstacleWidth + 10);
-
-				diffPilot.rotate(-90);
-				
-				while(isRunning){
-					if (val.getLightValue() > 50){
-				diffPilot.travel(obstacleWidth);
-					}
-					else{
-						isRunning = false;
-					}
-					
-					}
 				
 				diffPilot.rotate(90);
-				//diffPilot.travel(3);
+				diffPilot.travel(obstacleWidth + 5);
+				
+				start();
 			}
-			isRunning = false;
 
 		}
+	
+		}
 
-}
+
 
 	/**
 	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
 	 */
+	public static void setIsRunning(boolean isr){
+		isRunning = isr;
+	}
+	public static boolean getIsRunning(){
+		return isRunning ;
+	}
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);
@@ -156,11 +146,13 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
-		while (!Thread.interrupted()) {
-			if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
-					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
-				diffPilot.steer(-heading); // reverse current heading
-			}
-		}
+		diffPilot.rotate(-90);
+		diffPilot.travel(obstacleWidth + 10);
+		diffPilot.rotate(-90);
+		diffPilot.forward();
+		isRunning = true;
+			//maak 2 threads 1 thread gaat vooruit rijden.
+			// thread 2 kijkt of die op de lijn 
+		//diffPilot.travel(3);	
 	}
 }
