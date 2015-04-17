@@ -22,20 +22,16 @@ public class CalibrationController {
 		lightSensor = sensor;
 	}
 	
-	/** Function to calibrate both the {@link MyLightSensor} to work in a range of 0 to 100 
-	 * With 0 as most Black
-	 * With 100 as most White
-	 * @return <code>true</code> when configuration was succesfull, <code>false</code> otherwise.
+	/** 
+	 * Function to calibrate the {@link MyLightSensor} to work in a range of 0 (darkest) to 100 (lightest). 
 	 */
-	private int low;
-	private int high;
-	public void configureLightSensors() {
+	public void calibrateLightSensor() {
 		System.out.println("Place on white spot in five seconds");
 
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating white...");
-		 high = lightSensor.getNormalizedLightValue();
+		int high = lightSensor.getNormalizedLightValue();
 		lightSensor.setHigh(high);//calibrateHigh();
 		
 		System.out.println("Place on black spot in five seconds");
@@ -43,13 +39,13 @@ public class CalibrationController {
 		Button.waitForAnyPress(5000);
 
 		System.out.println("Calibrating black...");
-		 low = lightSensor.getNormalizedLightValue();
+		int low = lightSensor.getNormalizedLightValue();
 		lightSensor.setLow(low);//calibrateLow();
 		System.out.println("High: " + high + " | Low: " + low);
 		Delay.msDelay(2000);
 		if (high == 0 || high <= low) { // error checking
 			System.out.println("Calibration failed! Restarting procedure...");
-			configureLightSensors(); // restart procedure
+			calibrateLightSensor(); // restart procedure
 		}
 		if (high - low < 100) {
 			System.out.println("Values differ less than 100 (" + (high - low) + "). Might be less accurate");
@@ -57,10 +53,7 @@ public class CalibrationController {
 		}
 		System.out.println("Press the enter button in 2 seconds to recalibrate");
 		if (Button.waitForAnyPress(2000) == Button.ID_ENTER) {
-			configureLightSensors();
+			calibrateLightSensor();
 		}
-	}
-	public int getLow(){
-		return low;
 	}
 }

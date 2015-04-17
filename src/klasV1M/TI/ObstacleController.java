@@ -1,6 +1,5 @@
 package klasV1M.TI;
 
-import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
@@ -27,9 +26,8 @@ public class ObstacleController implements Runnable, SensorListener {
 	private Thread t;
 
 	/**
-	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
-	 * Also registers itself at the {@link MyLightSensor} and
-	 * {@link MyUltraSonicSensor}.
+	 * 
+	 * @param dp Used for afvanced maneuvers.
 	 */
 	public ObstacleController(DifferentialPilot dp) {
 		diffPilot = dp;

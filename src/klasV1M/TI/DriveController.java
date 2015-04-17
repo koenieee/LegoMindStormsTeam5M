@@ -11,7 +11,7 @@ import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
-TODO
+ * TODO
  * 
  * @author Remco, Koen, & Medzo
  * @version 2.0.0.0
@@ -30,7 +30,7 @@ public class DriveController implements SensorListener {
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
 	 */
-	private DifferentialPilot diffPilot; 
+	private DifferentialPilot diffPilot;
 
 	/**
 	 * The track width in centimeters from the robot, measured from the center
@@ -39,30 +39,26 @@ public class DriveController implements SensorListener {
 	 */
 	private double trackWidth = 13;
 
-	/**
-	 * The last known heading of the robot. Should be between -100 and 100.
-	 */
-	private double heading;
-	
 	private ObstacleController oc;
 	private SearchLineController slc;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
-	 * Also registers itself at the {@link MyLightSensor} 
+	 * Also registers itself and the {@link SearchLineController} at the
+	 * {@link MyLightSensor}. The {@link ObstacleController} gets registered at
+	 * the {@link MyUltraSonicSensor}.
+	 * 
 	 */
-	
 	public DriveController() {
-		/*
-		 * Motor.A is the right motor Motor.C is the left motor
-		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
 		slc = new SearchLineController(diffPilot);
-		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
+		oc = new ObstacleController(diffPilot); // initializes and starts the
+												// obstacle controller
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
 		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
 		// Register listeners
+		mls.addListener(this);
 		muss.addListener(oc);
 		mls.addListener(slc);
 		// Set speed to 1 rotation/second
@@ -75,12 +71,13 @@ public class DriveController implements SensorListener {
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Light Sensor
 		if (s instanceof MyLightSensor) {
-			/* instanceof could be replaces by .equals()
-			 * if sensors are fields and parameters for constructor
-			 */ 
+			/*
+			 * instanceof could be replaces by .equals() if sensors are fields
+			 * and parameters for constructor
+			 */
 			System.out.println("Newval: " + newVal);
-			if (oc.getIsRunning() && oc.getIsAvoiding()){
-				if(newVal < 40){
+			if (oc.getIsRunning() && oc.getIsAvoiding()) {
+				if (newVal < 40) {
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
@@ -91,12 +88,13 @@ public class DriveController implements SensorListener {
 					oc.stop();
 					slc.setIsLost(false);
 				}
-			}
-			else if(!oc.getIsRunning() && !oc.getIsAvoiding() && !slc.getIsLost()) {
-				/* Steers between -100 (left) and +100 (right) to adjust direction,
-				 * since newVal is always between 0 and 100. */
-				heading = (newVal - 50) * 2;
-				diffPilot.steer(heading);
+			} else if (!oc.getIsRunning() && !oc.getIsAvoiding()
+					&& !slc.getIsLost()) {
+				/*
+				 * Steers between -100 (left) and +100 (right) to adjust
+				 * direction, since newVal is always between 0 and 100.
+				 */
+				diffPilot.steer((newVal - 50) * 2);
 			}
 		}
 	}
