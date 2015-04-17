@@ -40,7 +40,7 @@ public class DriveController implements SensorListener {
 	private double trackWidth = 13;
 
 	private ObstacleController oc;
-	private SearchLineController slc;
+	//private SearchLineController slc;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
@@ -52,15 +52,14 @@ public class DriveController implements SensorListener {
 	public DriveController() {
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
-		slc = new SearchLineController(diffPilot);
-		oc = new ObstacleController(diffPilot); // initializes and starts the
-												// obstacle controller
+	//	slc = new SearchLineController(diffPilot);
+		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
 		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
 		// Register listeners
 		mls.addListener(this);
 		muss.addListener(oc);
-		mls.addListener(slc);
+		//mls.addListener(slc);
 		// Set speed to 1 rotation/second
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 3);
 		// Start moving forward
@@ -86,15 +85,14 @@ public class DriveController implements SensorListener {
 					oc.setIsAvoiding(false);
 					oc.setIsRunning(false);
 					oc.stop();
-					slc.setIsLost(false);
+				//	slc.setIsLost(false);
 				}
-			} else if (!oc.getIsRunning() && !oc.getIsAvoiding()
-					&& !slc.getIsLost()) {
-				/*
-				 * Steers between -100 (left) and +100 (right) to adjust
-				 * direction, since newVal is always between 0 and 100.
-				 */
-				diffPilot.steer((newVal - 50) * 2);
+			}
+			else if(!oc.getIsRunning() && !oc.getIsAvoiding() /* && !slc.getIsLost()*/) {
+				/* Steers between -100 (left) and +100 (right) to adjust direction,
+				 * since newVal is always between 0 and 100. */
+				heading = (newVal - 50) * 2;
+				diffPilot.steer(heading);
 			}
 		}
 	}
