@@ -100,7 +100,6 @@ public class ObstacleController implements Runnable, SensorListener {
 		diffPilot.travel(obstacleWidth + 10, false);
 		diffPilot.rotate(-90, false);
 		diffPilot.forward();
-		Sound.beep();
 		isRunning = true;
 		// maak 2 threads 1 thread gaat vooruit rijden.
 		// thread 2 kijkt of die op de lijn

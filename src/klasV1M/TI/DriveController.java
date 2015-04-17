@@ -93,7 +93,7 @@ public class DriveController implements SensorListener {
 		muss.addListener(oc);
 		
 		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 5);
+		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
 		// Start moving forward
 		diffPilot.forward();
 		diffPilot.setRotateSpeed(30);
@@ -110,10 +110,12 @@ public class DriveController implements SensorListener {
 				if(newVal < 40){
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
-					diffPilot.rotate(100);
+					diffPilot.travel(3);
+					diffPilot.rotate(50);
 					diffPilot.forward();
 					oc.isAvoiding = false;
 					oc.setIsRunning(false);
+					oc.stop();
 				}
 			}
 			else if(!oc.getIsRunning() && !oc.isAvoiding) {
@@ -122,7 +124,6 @@ public class DriveController implements SensorListener {
 				heading = (newVal - 50) * 2;
 				diffPilot.steer(heading);
 			}
-			
 		}
 	}
 }
