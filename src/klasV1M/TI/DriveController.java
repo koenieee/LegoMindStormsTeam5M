@@ -12,12 +12,10 @@ import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * Avoids obstacles, reacting to input from the {@link MyLightSensor} and
- * {@link MyUltraSonicSensor}. The maximum width of the obstacle is
- * {@value #obstacleWidth} centimeter.
+TODO
  * 
  * @author Remco, Koen, & Medzo
- * @version 1.0.0.0
+ * @version 2.0.0.0
  */
 public class DriveController implements SensorListener {
 
@@ -43,43 +41,16 @@ public class DriveController implements SensorListener {
 	private double trackWidth = 13;
 
 	/**
-	 * The maximum width of an obstacle that the robot can avoid in centimeters.
-	 * Also used as the threshold range to react to detected objects.
-	 */
-	private static final int obstacleWidth = 20;
-
-	/**
 	 * The last known heading of the robot. Should be between -100 and 100.
 	 */
 	private double heading;
-	/**
-	 * The amount of rotations measured by the {@link Tachometer} of
-	 * {@link #mLeft} when the line was lost.
-	 */
-	private int leftLastTachoCount;
-	/**
-	 * The amount of rotations measured by the {@link Tachometer} of
-	 * {@link #mRight} when the line was lost.
-	 */
-	private int rightLastTachoCount;
-
-	/**
-	 * The threshold combined with {@link #leftLastTachoCount} or
-	 * {@link #rightLastTachoCount} that needs to be exceeded by the current
-	 * amount of rotations by a {@link Tachometer}.
-	 */
-	private int tachoCountThreshold = 360 * 2;
+	
 	private ObstacleController oc;
 	private LineController slc;
-	/**
-	 * The {@link Thread} the method {@link #run()} will use.
-	 */
-	private Thread t;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
-	 * Also registers itself at the {@link MyLightSensor} and
-	 * {@link MyUltraSonicSensor}.
+	 * Also registers itself at the {@link MyLightSensor} 
 	 */
 	
 	public DriveController() {
@@ -89,6 +60,7 @@ public class DriveController implements SensorListener {
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
 		slc = new LineController(diffPilot);
+		
 		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
 		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
@@ -96,7 +68,7 @@ public class DriveController implements SensorListener {
 		muss.addListener(oc);
 		mls.addListener(slc);
 		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2);
+		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 2);
 		// Start moving forward
 		diffPilot.forward();
 		diffPilot.setRotateSpeed(30);
@@ -120,9 +92,7 @@ public class DriveController implements SensorListener {
 					oc.setIsRunning(false);
 					oc.stop();
 					slc.setIsLost(false);
-
 				}
-			
 			}
 			else if(!oc.getIsRunning() && !oc.isAvoiding && !slc.getIsLost()) {
 				/* Steers between -100 (left) and +100 (right) to adjust direction,

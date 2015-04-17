@@ -4,19 +4,14 @@ import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
-import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.Sound;
-import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * Avoids obstacles, reacting to input from the {@link MyLightSensor} and
- * {@link MyUltraSonicSensor}. The maximum width of the obstacle is
+ * Avoids obstacles, reacting to input from the {@link MyUltraSonicSensor} and the maximum width of the obstacle is
  * {@value #obstacleWidth} centimeter.
  * 
  * @author Remco, Koen, & Medzo
- * @version 1.0.0.0
+ * @version 2.0.0.0
  */
 public class ObstacleController implements Runnable, SensorListener {
 
@@ -41,8 +36,7 @@ public class ObstacleController implements Runnable, SensorListener {
 		diffPilot = dp;
 	}
 
-	public synchronized void stateChanged(UpdatingSensor s, float oldVal,
-			float newVal) {
+	public synchronized void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 
 		// Ultrasonic Sensor
 		if (s instanceof MyUltraSonicSensor && isRunning == false) {
@@ -57,9 +51,7 @@ public class ObstacleController implements Runnable, SensorListener {
 				diffPilot.travel(obstacleWidth + 5);
 				this.start();
 			}
-
 		}
-
 	}
 
 	/**
@@ -91,8 +83,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	}
 
 	/**
-	 * Corrects overshooting by reversing the direction it is traveling, when a
-	 * certain threshold is exceeded.
+	TODO
 	 */
 	@Override
 	public void run() {
@@ -101,8 +92,5 @@ public class ObstacleController implements Runnable, SensorListener {
 		diffPilot.rotate(-90, false);
 		diffPilot.forward();
 		isRunning = true;
-		// maak 2 threads 1 thread gaat vooruit rijden.
-		// thread 2 kijkt of die op de lijn
-		// diffPilot.travel(3);
 	}
 }
