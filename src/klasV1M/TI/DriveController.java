@@ -45,7 +45,7 @@ public class DriveController implements SensorListener {
 	private double heading;
 	
 	private ObstacleController oc;
-	private LineController slc;
+	private SearchLineController slc;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
@@ -58,8 +58,7 @@ public class DriveController implements SensorListener {
 		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
-		slc = new LineController(diffPilot);
-		
+		slc = new SearchLineController(diffPilot);
 		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
 		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
@@ -67,7 +66,7 @@ public class DriveController implements SensorListener {
 		muss.addListener(oc);
 		mls.addListener(slc);
 		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 2);
+		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 3);
 		// Start moving forward
 		diffPilot.forward();
 		diffPilot.setRotateSpeed(30);

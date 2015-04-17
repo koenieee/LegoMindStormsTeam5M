@@ -16,7 +16,7 @@ TODO
  * @author Remco, Koen, & Medzo
  * @version 2.0.0.0
  */
-public class LineController implements Runnable, SensorListener {
+public class SearchLineController implements Runnable, SensorListener {
 
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 
@@ -27,7 +27,7 @@ public class LineController implements Runnable, SensorListener {
 
 	boolean lost = false; 
 	
-	public LineController(DifferentialPilot dp) {
+	public SearchLineController(DifferentialPilot dp) {
 		diffPilot = dp;
 	}
 
