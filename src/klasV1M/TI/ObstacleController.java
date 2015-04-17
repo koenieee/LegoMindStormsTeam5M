@@ -55,7 +55,6 @@ public class ObstacleController implements Runnable, SensorListener {
 				isAvoiding = true;
 				diffPilot.rotate(90, false);
 				diffPilot.travel(obstacleWidth + 5);
-
 				this.start();
 			}
 
@@ -97,7 +96,6 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
-
 		diffPilot.rotate(-90, false);
 		diffPilot.travel(obstacleWidth + 10, false);
 		diffPilot.rotate(-90, false);
