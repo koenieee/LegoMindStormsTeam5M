@@ -8,7 +8,6 @@ import lejos.nxt.Motor;
 import lejos.nxt.NXTRegulatedMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
-import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
@@ -31,7 +30,7 @@ public class DriveController implements SensorListener {
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
 	 */
-	private DifferentialPilot diffPilot; // Used for advanced maneuvers
+	private DifferentialPilot diffPilot; 
 
 	/**
 	 * The track width in centimeters from the robot, measured from the center
@@ -81,20 +80,20 @@ public class DriveController implements SensorListener {
 			 * if sensors are fields and parameters for constructor
 			 */ 
 			System.out.println("Newval: " + newVal);
-			if (oc.getIsRunning() && oc.isAvoiding){
+			if (oc.getIsRunning() && oc.getIsAvoiding()){
 				if(newVal < 40){
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
 					diffPilot.rotate(50);
 					diffPilot.forward();
-					oc.isAvoiding = false;
+					oc.setIsAvoiding(false);
 					oc.setIsRunning(false);
 					oc.stop();
 					slc.setIsLost(false);
 				}
 			}
-			else if(!oc.getIsRunning() && !oc.isAvoiding && !slc.getIsLost()) {
+			else if(!oc.getIsRunning() && !oc.getIsAvoiding() && !slc.getIsLost()) {
 				/* Steers between -100 (left) and +100 (right) to adjust direction,
 				 * since newVal is always between 0 and 100. */
 				heading = (newVal - 50) * 2;

@@ -23,7 +23,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	private static final int obstacleWidth = 20;
 	private boolean isRunning = false;
-	public boolean isAvoiding = false;
+	private boolean isAvoiding = false;
 	private Thread t;
 
 	/**
@@ -31,7 +31,6 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * Also registers itself at the {@link MyLightSensor} and
 	 * {@link MyUltraSonicSensor}.
 	 */
-
 	public ObstacleController(DifferentialPilot dp) {
 		diffPilot = dp;
 	}
@@ -53,10 +52,14 @@ public class ObstacleController implements Runnable, SensorListener {
 			}
 		}
 	}
+	public void setIsAvoiding(boolean isA) {
+		isAvoiding = isA;
+	}
 
-	/**
-	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
-	 */
+	public boolean getIsAvoiding() {
+		return isAvoiding;
+	}
+
 	public void setIsRunning(boolean isr) {
 		isRunning = isr;
 	}
@@ -64,7 +67,10 @@ public class ObstacleController implements Runnable, SensorListener {
 	public boolean getIsRunning() {
 		return isRunning;
 	}
-
+	
+	/**
+	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
+	 */
 	public void start() {
 		if (t == null) {
 			t = new Thread(this);

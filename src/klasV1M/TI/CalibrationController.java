@@ -8,7 +8,7 @@ import lejos.util.Delay;
  * Provides methods to calibrate the LEGO NXT
  * 
  * @author Remco, Koen, & Medzo
- * @version 1.0.0.0
+ * @version 2.0.0.0
  */
 public class CalibrationController {
 	

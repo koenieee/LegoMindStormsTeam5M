@@ -11,7 +11,7 @@ import lejos.robotics.navigation.DifferentialPilot;
  * The Entrypoint for the application
  * 
  * @author Remco, Koen, & Medzo
- * @version 1.0.0.0
+ * @version 2.0.0.0
  */
 public class Main {
 
