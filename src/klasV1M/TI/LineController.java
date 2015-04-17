@@ -72,17 +72,9 @@ public class LineController implements Runnable, SensorListener {
 	 * Also registers itself at the {@link MyLightSensor} and
 	 * {@link MyUltraSonicSensor}.
 	 */
-	public LineController() {
-		/*
-		 * Motor.A is the right motor Motor.C is the left motor
-		 */
-		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
-				trackWidth, mLeft, mRight);
-		// Set speed to 1 rotation/second
-		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 5);
-		// Start moving forward
-		diffPilot.forward();
-		diffPilot.setRotateSpeed(30);
+	boolean lost = false; 
+	public LineController(DifferentialPilot dp) {
+		diffPilot = dp;
 	}
 
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
@@ -91,11 +83,23 @@ public class LineController implements Runnable, SensorListener {
 			/* instanceof could be replaces by .equals()
 			 * if sensors are fields and parameters for constructor
 			 */ 
-			System.out.println("Newval: " + newVal);
-			
+			if(newVal > 40 && lost == true){
+					
+				this.start();
+				
+			}
+				else{
+					this.stop();
+				}
 		}
 	}
-
+	public void setIsLost(boolean il){
+		lost = il;
+	}
+	public boolean getIsLost(){
+		return lost;
+	}
+	
 	/**
 	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
 	 */
@@ -122,6 +126,7 @@ public class LineController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
+		diffPilot.arcForward(45);
 	//	while (!Thread.interrupted()) {
 		//	if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
 		//			rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
