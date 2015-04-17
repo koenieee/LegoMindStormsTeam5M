@@ -70,6 +70,7 @@ public class DriveController implements SensorListener {
 	 */
 	private int tachoCountThreshold = 360 * 2;
 	private ObstacleController oc;
+	private LineController slc;
 	/**
 	 * The {@link Thread} the method {@link #run()} will use.
 	 */
@@ -87,11 +88,13 @@ public class DriveController implements SensorListener {
 		 */
 		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
 				trackWidth, mLeft, mRight);
+		slc = new LineController(diffPilot);
 		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
+		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
 		// Register listeners
 		muss.addListener(oc);
-		
+		mls.addListener(slc);
 		// Set speed to 1 rotation/second
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 5);
 		// Start moving forward
@@ -114,9 +117,11 @@ public class DriveController implements SensorListener {
 					diffPilot.forward();
 					oc.isAvoiding = false;
 					oc.setIsRunning(false);
+					slc.setIsLost(false);
 				}
+			
 			}
-			else if(!oc.getIsRunning() && !oc.isAvoiding) {
+			else if(!oc.getIsRunning() && !oc.isAvoiding && !slc.getIsLost()) {
 				/* Steers between -100 (left) and +100 (right) to adjust direction,
 				 * since newVal is always between 0 and 100. */
 				heading = (newVal - 50) * 2;
