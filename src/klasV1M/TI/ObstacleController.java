@@ -36,7 +36,7 @@ public class ObstacleController implements Runnable, SensorListener {
 		diffPilot = dp;
 	}
 
-	public synchronized void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
+	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 
 		// Ultrasonic Sensor
 		if (s instanceof MyUltraSonicSensor && isAvoiding == false) {
