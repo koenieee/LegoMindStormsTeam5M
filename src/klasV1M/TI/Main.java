@@ -39,12 +39,12 @@ public class Main {
 		c.calibrateLightSensor(); //calibrate lightSensor 
 		System.out.println("Place lightsensor above the middle of the black line.");
 		Button.waitForAnyPress();
-		
-		SearchLineController slc = new SearchLineController(diffPilot,mLeft,mRight);
-		mls.addListener(slc);
 
 		DriveController dc = new DriveController(diffPilot);
 		mls.addListener(dc);
+		
+		SearchLineController slc = new SearchLineController(diffPilot, mLeft, mRight, dc);
+		mls.addListener(slc);
 		
 		ObstacleController obc = new ObstacleController(diffPilot, dc);
 		muss.addListener(obc);

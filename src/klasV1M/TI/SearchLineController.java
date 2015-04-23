@@ -65,11 +65,11 @@ public class SearchLineController implements Runnable, SensorListener {
 			/* instanceof could be replaces by .equals()
 			 * if sensors are fields and parameters for constructor
 			 */ 
-			if(newVal > 40){
+			if(newVal > 60){
 				if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
 					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
 					System.out.println("lijn kwijt");
-					if(newVal > 40){
+					if(newVal > 60){
 						dc.suspend();						
 						this.start();
 						System.out.println("reageert");
