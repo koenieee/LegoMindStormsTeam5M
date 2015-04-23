@@ -43,7 +43,7 @@ public class Main {
 		DriveController dc = new DriveController(diffPilot);
 		mls.addListener(dc);
 		
-		SearchLineController slc = new SearchLineController(diffPilot, mLeft, mRight, dc);
+		SearchLineController slc = new SearchLineController(diffPilot, dc);
 		mls.addListener(slc);
 		
 		ObstacleController obc = new ObstacleController(diffPilot, dc);

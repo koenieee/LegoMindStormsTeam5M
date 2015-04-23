@@ -1,121 +1,64 @@
 package klasV1M.TI;
 
-
 import klasV1M.TI.sensoren.MyLightSensor;
-import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
-import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.robotics.Tachometer;
 import lejos.robotics.navigation.DifferentialPilot;
+import lejos.util.Timer;
+import lejos.util.TimerListener;
 
 /**
-TODO
+ * TODO
  * 
  * @author Remco, Koen, & Medzo
  * @version 2.0.0.0
  */
-public class SearchLineController implements Runnable, SensorListener {
+public class SearchLineController implements SensorListener, TimerListener {
 
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 
 	/**
 	 * The {@link Thread} the method {@link #run()} will use.
 	 */
-	private Thread t;
-
-	boolean lost = false; 
-	/**
-	 * The left {@link NXTRegulatedMotor}.
-	 */
-	private NXTRegulatedMotor mLeft = Motor.C;
-	/**
-	 * The right {@link NXTRegulatedMotor}
-	 */
-	private NXTRegulatedMotor mRight = Motor.A;
-	/**
-	 * The amount of rotations measured by the {@link Tachometer} of
-	 * {@link #mLeft} when the line was lost.
-	 */
-	private int leftLastTachoCount;
-	/**
-	 * The amount of rotations measured by the {@link Tachometer} of
-	 * {@link #mRight} when the line was lost.
-	 */
-	private int rightLastTachoCount;
-
-	/**
-	 * The threshold combined with {@link #leftLastTachoCount} or
-	 * {@link #rightLastTachoCount} that needs to be exceeded by the current
-	 * amount of rotations by a {@link Tachometer}.
-	 */
-	private int tachoCountThreshold = 360 * 5;
+	private boolean counting = false;
+	private Timer theTimer;
 	private DriveController dc;
-	
-	
-	public SearchLineController(DifferentialPilot dp,NXTRegulatedMotor mLeft,NXTRegulatedMotor mRight, DriveController drvl) {
+
+	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
+		theTimer = new Timer(0, this);
+		theTimer.setDelay(2000);
 		dc = drvl;
+	}
+
+	@Override
+	public void timedOut() {
+		System.out.println("Line is lost");
+		dc.suspend();
+		System.out.println("Line searching, using arcs");
+		diffPilot.arcForward(45);
 	}
 
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
 		// Light Sensor
 		if (s instanceof MyLightSensor) {
-			/* instanceof could be replaces by .equals()
-			 * if sensors are fields and parameters for constructor
-			 */ 
-			if(newVal > 60){
-				if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
-					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
-					System.out.println("lijn kwijt");
-					if(newVal > 60){
-						dc.suspend();						
-						this.start();
-						System.out.println("reageert");
-					}
-							
+			/*
+			 * instanceof could be replaces by .equals() if sensors are fields
+			 * and parameters for constructor
+			 */
+			if (newVal > 60) { // line is lost
+				if (!counting) {
+					theTimer.start();
+					counting = true;
 				}
 			}
-			if(newVal < 40){
-				this.stop();
+			if (newVal < 40) { // line found
+				if (counting) {
+					theTimer.stop();
+					counting = false;
+				}
 			}
 		}
 	}
-	
-	public void setIsLost(boolean il){
-		lost = il;
-	}
-	public boolean getIsLost(){
-		return lost;
-	}
-	
-	/**
-	 * Starts the {@link Thread} of {@link #t} if it doesn't already exist.
-	 */
-	public void start() {
-		if (t == null) {
-			t = new Thread(this);
-			t.start();
-		}
-	}
 
-	/**
-	 * Stops the {@link Thread} of {@link #t} if it already exists.
-	 */
-	public void stop() {
-		if (t != null) {
-			t.interrupt();
-			t = null;
-		}
-	}
-
-	/**
-	 * Corrects overshooting by reversing the direction it is traveling, when a
-	 * certain threshold is exceeded.
-	 */
-	@Override
-	public void run() {
-		diffPilot.arcForward(45);
-	}
 }
