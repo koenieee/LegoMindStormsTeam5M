@@ -3,7 +3,6 @@ package klasV1M.TI;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
-import lejos.nxt.SensorPort;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**

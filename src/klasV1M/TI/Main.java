@@ -45,7 +45,6 @@ public class Main {
 		mls.addListener(dc);
 		
 		ObstacleController obc = new ObstacleController(diffPilot, dc);
-		
 		muss.addListener(obc);
 		
 		while (true) {
