@@ -26,7 +26,7 @@ public class DriveController implements SensorListener {
 	 * This boolean is used to react to different actions when the line is lost
 	 * or the robot is avoiding an obstacle.
 	 */
-	private boolean suspended;
+	private boolean suspended = false;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
@@ -46,7 +46,7 @@ public class DriveController implements SensorListener {
 			 * instanceof could be replaces by .equals() if sensors are fields
 			 * and parameters for constructor
 			 */
-			System.out.println("Newval: " + newVal);
+		//	System.out.println("Newval: " + newVal);
 			if (suspended) {
 				if (newVal < 40) { // black line detected
 
