@@ -17,7 +17,7 @@ import lejos.robotics.navigation.DifferentialPilot;
 public class Main {
 
 	/**
-	 * Entrypoint for the application
+	 * Entrypoint for the application, also creates and initializes the other Objects and Controllers.
 	 * @param args Arguments that can be passed into the application. Current implementation ignores these.
 	 */
 	public static void main(String[] args) {

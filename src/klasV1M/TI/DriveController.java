@@ -46,10 +46,9 @@ public class DriveController implements SensorListener {
 			 * instanceof could be replaces by .equals() if sensors are fields
 			 * and parameters for constructor
 			 */
-		//	System.out.println("Newval: " + newVal);
+			// System.out.println("Newval: " + newVal);
 			if (suspended) {
 				if (newVal < 40) { // black line detected
-
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
