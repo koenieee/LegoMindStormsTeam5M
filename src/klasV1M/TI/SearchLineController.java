@@ -26,8 +26,7 @@ public class SearchLineController implements SensorListener, TimerListener {
 
 	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
-		theTimer = new Timer(0, this);
-		theTimer.setDelay(2000);
+		theTimer = new Timer(2000, this);
 		dc = drvl;
 	}
 

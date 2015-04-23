@@ -29,7 +29,6 @@ public class DriveController implements SensorListener {
 	 */
 
 	private boolean suspended;
-	//private SearchLineController slc;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
@@ -39,12 +38,8 @@ public class DriveController implements SensorListener {
 	 * 
 	 */
 	public DriveController(DifferentialPilot dp) {
-		
-	//	slc = new SearchLineController(diffPilot);
-		diffPilot = dp;
 
-		//mls.addListener(slc);
-		// Set speed to 1 rotation/second
+		diffPilot = dp;
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 3);
 		// Start moving forward
 		diffPilot.forward();
@@ -68,7 +63,6 @@ public class DriveController implements SensorListener {
 					diffPilot.rotate(50);
 					resume();
 					diffPilot.forward();
-				//	slc.setIsLost(false);
 				}
 			}
 			else if(!suspended) {
