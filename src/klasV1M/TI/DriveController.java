@@ -38,7 +38,6 @@ public class DriveController implements SensorListener {
 	 * the {@link MyUltraSonicSensor}.
 	 * 
 	 */
-	private SearchLineController slc;
 	public DriveController(DifferentialPilot dp) {
 		
 	//	slc = new SearchLineController(diffPilot);
