@@ -4,9 +4,6 @@ import klasV1M.TI.sensoren.MyLightSensor;
 import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
-import lejos.nxt.Motor;
-import lejos.nxt.NXTRegulatedMotor;
-import lejos.nxt.SensorPort;
 import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
 
@@ -18,14 +15,7 @@ import lejos.robotics.navigation.DifferentialPilot;
  */
 public class DriveController implements SensorListener {
 
-	/**
-	 * The left {@link NXTRegulatedMotor}.
-	 */
-	private NXTRegulatedMotor mLeft = Motor.C;
-	/**
-	 * The right {@link NXTRegulatedMotor}
-	 */
-	private NXTRegulatedMotor mRight = Motor.A;
+
 
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
@@ -37,9 +27,8 @@ public class DriveController implements SensorListener {
 	 * of the left wheel to the center of the right wheel. <br>
 	 * Used by {@link #diffPilot} for accurate driving.
 	 */
-	private double trackWidth = 13;
 
-	private ObstacleController oc;
+	private boolean suspended;
 	//private SearchLineController slc;
 
 	/**
@@ -49,16 +38,11 @@ public class DriveController implements SensorListener {
 	 * the {@link MyUltraSonicSensor}.
 	 * 
 	 */
-	public DriveController() {
-		diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2,
-				trackWidth, mLeft, mRight);
+	public DriveController(DifferentialPilot dp) {
+		
 	//	slc = new SearchLineController(diffPilot);
-		oc = new ObstacleController(diffPilot); // initializes and starts the obstacle controller
-		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
-		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
-		// Register listeners
-		mls.addListener(this);
-		muss.addListener(oc);
+		diffPilot = dp;
+
 		//mls.addListener(slc);
 		// Set speed to 1 rotation/second
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 3);
@@ -75,25 +59,32 @@ public class DriveController implements SensorListener {
 			 * and parameters for constructor
 			 */
 			System.out.println("Newval: " + newVal);
-			if (oc.getIsRunning() && oc.getIsAvoiding()) {
-				if (newVal < 40) {
+			if (suspended) {
+				if (newVal < 40) { //black line detected
+					resume();
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
 					diffPilot.rotate(50);
 					diffPilot.forward();
-					oc.setIsAvoiding(false);
-					oc.setIsRunning(false);
-					oc.stop();
 				//	slc.setIsLost(false);
 				}
 			}
-			else if(!oc.getIsRunning() && !oc.getIsAvoiding() /* && !slc.getIsLost()*/) {
+			else if(!suspended) {
 				/* Steers between -100 (left) and +100 (right) to adjust direction,
 				 * since newVal is always between 0 and 100. */
-				heading = (newVal - 50) * 2;
-				diffPilot.steer(heading);
+				diffPilot.steer((newVal - 50) * 2);
 			}
 		}
 	}
+	
+	
+	public void suspend() {
+		suspended = true;
+	}
+
+	public void resume() {
+		suspended = false;
+	}
+	
 }
