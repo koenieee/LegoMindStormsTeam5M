@@ -8,21 +8,34 @@ import lejos.util.Timer;
 import lejos.util.TimerListener;
 
 /**
- * TODO
+ * keeps track of how long he is of the line. Will activate if it execeeds a certain time. It will then go along a 
+ * path until the line is found again.
  * 
  * @author Remco, Koen, & Medzo
  * @version 2.0.0.0
  */
 public class SearchLineController implements SensorListener, TimerListener {
-
-	private DifferentialPilot diffPilot; // Used for advanced maneuvers
-
 	/**
-	 * The {@link Thread} the method {@link #run()} will use.
+	 * Used to pilot the robot and for advanced maneuvers
+	 */
+	private DifferentialPilot diffPilot; 
+	/**
+	 * The boolean that will dictated when to start the Timer
 	 */
 	private boolean counting = false;
+	/**
+	 * The Timer that will give a timeout if the robot does not see the line within 2 seconds 
+	 */
 	private Timer theTimer;
+	/**
+	 * connection to DriveController used to tell the DriveController when the SearchLineCOntroller is active
+	 */
 	private DriveController dc;
+	/**
+	 * Constructor of the SearhLineController 
+	 * @param dp
+	 * @param drvl
+	 */
 
 	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
