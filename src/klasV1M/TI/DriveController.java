@@ -61,11 +61,12 @@ public class DriveController implements SensorListener {
 			System.out.println("Newval: " + newVal);
 			if (suspended) {
 				if (newVal < 40) { //black line detected
-					resume();
+					
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
 					diffPilot.rotate(50);
+					resume();
 					diffPilot.forward();
 				//	slc.setIsLost(false);
 				}
@@ -79,11 +80,11 @@ public class DriveController implements SensorListener {
 	}
 	
 	
-	public void suspend() {
+	public synchronized void suspend() {
 		suspended = true;
 	}
 
-	public void resume() {
+	public synchronized void resume() {
 		suspended = false;
 	}
 	

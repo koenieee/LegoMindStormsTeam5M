@@ -51,9 +51,12 @@ public class SearchLineController implements Runnable, SensorListener {
 	 * amount of rotations by a {@link Tachometer}.
 	 */
 	private int tachoCountThreshold = 360 * 5;
-	DriveController dc;
-	public SearchLineController(DifferentialPilot dp,NXTRegulatedMotor mLeft,NXTRegulatedMotor mRight) {
+	private DriveController dc;
+	
+	
+	public SearchLineController(DifferentialPilot dp,NXTRegulatedMotor mLeft,NXTRegulatedMotor mRight, DriveController drvl) {
 		diffPilot = dp;
+		dc = drvl;
 	}
 
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {

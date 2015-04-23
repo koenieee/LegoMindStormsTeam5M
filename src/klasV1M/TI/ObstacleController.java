@@ -46,7 +46,7 @@ public class ObstacleController implements Runnable, SensorListener {
 			 */
 			if (newVal <= obstacleWidth) { // if object is in 20cm of us.
 				isAvoiding = true;
-				
+				dvc.suspend();
 				// travel a pre-programmed path around an object.
 				diffPilot.rotate(90, false);
 				diffPilot.travel(obstacleWidth + 5);
@@ -81,7 +81,6 @@ public class ObstacleController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
-		dvc.suspend();
 		diffPilot.rotate(-90, false);
 		diffPilot.travel(obstacleWidth + 10, false);
 		diffPilot.rotate(-90, false);
