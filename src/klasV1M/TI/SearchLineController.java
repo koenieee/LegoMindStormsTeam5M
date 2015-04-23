@@ -26,8 +26,25 @@ public class SearchLineController implements Runnable, SensorListener {
 	private Thread t;
 
 	boolean lost = false; 
-	
-	public SearchLineController(DifferentialPilot dp) {
+	/**
+	 * The amount of rotations measured by the {@link Tachometer} of
+	 * {@link #mLeft} when the line was lost.
+	 */
+	private int leftLastTachoCount;
+	/**
+	 * The amount of rotations measured by the {@link Tachometer} of
+	 * {@link #mRight} when the line was lost.
+	 */
+	private int rightLastTachoCount;
+
+	/**
+	 * The threshold combined with {@link #leftLastTachoCount} or
+	 * {@link #rightLastTachoCount} that needs to be exceeded by the current
+	 * amount of rotations by a {@link Tachometer}.
+	 */
+	private int tachoCountThreshold = 360 * 2;
+
+	public SearchLineController(DifferentialPilot dp,mLeft, mRight) {
 		diffPilot = dp;
 	}
 
@@ -37,13 +54,21 @@ public class SearchLineController implements Runnable, SensorListener {
 			/* instanceof could be replaces by .equals()
 			 * if sensors are fields and parameters for constructor
 			 */ 
-			if(newVal > 40 && lost == true){
-					
-				this.start();
-				
+			if(newVal > 40){
+				if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
+					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
+					if(newVal > 40){
+						lost = true;
+						this.start();
+						System.out.println("reageert");
+					}
+							
+				}
 			}
 				else{
-					this.stop();
+					if(newVal<40){
+						lost = false;
+					}
 				}
 		}
 	}
