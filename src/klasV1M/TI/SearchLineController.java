@@ -27,6 +27,14 @@ public class SearchLineController implements Runnable, SensorListener {
 
 	boolean lost = false; 
 	/**
+	 * The left {@link NXTRegulatedMotor}.
+	 */
+	private NXTRegulatedMotor mLeft = Motor.C;
+	/**
+	 * The right {@link NXTRegulatedMotor}
+	 */
+	private NXTRegulatedMotor mRight = Motor.A;
+	/**
 	 * The amount of rotations measured by the {@link Tachometer} of
 	 * {@link #mLeft} when the line was lost.
 	 */
@@ -44,7 +52,7 @@ public class SearchLineController implements Runnable, SensorListener {
 	 */
 	private int tachoCountThreshold = 360 * 2;
 
-	public SearchLineController(DifferentialPilot dp,mLeft, mRight) {
+	public SearchLineController(DifferentialPilot dp,NXTRegulatedMotor mLeft,NXTRegulatedMotor mRight) {
 		diffPilot = dp;
 	}
 
@@ -68,6 +76,7 @@ public class SearchLineController implements Runnable, SensorListener {
 				else{
 					if(newVal<40){
 						lost = false;
+						
 					}
 				}
 		}
@@ -106,12 +115,8 @@ public class SearchLineController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
+		if(lost = true){
 		diffPilot.arcForward(45);
-	//	while (!Thread.interrupted()) {
-		//	if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
-		//			rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
-		//		diffPilot.steer(-heading); // reverse current heading
-		//	}
-		//}
+		}
 	}
 }

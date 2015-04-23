@@ -40,6 +40,8 @@ public class Main {
 		System.out.println("Place lightsensor above the middle of the black line.");
 		Button.waitForAnyPress();
 		
+		SearchLineController slc = new SearchLineController(diffPilot,mLeft,mRight);
+		mls.addListener(slc);
 
 		DriveController dc = new DriveController(diffPilot);
 		mls.addListener(dc);
