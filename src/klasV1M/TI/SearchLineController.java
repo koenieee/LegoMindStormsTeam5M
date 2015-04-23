@@ -8,25 +8,35 @@ import lejos.robotics.navigation.DifferentialPilot;
 import lejos.util.Delay;
 
 /**
- * TODO
+ * keeps track of how long he is of the line. Will activate if it execeeds a certain time. It will then go along a 
+ * path until the line is found again.
  * 
  * @author Remco, Koen, & Medzo
  * @version 2.0.0.0
  */
+
 public class SearchLineController implements SensorListener {
 
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
 	 */
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
-
 	/**
-	 * The {@link Thread} the method {@link #run()} will use.
+	 * The boolean that will dictated when to start the Timer
 	 */
 	private boolean counting = false;
 	private long millis;
 	private long timeUntilStarting = 5000;
+
+	/**
+	 * connection to DriveController used to tell the DriveController when the SearchLineController is active
+	 */
 	private DriveController dc;
+	/**
+	 * Constructor of the SearhLineController 
+	 * @param dp
+	 * @param drvl
+	 */
 
 	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
