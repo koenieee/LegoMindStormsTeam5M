@@ -50,7 +50,7 @@ public class SearchLineController implements Runnable, SensorListener {
 	 * {@link #rightLastTachoCount} that needs to be exceeded by the current
 	 * amount of rotations by a {@link Tachometer}.
 	 */
-	private int tachoCountThreshold = 360 * 2;
+	private int tachoCountThreshold = 360 * 5;
 	DriveController dc;
 	public SearchLineController(DifferentialPilot dp,NXTRegulatedMotor mLeft,NXTRegulatedMotor mRight) {
 		diffPilot = dp;
@@ -65,20 +65,18 @@ public class SearchLineController implements Runnable, SensorListener {
 			if(newVal > 40){
 				if (leftLastTachoCount + tachoCountThreshold < mLeft.getTachoCount() ||
 					rightLastTachoCount + tachoCountThreshold < mRight.getTachoCount()) {
+					System.out.println("lijn kwijt");
 					if(newVal > 40){
-						lost = true;
+						dc.suspend();						
 						this.start();
 						System.out.println("reageert");
 					}
 							
 				}
 			}
-				else{
-					if(newVal<40){
-						lost = false;
-						
-					}
-				}
+			if(newVal < 40){
+				this.stop();
+			}
 		}
 	}
 	
@@ -115,8 +113,6 @@ public class SearchLineController implements Runnable, SensorListener {
 	 */
 	@Override
 	public void run() {
-		if(lost = true){
 		diffPilot.arcForward(45);
-		}
 	}
 }
