@@ -1,21 +1,21 @@
 package klasV1M.TI;
 
 import klasV1M.TI.sensoren.MyLightSensor;
-import klasV1M.TI.sensoren.MyUltraSonicSensor;
 import klasV1M.TI.sensoren.SensorListener;
 import klasV1M.TI.sensoren.UpdatingSensor;
 import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * TODO
+ * DriveController is used to follow the black line on the ground, it steers the
+ * robot so the black line is always in the middle. DriveController is
+ * registered to MyLightSensor and uses the data input from MyLightSensor to
+ * control the robot.
  * 
  * @author Remco, Koen, & Medzo
- * @version 2.0.0.0
+ * @version 3.0.0.0
  */
 public class DriveController implements SensorListener {
-
-
 
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
@@ -23,22 +23,15 @@ public class DriveController implements SensorListener {
 	private DifferentialPilot diffPilot;
 
 	/**
-	 * The track width in centimeters from the robot, measured from the center
-	 * of the left wheel to the center of the right wheel. <br>
-	 * Used by {@link #diffPilot} for accurate driving.
+	 * This boolean is used to react to different actions when the line is lost
+	 * or the robot is avoiding an obstacle.
 	 */
-
 	private boolean suspended;
 
 	/**
 	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
-	 * Also registers itself and the {@link SearchLineController} at the
-	 * {@link MyLightSensor}. The {@link ObstacleController} gets registered at
-	 * the {@link MyUltraSonicSensor}.
-	 * 
 	 */
 	public DriveController(DifferentialPilot dp) {
-
 		diffPilot = dp;
 		diffPilot.setTravelSpeed(DifferentialPilot.WHEEL_SIZE_NXT2 + 3);
 		// Start moving forward
@@ -55,8 +48,8 @@ public class DriveController implements SensorListener {
 			 */
 			System.out.println("Newval: " + newVal);
 			if (suspended) {
-				if (newVal < 40) { //black line detected
-					
+				if (newVal < 40) { // black line detected
+
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
@@ -64,22 +57,31 @@ public class DriveController implements SensorListener {
 					resume();
 					diffPilot.forward();
 				}
-			}
-			else if(!suspended) {
-				/* Steers between -100 (left) and +100 (right) to adjust direction,
-				 * since newVal is always between 0 and 100. */
+			} else if (!suspended) {
+				/*
+				 * Steers between -100 (left) and +100 (right) to adjust
+				 * direction, since newVal is always between 0 and 100.
+				 */
 				diffPilot.steer((newVal - 50) * 2);
 			}
 		}
 	}
-	
-	
+
+	/**
+	 * This method is used for the outside world to set the contents of a
+	 * private boolean. When suspend is called, the DriveController stops
+	 * following a line.
+	 */
 	public synchronized void suspend() {
 		suspended = true;
 	}
 
+	/**
+	 * When the DriveController sees the black line again, it will rotate and
+	 * starts following the line.
+	 */
 	public synchronized void resume() {
 		suspended = false;
 	}
-	
+
 }

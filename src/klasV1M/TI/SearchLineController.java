@@ -15,6 +15,9 @@ import lejos.util.TimerListener;
  */
 public class SearchLineController implements SensorListener, TimerListener {
 
+	/**
+	 * The {@link DifferentialPilot} used for advanced maneuvers.
+	 */
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 
 	/**
