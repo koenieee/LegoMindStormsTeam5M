@@ -16,9 +16,9 @@ import lejos.util.TimerListener;
  */
 public class SearchLineController implements SensorListener, TimerListener {
 	/**
-	 * Used to pilot the robot and for advanced maneuvers
+	 * The {@link DifferentialPilot} used for advanced maneuvers.
 	 */
-	private DifferentialPilot diffPilot; 
+	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 	/**
 	 * The boolean that will dictated when to start the Timer
 	 */
@@ -39,8 +39,7 @@ public class SearchLineController implements SensorListener, TimerListener {
 
 	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
-		theTimer = new Timer(0, this);
-		theTimer.setDelay(2000);
+		theTimer = new Timer(2000, this);
 		dc = drvl;
 	}
 

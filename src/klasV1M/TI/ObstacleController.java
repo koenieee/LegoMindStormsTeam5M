@@ -10,10 +10,13 @@ import lejos.robotics.navigation.DifferentialPilot;
  * {@value #obstacleWidth} centimeter.
  * 
  * @author Remco, Koen, & Medzo
- * @version 2.0.0.0
+ * @version 3.0.0.0
  */
 public class ObstacleController implements Runnable, SensorListener {
-
+	
+	/**
+	 * The {@link DifferentialPilot} used for advanced maneuvers.
+	 */
 	private DifferentialPilot diffPilot; // Used for advanced maneuvers
 
 	/**
@@ -21,15 +24,26 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * Also used as the threshold range to react to detected objects.
 	 */
 	private static final int obstacleWidth = 20;
+	
+	/**
+	 * Used internally to determine if the ObstacleController is busy with avoiding an object. 
+	 */
 	private boolean isAvoiding = false;
 	
+	/**
+	 * The private DriveController to let the controller know when Obstacle avoidance is running.
+	 */
 	private DriveController dvc;
 	
+	/**
+	 * The thread that ObstacleController uses to avoid obstacles 
+	 */
 	private Thread t;
 
 	/**
-	 * 
-	 * @param dp Used for afvanced maneuvers.
+	 * Initialize ObstacleController to work with the DriveController and set the DifferentialPilot.
+	 * @param dp Used for DifferentialPilot
+	 * @param dc Used for DriveController
 	 */
 	public ObstacleController(DifferentialPilot dp, DriveController dc) {
 		dvc = dc;

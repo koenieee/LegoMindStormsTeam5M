@@ -26,7 +26,10 @@ public class Main {
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
 		NXTRegulatedMotor mLeft = Motor.C;
 		NXTRegulatedMotor mRight = Motor.A;
+
 		double trackWidth = 13;
+		
+		
 		DifferentialPilot diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2, trackWidth, mLeft, mRight);
 		
 		//RConsole.open();
