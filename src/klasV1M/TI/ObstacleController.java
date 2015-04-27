@@ -86,7 +86,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	}
 
 	/**
-	 * Stops the {@link Thread} of {@link #t} if it already exists.
+	 * Stops the {@link Thread} of {@link #t} if it exists.
 	 */
 	public void stop() {
 		if (t != null) {

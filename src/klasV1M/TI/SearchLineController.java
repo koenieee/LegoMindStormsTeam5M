@@ -12,7 +12,7 @@ import lejos.util.Delay;
  * exceeds a certain time. It will then drive an arc until the line is found.
  * 
  * @author Remco, Koen, & Medzo
- * @version 3.0.0.0
+ * @version 1.0.0.0
  */
 
 public class SearchLineController implements SensorListener {
