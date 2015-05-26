@@ -26,18 +26,19 @@ public class ObstacleController implements Runnable, SensorListener {
 	private static final int obstacleWidth = 20;
 
 	/**
-	 * Used internally to determine if the {@link ObstacleController} is busy with
-	 * avoiding an object.
+	 * Used internally to determine if the {@link ObstacleController} is busy
+	 * with avoiding an object.
 	 */
 	private boolean isAvoiding = false;
 
 	/**
-	 * The {@link DriveController} to 
+	 * The {@link DriveController} to
 	 */
 	private DriveController dvc;
 
 	/**
-	 * The {@link Thread} that {@link ObstacleController} uses to avoid obstacles.
+	 * The {@link Thread} that {@link ObstacleController} uses to avoid
+	 * obstacles.
 	 */
 	private Thread t;
 

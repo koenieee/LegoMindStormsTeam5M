@@ -7,9 +7,9 @@ import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * Follows the edge of the black line, by adjusting the steering of the robot accordingly.
- * It registers itself to the {@link MyLightSensor} and uses
- * the received data to calculate the adjustment needed for steering.
+ * Follows the edge of the black line, by adjusting the steering of the robot
+ * accordingly. It registers itself to the {@link MyLightSensor} and uses the
+ * received data to calculate the adjustment needed for steering.
  * 
  * @author Remco, Koen, & Medzo
  * @version 3.0.0.0

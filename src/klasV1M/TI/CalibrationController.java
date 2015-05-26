@@ -19,6 +19,7 @@ public class CalibrationController {
 
 	/**
 	 * Constructor for the {@link CalibrationController}
+	 * 
 	 * @param sensor
 	 *            The {@link MyLightSensor} to use for the calibration.
 	 */
@@ -46,19 +47,24 @@ public class CalibrationController {
 		System.out.println("Calibrating black...");
 		int low = lightSensor.getNormalizedLightValue();
 		lightSensor.setLow(low); // Configure low (darkest)
-		System.out.println("High: " + high + " | Low: " + low); // Display values for debugging
+		System.out.println("High: " + high + " | Low: " + low); // Display
+																// values for
+																// debugging
 		Delay.msDelay(2000);
+		
 		if (high == 0 || high <= low) { // Error checking
 			System.out.println("Calibration failed! Restarting procedure...");
 			calibrateLightSensor(); // Restart procedure
 		}
 		if (high - low < 100) {
 			// Warn user for less accurate readings
-			System.out.println("Values differ less than 100 (" + (high - low) + "). Might be less accurate");
+			System.out.println("Values differ less than 100 (" + (high - low)
+					+ "). Might be less accurate");
 			Delay.msDelay(2000);
 		}
 		// Allow user to recalibrate if deemed necessary
-		System.out.println("Press the enter button in 2 seconds to recalibrate");
+		System.out
+				.println("Press the enter button in 2 seconds to recalibrate");
 		if (Button.waitForAnyPress(2000) == Button.ID_ENTER) {
 			calibrateLightSensor();
 		}

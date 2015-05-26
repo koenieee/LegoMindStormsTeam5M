@@ -38,7 +38,8 @@ public class SearchLineController implements SensorListener {
 	private long timeUntilStarting = 5000;
 
 	/**
-	 * The {@link DriveController} to suspend when {@link SearchLineController} is busy avoiding.
+	 * The {@link DriveController} to suspend when {@link SearchLineController}
+	 * is busy avoiding.
 	 */
 	private DriveController dc;
 
@@ -48,7 +49,8 @@ public class SearchLineController implements SensorListener {
 	 * @param dp
 	 *            The {@link DifferentialPilot} to use for advanced maneuvers.
 	 * @param drvl
-	 *            The {@link DriveController} to be notified when the line is lost.
+	 *            The {@link DriveController} to be notified when the line is
+	 *            lost.
 	 */
 	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
@@ -69,15 +71,19 @@ public class SearchLineController implements SensorListener {
 					counting = true;
 				}
 				/*
-				 * Check if the earlier system time combined with
-				 * the pre-set amount of milliseconds is smaller than the current time in milliseconds.
-				 * This makes sure code is not execute before a certain amount of time has passed.
+				 * Check if the earlier system time combined with the pre-set
+				 * amount of milliseconds is smaller than the current time in
+				 * milliseconds. This makes sure code is not execute before a
+				 * certain amount of time has passed.
 				 */
-				else if (counting && (millis + timeUntilStarting < System.currentTimeMillis())) {
+				else if (counting
+						&& (millis + timeUntilStarting < System
+								.currentTimeMillis())) {
 					dc.suspend();
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beepSequence(); // beep to notify arcing starts.
-					diffPilot.arcForward(50); // arcing in a radius of 50 degrees.
+					diffPilot.arcForward(50); // arcing in a radius of 50
+												// degrees.
 					Delay.msDelay(1000);
 				}
 			} else if (newVal < 60 && counting) { // Line found
