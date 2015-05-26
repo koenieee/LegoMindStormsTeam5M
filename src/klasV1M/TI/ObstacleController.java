@@ -17,7 +17,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
 	 */
-	private DifferentialPilot diffPilot; // Used for advanced maneuvers
+	private DifferentialPilot diffPilot;
 
 	/**
 	 * The maximum width of an obstacle that the robot can avoid in centimeters.
@@ -26,19 +26,18 @@ public class ObstacleController implements Runnable, SensorListener {
 	private static final int obstacleWidth = 20;
 
 	/**
-	 * Used internally to determine if the ObstacleController is busy with
+	 * Used internally to determine if the {@link ObstacleController} is busy with
 	 * avoiding an object.
 	 */
 	private boolean isAvoiding = false;
 
 	/**
-	 * The private DriveController to let the controller know when Obstacle
-	 * avoidance is running.
+	 * The {@link DriveController} to 
 	 */
 	private DriveController dvc;
 
 	/**
-	 * The thread that ObstacleController uses to avoid obstacles
+	 * The {@link Thread} that {@link ObstacleController} uses to avoid obstacles.
 	 */
 	private Thread t;
 
@@ -47,9 +46,9 @@ public class ObstacleController implements Runnable, SensorListener {
 	 * the DifferentialPilot.
 	 * 
 	 * @param dp
-	 *            Used for DifferentialPilot
+	 *            The {@link DifferentialPilot} to use
 	 * @param dc
-	 *            Used for DriveController
+	 *            The {@link DriveController} to use
 	 */
 	public ObstacleController(DifferentialPilot dp, DriveController dc) {
 		dvc = dc;
@@ -57,7 +56,6 @@ public class ObstacleController implements Runnable, SensorListener {
 	}
 
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal) {
-
 		// Ultrasonic Sensor
 		if (s instanceof MyUltraSonicSensor && isAvoiding == false) {
 			/*
@@ -96,7 +94,7 @@ public class ObstacleController implements Runnable, SensorListener {
 	}
 
 	/**
-	 * Drive around obstacle with a certain width. When the line is found, this function stops running.
+	 * Drives around an obstacle with the width of {@value #obstacleWidth}.
 	 */
 	@Override
 	public void run() {

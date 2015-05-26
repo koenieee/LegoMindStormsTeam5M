@@ -13,12 +13,12 @@ import lejos.util.Delay;
 public class CalibrationController {
 
 	/**
-	 * The lightsensor that you want to calibrate.
+	 * The {@link MyLightSensor} that you want to calibrate.
 	 */
 	private MyLightSensor lightSensor;
 
 	/**
-	 * 
+	 * Constructor for the {@link CalibrationController}
 	 * @param sensor
 	 *            The {@link MyLightSensor} to use for the calibration.
 	 */
@@ -37,7 +37,7 @@ public class CalibrationController {
 
 		System.out.println("Calibrating white...");
 		int high = lightSensor.getNormalizedLightValue();
-		lightSensor.setHigh(high);// calibrateHigh();
+		lightSensor.setHigh(high); // Configure high (brightest)
 
 		System.out.println("Place on black spot in five seconds");
 
@@ -45,20 +45,20 @@ public class CalibrationController {
 
 		System.out.println("Calibrating black...");
 		int low = lightSensor.getNormalizedLightValue();
-		lightSensor.setLow(low);// calibrateLow();
-		System.out.println("High: " + high + " | Low: " + low);
+		lightSensor.setLow(low); // Configure low (darkest)
+		System.out.println("High: " + high + " | Low: " + low); // Display values for debugging
 		Delay.msDelay(2000);
-		if (high == 0 || high <= low) { // error checking
+		if (high == 0 || high <= low) { // Error checking
 			System.out.println("Calibration failed! Restarting procedure...");
-			calibrateLightSensor(); // restart procedure
+			calibrateLightSensor(); // Restart procedure
 		}
 		if (high - low < 100) {
-			System.out.println("Values differ less than 100 (" + (high - low)
-					+ "). Might be less accurate");
+			// Warn user for less accurate readings
+			System.out.println("Values differ less than 100 (" + (high - low) + "). Might be less accurate");
 			Delay.msDelay(2000);
 		}
-		System.out
-				.println("Press the enter button in 2 seconds to recalibrate");
+		// Allow user to recalibrate if deemed necessary
+		System.out.println("Press the enter button in 2 seconds to recalibrate");
 		if (Button.waitForAnyPress(2000) == Button.ID_ENTER) {
 			calibrateLightSensor();
 		}

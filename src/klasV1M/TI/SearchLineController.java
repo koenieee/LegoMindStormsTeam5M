@@ -20,38 +20,36 @@ public class SearchLineController implements SensorListener {
 	/**
 	 * The {@link DifferentialPilot} used for advanced maneuvers.
 	 */
-	private DifferentialPilot diffPilot; // Used for advanced maneuvers
+	private DifferentialPilot diffPilot;
 
 	/**
-	 * The boolean that will dictated when to start the Timer
+	 * Flag to indicate if the {@link SearchLineController} is counting.
 	 */
 	private boolean counting = false;
 
 	/**
-	 * Store the System time in milliseconds to use as Timer system.
+	 * Used to store the system time in milliseconds when the line was lost.
 	 */
 	private long millis;
 
 	/**
-	 * Time until the robot is starting the arc driving.
+	 * Amount of milliseconds needed to start driving an arc.
 	 */
 	private long timeUntilStarting = 5000;
 
 	/**
-	 * Connection to DriveController used to tell the DriveController when the
-	 * SearchLineController is active
+	 * The {@link DriveController} to suspend when {@link SearchLineController} is busy avoiding.
 	 */
 	private DriveController dc;
 
 	/**
-	 * Constructor of the SearhLineController
+	 * Constructor of the {@link SearchLineController}
 	 * 
 	 * @param dp
-	 *            DifferentialPilot to use for advanced maneuvers.
+	 *            The {@link DifferentialPilot} to use for advanced maneuvers.
 	 * @param drvl
-	 *            DriveController to be notified when the line is lost.
+	 *            The {@link DriveController} to be notified when the line is lost.
 	 */
-
 	public SearchLineController(DifferentialPilot dp, DriveController drvl) {
 		diffPilot = dp;
 		dc = drvl;
@@ -69,17 +67,20 @@ public class SearchLineController implements SensorListener {
 					System.out.println("Timer started");
 					millis = System.currentTimeMillis();
 					counting = true;
-				} else if (counting
-						&& (millis + timeUntilStarting < System
-								.currentTimeMillis())) {
+				}
+				/*
+				 * Check if the earlier system time combined with
+				 * the pre-set amount of milliseconds is smaller than the current time in milliseconds.
+				 * This makes sure code is not execute before a certain amount of time has passed.
+				 */
+				else if (counting && (millis + timeUntilStarting < System.currentTimeMillis())) {
 					dc.suspend();
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beepSequence(); // beep to notify arcing starts.
-					diffPilot.arcForward(50); // arcing in a radius of 35
-												// degrees.
+					diffPilot.arcForward(50); // arcing in a radius of 50 degrees.
 					Delay.msDelay(1000);
 				}
-			} else if (newVal < 60 && counting) { // line found
+			} else if (newVal < 60 && counting) { // Line found
 				counting = false;
 				millis = 0;
 			}

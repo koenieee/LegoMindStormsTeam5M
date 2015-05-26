@@ -21,18 +21,20 @@ public class Main {
 	 * @param args Arguments that can be passed into the application. Current implementation ignores these.
 	 */
 	public static void main(String[] args) {
-		
+		// Sensors
 		MyLightSensor mls = new MyLightSensor(SensorPort.S2);
 		MyUltraSonicSensor muss = new MyUltraSonicSensor(SensorPort.S4);
+		
+		// Motors needed by the DifferentialPilot
 		NXTRegulatedMotor mLeft = Motor.C;
 		NXTRegulatedMotor mRight = Motor.A;
 
-		double trackWidth = 13;
+		double trackWidth = 13; // The track-width needed by the DifferentialPilot
 		
 		
 		DifferentialPilot diffPilot = new DifferentialPilot(DifferentialPilot.WHEEL_SIZE_NXT2, trackWidth, mLeft, mRight);
 		
-		//RConsole.open();
+		//RConsole.open(); // For debugging purposes
 		System.out.println("Press button to start...");
 
 		
@@ -44,13 +46,13 @@ public class Main {
 		Button.waitForAnyPress();
 
 		DriveController dc = new DriveController(diffPilot);
-		mls.addListener(dc);
+		mls.addListener(dc); // Register the DriveController to the MyLightSensor
 		
 		SearchLineController slc = new SearchLineController(diffPilot, dc);
-		mls.addListener(slc);
+		mls.addListener(slc); // Register the SearchLineController to the MyLightSensor
 		
 		ObstacleController obc = new ObstacleController(diffPilot, dc);
-		muss.addListener(obc);
+		muss.addListener(obc); // Register the SearchLineController to the MyUltraSonicListener
 		
 		while (true) {
 			Thread.yield();

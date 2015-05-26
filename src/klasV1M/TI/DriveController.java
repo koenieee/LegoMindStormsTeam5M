@@ -7,10 +7,9 @@ import lejos.nxt.Sound;
 import lejos.robotics.navigation.DifferentialPilot;
 
 /**
- * DriveController is used to follow the black line on the ground, it steers the
- * robot so the black line is always in the middle. DriveController is
- * registered to MyLightSensor and uses the data input from MyLightSensor to
- * control the robot.
+ * Follows the edge of the black line, by adjusting the steering of the robot accordingly.
+ * It registers itself to the {@link MyLightSensor} and uses
+ * the received data to calculate the adjustment needed for steering.
  * 
  * @author Remco, Koen, & Medzo
  * @version 3.0.0.0
@@ -23,13 +22,12 @@ public class DriveController implements SensorListener {
 	private DifferentialPilot diffPilot;
 
 	/**
-	 * This boolean is used to react to different actions when the line is lost
-	 * or the robot is avoiding an obstacle.
+	 * Used as a flag for the suspended state.
 	 */
 	private boolean suspended = false;
 
 	/**
-	 * Initializes the {@link #diffPilot} and starts moving forward. <br>
+	 * Initializes the {@link #diffPilot} and starts moving forward.
 	 */
 	public DriveController(DifferentialPilot dp) {
 		diffPilot = dp;
@@ -46,9 +44,8 @@ public class DriveController implements SensorListener {
 			 * instanceof could be replaces by .equals() if sensors are fields
 			 * and parameters for constructor
 			 */
-			// System.out.println("Newval: " + newVal);
 			if (suspended) {
-				if (newVal < 40) { // black line detected
+				if (newVal < 40) { // Black line detected
 					Sound.setVolume(Sound.VOL_MAX);
 					Sound.beep();
 					diffPilot.travel(3);
@@ -67,17 +64,14 @@ public class DriveController implements SensorListener {
 	}
 
 	/**
-	 * This method is used for the outside world to set the contents of a
-	 * private boolean. When suspend is called, the DriveController stops
-	 * following a line.
+	 * Suspends the {@link DriveController}
 	 */
 	public synchronized void suspend() {
 		suspended = true;
 	}
 
 	/**
-	 * When the DriveController sees the black line again, it will rotate and
-	 * starts following the line.
+	 * Resumes the {@link DriveController}
 	 */
 	public synchronized void resume() {
 		suspended = false;
