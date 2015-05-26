@@ -1,9 +1,10 @@
 package klasV1M.TI.sensoren;
 
 /**
- * Allows a listener to receive notifications from an {@link UpdatingSensor}.
- * <br>Before a listener can receive notifications it needs to register itself at the {@link UpdatingSensor} to listen to.
- * <br>Implementing classes should keep an internal {@link List} of
+ * Allows a listener to receive notifications from an {@link UpdatingSensor}. <br>
+ * Before a listener can receive notifications it needs to register itself at
+ * the {@link UpdatingSensor} to listen to. <br>
+ * Implementing classes should keep an internal {@link List} of
  * {@link UpdatingSensor}s.
  * 
  * @author Remco, Koen, & Medzo
@@ -13,9 +14,12 @@ public interface SensorListener {
 	/**
 	 * Notifies a listener when an {@link UpdatingSensor} measured a change.
 	 * 
-	 * @param s The {@link UpdatingSensor} that measured the change
-	 * @param oldVal The previously measured value
-	 * @param newVal The new measured value
+	 * @param s
+	 *            The {@link UpdatingSensor} that measured the change
+	 * @param oldVal
+	 *            The previously measured value
+	 * @param newVal
+	 *            The new measured value
 	 */
 	public void stateChanged(UpdatingSensor s, float oldVal, float newVal);
 }

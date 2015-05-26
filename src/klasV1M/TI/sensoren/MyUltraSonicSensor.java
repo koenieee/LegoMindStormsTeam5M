@@ -7,6 +7,7 @@ import lejos.nxt.I2CPort;
 import lejos.nxt.UltrasonicSensor;
 
 /**
+ * Can provide a connection to the UltrasonicSensor with a few more functions
  * Overrides the {@link UltrasonicSensor} to implement the listener-pattern
  * 
  * @author Remco, Koen, & Medzo
@@ -14,15 +15,21 @@ import lejos.nxt.UltrasonicSensor;
  */
 public class MyUltraSonicSensor extends UltrasonicSensor implements
 		UpdatingSensor {
+
+	/**
+	 * The old and new distance value from the UltraSonicSensor
+	 */
 	private float oldVal, newVal;
 	/**
-	 * Internal list of listeners
+	 * Internal list of sensor listeners
 	 */
 	private List<SensorListener> listeners;
 
 	/**
 	 * Creates and instantiates a new instance of {@link MyUltraSonicSensor}.
-	 * @param port The {@link I2CPort} this object will be attached to.
+	 * 
+	 * @param port
+	 *            The {@link I2CPort} this object will be attached to.
 	 */
 	public MyUltraSonicSensor(I2CPort port) {
 		super(port);
@@ -32,7 +39,7 @@ public class MyUltraSonicSensor extends UltrasonicSensor implements
 	public void updateState() {
 		oldVal = newVal;
 		newVal = super.getRange();
-		
+
 		if (oldVal != newVal) {
 			// notify listeners about a change
 			for (SensorListener s : listeners) {

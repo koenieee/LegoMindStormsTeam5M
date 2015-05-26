@@ -7,27 +7,40 @@ import lejos.nxt.ADSensorPort;
 import lejos.nxt.LightSensor;
 
 /**
+ * Can provide a connection to the LightSensor with a few more functions
  * Overrides the {@link LightSensor} to implement the listener-pattern
  * 
  * @author Remco, Koen, & Medzo
  * @version 1.0.0.0
  */
 public class MyLightSensor extends LightSensor implements UpdatingSensor {
+
 	/**
-	 * Internal list of listeners
+	 * Internal list of sensor listeners
 	 */
 	private List<SensorListener> listeners;
+
+	/**
+	 * The old and new light value from the LightSensor
+	 */
 	private float oldVal, newVal;
 
 	/**
 	 * Creates and instantiates a new instance of {@link MyLightSensor}.
-	 * @param port The {@link ADSensorPort} this object will be attached to.
+	 * 
+	 * @param port
+	 *            The {@link ADSensorPort} this object will be attached to.
 	 */
 	public MyLightSensor(ADSensorPort port) {
 		super(port);
 		listeners = new ArrayList<SensorListener>();
 	}
 
+	/**
+	 * This function returns the current light value of the LightSensor
+	 * 
+	 * @return current light value of LightSensor
+	 */
 	public int getLightValue() {
 		int val = super.getLightValue();
 		// correct out of bounds values
